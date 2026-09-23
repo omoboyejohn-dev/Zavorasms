@@ -494,9 +494,6 @@
     collection, addDoc, query, where, getDocs, serverTimestamp, increment
   } from './firebase-config.js';
 
-  /* ============================================================
-     GLOBAL STATE
-  ============================================================ */
   let currentUser = null;
   let currentAdmin = null;
   let products = [];
@@ -506,9 +503,6 @@
   let allDeposits = [];
   let currentTab = 'overview';
 
-  /* ============================================================
-     DEFAULT DATA
-  ============================================================ */
   const DEFAULT_PRODUCTS = [
     { id: 'whatsapp',  name: 'WhatsApp',    icon: '✆', cls: 'ic-whatsapp',  stock: 113 },
     { id: 'telegram',  name: 'Telegram',    icon: '✈', cls: 'ic-telegram',  stock: 340 },
@@ -546,9 +540,6 @@
     { id: 'br', name: 'Brazil',         flag: '🇧🇷', price: 1900,  stock: 420000,  dial: '+55',  order: 15 }
   ];
 
-  /* ============================================================
-     AUTH GUARD
-  ============================================================ */
   onAuthStateChanged(auth, async (user) => {
     if (!user) { window.location.href = 'login.html'; return; }
 
@@ -573,9 +564,6 @@
     switchTab('overview');
   });
 
-  /* ============================================================
-     LOAD ALL DATA
-  ============================================================ */
   async function loadAllData() {
     await Promise.all([
       loadProducts(),
@@ -656,9 +644,6 @@
     if (dEl) dEl.textContent = allDeposits.filter(d => d.status === 'pending').length;
   }
 
-  /* ============================================================
-     HELPERS
-  ============================================================ */
   function nextProductOrder() {
     if (products.length === 0) return 1;
     return Math.max(...products.map(p => p.order || 0)) + 1;
@@ -668,9 +653,6 @@
     return Math.max(...countries.map(c => c.order || 0)) + 1;
   }
 
-  /* ============================================================
-     TAB NAV
-  ============================================================ */
   document.querySelectorAll('.side-link[data-tab]').forEach(link => {
     link.addEventListener('click', () => switchTab(link.dataset.tab));
   });
@@ -703,9 +685,6 @@
   }
   window.switchTab = switchTab;
 
-  /* ============================================================
-     TAB: OVERVIEW
-  ============================================================ */
   function renderOverview() {
     const totalRevenue = allOrders
       .filter(o => o.status === 'completed')
@@ -714,6 +693,10 @@
     const pending = allOrders.filter(o => o.status === 'pending').length;
     const completed = allOrders.filter(o => o.status === 'completed').length;
     const pendingDeposits = allDeposits.filter(d => d.status === 'pending').length;
+
+    // Provider breakdown
+    const mainOrders = allOrders.filter(o => (o.provider || 'main') === 'main').length;
+    const usaOrders = allOrders.filter(o => o.provider === 'usa').length;
 
     document.getElementById('contentArea').innerHTML = `
       <div class="stats-grid">
@@ -736,6 +719,19 @@
           <div class="ic purple">📊</div>
           <div class="num">${completed}</div>
           <div class="lbl">Completed Orders</div>
+        </div>
+      </div>
+
+      <div class="stats-grid" style="margin-bottom:24px;">
+        <div class="stat-box">
+          <div class="ic blue">🌍</div>
+          <div class="num">${mainOrders}</div>
+          <div class="lbl">Main Provider Orders</div>
+        </div>
+        <div class="stat-box">
+          <div class="ic purple">🇺🇸</div>
+          <div class="num">${usaOrders}</div>
+          <div class="lbl">USA Provider Orders</div>
         </div>
       </div>
 
@@ -776,9 +772,6 @@
     `;
   }
 
-  /* ============================================================
-     TAB: PRODUCTS
-  ============================================================ */
   function renderProducts() {
     if (products.length === 0) {
       document.getElementById('contentArea').innerHTML = `
@@ -854,9 +847,6 @@
     `;
   }
 
-  /* ============================================================
-     TAB: COUNTRIES
-  ============================================================ */
   function renderCountries() {
     if (countries.length === 0) {
       document.getElementById('contentArea').innerHTML = `
@@ -934,9 +924,6 @@
     `;
   }
 
-  /* ============================================================
-     TAB: USERS
-  ============================================================ */
   function renderUsers() {
     if (allUsers.length === 0) {
       document.getElementById('contentArea').innerHTML = `
@@ -1003,9 +990,7 @@
     `;
   }
 
-  /* ============================================================
-     TAB: ORDERS
-  ============================================================ */
+  /* ⭐ ORDERS — Now with Provider column */
   function renderOrders() {
     if (allOrders.length === 0) {
       document.getElementById('contentArea').innerHTML = `
@@ -1015,10 +1000,16 @@
       return;
     }
 
+    const mainCount = allOrders.filter(o => (o.provider || 'main') === 'main').length;
+    const usaCount = allOrders.filter(o => o.provider === 'usa').length;
+
     document.getElementById('contentArea').innerHTML = `
       <div class="sec-head">
         <div><h2>Orders <span style="color:var(--gray); font-weight:500; font-size:14px;">(${allOrders.length})</span></h2>
-        <div class="sub">All orders across all users</div></div>
+        <div class="sub">
+          <span class="pill pill-blue" style="font-size:10px;">🌍 Main: ${mainCount}</span>
+          <span class="pill pill-purple" style="font-size:10px; margin-left:6px;">🇺🇸 USA: ${usaCount}</span>
+        </div></div>
         <div class="actions">
           <div class="search-box">
             <span class="ico">🔍</span>
@@ -1036,6 +1027,7 @@
               <th>Number</th>
               <th>Code</th>
               <th>Price</th>
+              <th>Provider</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -1061,6 +1053,13 @@
       o.status === 'completed' ? 'pill-green' :
       o.status === 'pending'   ? 'pill-yellow' :
       o.status === 'cancelled' ? 'pill-gray' : 'pill-red';
+
+    // ⭐ Provider badge
+    const provider = o.provider || 'main';
+    const providerPill = provider === 'usa'
+      ? '<span class="pill pill-purple">🇺🇸 USA</span>'
+      : '<span class="pill pill-blue">🌍 Main</span>';
+
     return `
       <tr>
         <td style="color:var(--gray); font-weight:600;">${idx + 1}</td>
@@ -1069,6 +1068,7 @@
         <td><code style="font-size:12px;">${o.number || '—'}</code></td>
         <td><code style="font-size:12px; color:var(--blue);">${o.smsCode || '—'}</code></td>
         <td><span class="price-cell">₦${(o.price || 0).toLocaleString()}</span></td>
+        <td>${providerPill}</td>
         <td><span class="pill ${statusPill}">${o.status || 'pending'}</span></td>
         <td>
           <div class="row-actions">
@@ -1079,9 +1079,6 @@
     `;
   }
 
-  /* ============================================================
-     TAB: DEPOSITS
-  ============================================================ */
   function renderDeposits() {
     if (allDeposits.length === 0) {
       document.getElementById('contentArea').innerHTML = `
@@ -1159,22 +1156,17 @@
     `;
   }
 
-  /* ============================================================
-     APPROVE / REJECT DEPOSIT (WITH DOUBLE-CLICK PROTECTION)
-  ============================================================ */
+  /* APPROVE / REJECT DEPOSIT — with double-click protection */
   window.approveDeposit = async function (id) {
-    // Prevent double-clicks globally
     if (window.__approvingDeposit) return;
     window.__approvingDeposit = true;
 
-    // Disable buttons in UI immediately
     const approveBtn = document.getElementById(`approve-${id}`);
     const rejectBtn  = document.getElementById(`reject-${id}`);
     if (approveBtn) { approveBtn.disabled = true; approveBtn.textContent = '...'; }
     if (rejectBtn)  { rejectBtn.disabled = true; }
 
     try {
-      // 1. Re-fetch fresh data from Firestore
       const depRef = doc(db, 'deposits', id);
       const freshSnap = await getDoc(depRef);
 
@@ -1185,7 +1177,6 @@
 
       const d = freshSnap.data();
 
-      // 2. Guard: already processed?
       if (d.status !== 'pending') {
         showToast(`This deposit was already ${d.status}.`, 'error');
         await loadDeposits();
@@ -1195,19 +1186,16 @@
         return;
       }
 
-      // 3. Ask for confirmation
       if (!confirm(`Approve deposit?\n\nUser: ${d.email}\nAmount: ₦${Number(d.amount).toLocaleString()}\n\nThis will credit the user's wallet immediately.`)) {
         return;
       }
 
-      // 4. Mark as completed FIRST (before crediting wallet)
       await updateDoc(depRef, {
         status: 'completed',
         approvedAt: serverTimestamp(),
         approvedBy: currentUser.uid
       });
 
-      // 5. NOW credit the wallet
       await updateDoc(doc(db, 'users', d.uid), {
         walletBalance: increment(d.amount || 0)
       });
@@ -1279,9 +1267,7 @@
     }
   };
 
-  /* ============================================================
-     PRODUCT CRUD
-  ============================================================ */
+  /* PRODUCT CRUD */
   window.addProduct = function () {
     const nextOrder = nextProductOrder();
     window.openModal(
@@ -1436,9 +1422,7 @@
     }
   };
 
-  /* ============================================================
-     COUNTRY CRUD
-  ============================================================ */
+  /* COUNTRY CRUD */
   window.addCountry = function () {
     const nextOrder = nextCountryOrder();
     window.openModal(
@@ -1582,9 +1566,7 @@
     }
   };
 
-  /* ============================================================
-     USER WALLET ADJUST
-  ============================================================ */
+  /* USER WALLET */
   window.editUserWallet = function (uid) {
     const u = allUsers.find(x => x.uid === uid);
     if (!u) return;
@@ -1618,9 +1600,7 @@
     }
   };
 
-  /* ============================================================
-     ORDER CANCEL
-  ============================================================ */
+  /* ORDER CANCEL */
   window.cancelOrder = async function (id) {
     const o = allOrders.find(x => x.id === id);
     if (!o) return;
@@ -1639,9 +1619,7 @@
     }
   };
 
-  /* ============================================================
-     SEED DEFAULT DATA
-  ============================================================ */
+  /* SEED */
   document.getElementById('seedBtn').addEventListener('click', async () => {
     if (!confirm('Seed default products + countries?\n\nThis adds 16 products and 15 countries.\n\nExisting entries with same IDs will be overwritten but keep their order.')) return;
 
@@ -1673,9 +1651,7 @@
     }
   });
 
-  /* ============================================================
-     LOGOUT
-  ============================================================ */
+  /* LOGOUT */
   document.getElementById('logoutBtn').addEventListener('click', async () => {
     await signOut(auth);
     window.location.href = 'login.html';
