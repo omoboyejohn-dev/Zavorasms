@@ -476,7 +476,6 @@
     .products-grid { grid-template-columns: 1fr; }
   }
 
-  /* overlay for mobile */
   .overlay {
     display: none;
     position: fixed;
@@ -485,6 +484,13 @@
     z-index: 45;
   }
   .overlay.show { display: block; }
+
+  .empty-row td {
+    text-align: center;
+    padding: 32px 20px !important;
+    color: var(--gray);
+    font-size: 14px;
+  }
 </style>
 </head>
 <body>
@@ -517,15 +523,15 @@
   <div class="nav-section-label" style="margin-top:20px;">Account</div>
   <a class="side-link"><span class="ic">⚙</span> Settings</a>
   <a class="side-link"><span class="ic">?</span> Support</a>
-  <a class="side-link" href="login.html"><span class="ic">⎋</span> Logout</a>
+  <a class="side-link" id="logoutBtn" style="cursor:pointer;"><span class="ic">⎋</span> Logout</a>
 
   <div class="sidebar-spacer"></div>
 
   <div class="user-mini">
-    <div class="avatar">JD</div>
+    <div class="avatar" id="avatar">--</div>
     <div class="info">
-      <div class="name">John Doe</div>
-      <div class="email">john@example.com</div>
+      <div class="name" id="userName">Loading...</div>
+      <div class="email" id="userEmail">...</div>
     </div>
   </div>
 </aside>
@@ -534,7 +540,7 @@
 <main class="main">
 
   <div class="topbar">
-    <h1>Dashboard <span>/ Welcome back, John 👋</span></h1>
+    <h1>Dashboard <span id="welcomeMsg">/ Loading...</span></h1>
     <div class="top-actions">
       <button class="icon-btn">🔔<span class="dot"></span></button>
       <a href="#" class="btn btn-primary">＋ Deposit</a>
@@ -547,7 +553,7 @@
     <div class="top-grid">
       <div class="wallet-card">
         <div class="label">Wallet Balance</div>
-        <div class="balance">$25.00 <small>USD</small></div>
+        <div class="balance" id="walletBalance">₦0.00 <small>NGN</small></div>
         <div class="actions">
           <a href="#" class="btn">＋ Deposit</a>
           <a href="#" class="btn ghost">Withdraw</a>
@@ -557,7 +563,7 @@
       <div class="stat-card">
         <div class="ic-wrap">🧾</div>
         <div>
-          <div class="num">12</div>
+          <div class="num" id="totalOrders">0</div>
           <div class="lbl">Total Orders</div>
         </div>
       </div>
@@ -565,7 +571,7 @@
       <div class="stat-card">
         <div class="ic-wrap">✓</div>
         <div>
-          <div class="num">10</div>
+          <div class="num" id="completedOrders">0</div>
           <div class="lbl">Completed</div>
         </div>
       </div>
@@ -578,25 +584,45 @@
     </div>
 
     <div class="products-grid">
-      <div class="product-card">
+      <div class="product-card" onclick="openProduct('whatsapp')">
         <div class="product-icon ic-whatsapp">✆</div>
         <h3>WhatsApp</h3>
         <div class="countries">150+ countries</div>
       </div>
-      <div class="product-card">
+      <div class="product-card" onclick="openProduct('facebook')">
         <div class="product-icon ic-facebook">f</div>
         <h3>Facebook</h3>
         <div class="countries">120+ countries</div>
       </div>
-      <div class="product-card">
+      <div class="product-card" onclick="openProduct('telegram')">
         <div class="product-icon ic-telegram">✈</div>
         <h3>Telegram</h3>
         <div class="countries">90+ countries</div>
       </div>
-      <div class="product-card">
+      <div class="product-card" onclick="openProduct('google')">
         <div class="product-icon ic-google">G</div>
         <h3>Google</h3>
         <div class="countries">130+ countries</div>
+      </div>
+      <div class="product-card" onclick="openProduct('instagram')">
+        <div class="product-icon ic-instagram">◉</div>
+        <h3>Instagram</h3>
+        <div class="countries">100+ countries</div>
+      </div>
+      <div class="product-card" onclick="openProduct('twitter')">
+        <div class="product-icon ic-twitter">𝕏</div>
+        <h3>Twitter / X</h3>
+        <div class="countries">80+ countries</div>
+      </div>
+      <div class="product-card" onclick="openProduct('tiktok')">
+        <div class="product-icon ic-tiktok">♪</div>
+        <h3>TikTok</h3>
+        <div class="countries">70+ countries</div>
+      </div>
+      <div class="product-card" onclick="openProduct('discord')">
+        <div class="product-icon ic-discord">◈</div>
+        <h3>Discord</h3>
+        <div class="countries">60+ countries</div>
       </div>
     </div>
 
@@ -618,67 +644,8 @@
             <th>Status</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>
-              <div class="cell-product">
-                <div class="mini-icon ic-whatsapp">✆</div> WhatsApp
-              </div>
-            </td>
-            <td>🇺🇸 United States</td>
-            <td>+1 415 *** 8821</td>
-            <td><span class="code">482 913</span></td>
-            <td>$1.20</td>
-            <td><span class="badge badge-green">Completed</span></td>
-          </tr>
-          <tr>
-            <td>
-              <div class="cell-product">
-                <div class="mini-icon ic-facebook">f</div> Facebook
-              </div>
-            </td>
-            <td>🇬🇧 United Kingdom</td>
-            <td>+44 7700 *** 421</td>
-            <td><span class="code">771 204</span></td>
-            <td>$0.85</td>
-            <td><span class="badge badge-green">Completed</span></td>
-          </tr>
-          <tr>
-            <td>
-              <div class="cell-product">
-                <div class="mini-icon ic-telegram">✈</div> Telegram
-              </div>
-            </td>
-            <td>🇩🇪 Germany</td>
-            <td>+49 151 *** 5589</td>
-            <td><span class="code">—</span></td>
-            <td>$1.50</td>
-            <td><span class="badge badge-yellow">Pending</span></td>
-          </tr>
-          <tr>
-            <td>
-              <div class="cell-product">
-                <div class="mini-icon ic-google">G</div> Google
-              </div>
-            </td>
-            <td>🇨🇦 Canada</td>
-            <td>+1 604 *** 1092</td>
-            <td><span class="code">903 118</span></td>
-            <td>$1.10</td>
-            <td><span class="badge badge-green">Completed</span></td>
-          </tr>
-          <tr>
-            <td>
-              <div class="cell-product">
-                <div class="mini-icon ic-instagram">◉</div> Instagram
-              </div>
-            </td>
-            <td>🇳🇬 Nigeria</td>
-            <td>+234 80 *** 7741</td>
-            <td><span class="code">—</span></td>
-            <td>$0.95</td>
-            <td><span class="badge badge-red">Expired</span></td>
-          </tr>
+        <tbody id="ordersBody">
+          <tr class="empty-row"><td colspan="6">Loading orders...</td></tr>
         </tbody>
       </table>
     </div>
@@ -691,6 +658,140 @@
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('overlay').classList.toggle('show');
   }
+
+  function openProduct(slug) {
+    window.location.href = 'product.html?app=' + slug;
+  }
+</script>
+
+<script type="module">
+  import {
+    auth, db, onAuthStateChanged, signOut,
+    doc, getDoc, collection, query, where, getDocs
+  } from './firebase-config.js';
+
+  // ---------- AUTH GUARD ----------
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    try {
+      const snap = await getDoc(doc(db, 'users', user.uid));
+
+      if (!snap.exists()) {
+        // User exists in Auth but no Firestore doc — send back to register
+        window.location.href = 'register.html';
+        return;
+      }
+
+      const data = snap.data();
+      renderUser(data);
+      loadOrders(user.uid);
+
+    } catch (err) {
+      console.error('Error loading user:', err);
+    }
+  });
+
+  // ---------- RENDER USER DATA ----------
+  function renderUser(data) {
+    const first = data.firstName || 'User';
+    const last  = data.lastName  || '';
+    const initials = (first[0] + (last[0] || '')).toUpperCase();
+
+    document.getElementById('avatar').textContent   = initials;
+    document.getElementById('userName').textContent = `${first} ${last}`.trim();
+    document.getElementById('userEmail').textContent = data.email || '';
+    document.getElementById('welcomeMsg').textContent = `/ Welcome back, ${first} 👋`;
+
+    // Wallet balance in NGN
+    const bal = Number(data.walletBalance || 0).toLocaleString('en-NG', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+    document.getElementById('walletBalance').innerHTML = `₦${bal} <small>NGN</small>`;
+
+    // Stats
+    document.getElementById('totalOrders').textContent     = data.totalOrders || 0;
+    document.getElementById('completedOrders').textContent = data.completedOrders || 0;
+  }
+
+  // ---------- LOAD ORDERS ----------
+  async function loadOrders(uid) {
+    const tbody = document.getElementById('ordersBody');
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="6">Loading orders...</td></tr>';
+
+    try {
+      const q = query(collection(db, 'orders'), where('uid', '==', uid));
+      const snap = await getDocs(q);
+
+      if (snap.empty) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No orders yet. Buy your first number!</td></tr>';
+        return;
+      }
+
+      const icons = {
+        whatsapp:  { cls: 'ic-whatsapp',  label: '✆' },
+        facebook:  { cls: 'ic-facebook',  label: 'f' },
+        telegram:  { cls: 'ic-telegram',  label: '✈' },
+        instagram: { cls: 'ic-instagram', label: '◉' },
+        google:    { cls: 'ic-google',    label: 'G' },
+        twitter:   { cls: 'ic-twitter',   label: '𝕏' },
+        tiktok:    { cls: 'ic-tiktok',    label: '♪' },
+        discord:   { cls: 'ic-discord',   label: '◈' }
+      };
+
+      tbody.innerHTML = '';
+
+      snap.forEach((d) => {
+        const o = d.data();
+        const key = (o.product || '').toLowerCase();
+        const ic = icons[key] || { cls: 'ic-whatsapp', label: '?' };
+
+        const statusClass =
+          o.status === 'completed' ? 'badge-green' :
+          o.status === 'pending'   ? 'badge-yellow' :
+          'badge-red';
+
+        const price = o.price != null
+          ? `₦${Number(o.price).toLocaleString('en-NG', { minimumFractionDigits: 2 })}`
+          : '—';
+
+        const smsCode = o.smsCode
+          ? `<span class="code">${o.smsCode}</span>`
+          : `<span class="code">—</span>`;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div class="cell-product">
+              <div class="mini-icon ${ic.cls}">${ic.label}</div>
+              ${o.product || '—'}
+            </div>
+          </td>
+          <td>${o.flag || ''} ${o.country || '—'}</td>
+          <td>${o.number || '—'}</td>
+          <td>${smsCode}</td>
+          <td>${price}</td>
+          <td><span class="badge ${statusClass}">${o.status || 'pending'}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+    } catch (err) {
+      console.error('Error loading orders:', err);
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="6">Could not load orders.</td></tr>';
+    }
+  }
+
+  // ---------- LOGOUT ----------
+  document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+    e.preventDefault();
+    await signOut(auth);
+    window.location.href = 'login.html';
+  });
 </script>
 
 </body>
