@@ -50,12 +50,6 @@
     border-radius: 9px; display: grid; place-items: center;
     color: white; font-weight: 900; font-size: 16px;
   }
-  .admin-badge {
-    font-size: 10px; padding: 2px 7px;
-    background: var(--purple); color: white;
-    border-radius: 999px; font-weight: 700;
-    letter-spacing: 0.4px;
-  }
   .nav-section-label {
     font-size: 10.5px; color: #555; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.8px;
@@ -117,8 +111,6 @@
   }
   .btn-primary { background: var(--blue); color: white; }
   .btn-primary:hover { background: var(--blue-dark); }
-  .btn-purple { background: var(--purple); color: white; }
-  .btn-purple:hover { background: #7c3aed; }
   .btn-outline {
     background: white; color: var(--black);
     border: 1.5px solid var(--border);
@@ -126,21 +118,9 @@
   .btn-outline:hover { border-color: var(--black); }
   .btn-danger { background: var(--red); color: white; }
   .btn-danger:hover { background: #dc2626; }
-  .btn-green { background: var(--green); color: white; }
-  .btn-green:hover { background: #059669; }
   .btn-sm { padding: 7px 12px; font-size: 12.5px; }
-  .btn-ghost { background: transparent; color: var(--gray); }
-  .btn-ghost:hover { background: var(--gray-light); color: var(--black); }
 
   .content { padding: 26px 32px 60px; max-width: 1400px; }
-
-  /* ===== TABS ===== */
-  .tab-content { display: none; }
-  .tab-content.active { display: block; animation: fadeIn 0.2s ease; }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(6px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
 
   /* ===== STATS GRID ===== */
   .stats-grid {
@@ -255,9 +235,12 @@
   .act-btn:hover { border-color: var(--black); }
   .act-btn.edit:hover  { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
   .act-btn.del:hover   { border-color: var(--red); color: var(--red); background: #fee2e2; }
-  .act-btn.view:hover  { border-color: var(--green); color: var(--green); background: #dcfce7; }
   .act-btn.approve { background: #dcfce7; border-color: #86efac; color: #15803d; }
   .act-btn.approve:hover { background: #15803d; color: white; border-color: #15803d; }
+  .act-btn.approve:disabled,
+  .act-btn.del:disabled {
+    opacity: 0.5; cursor: not-allowed;
+  }
 
   /* ===== MODAL ===== */
   .modal-overlay {
@@ -268,17 +251,12 @@
     align-items: center; justify-content: center;
     padding: 20px;
   }
-  .modal-overlay.show { display: flex; animation: fadeIn 0.15s ease; }
+  .modal-overlay.show { display: flex; }
   .modal {
     background: white; border-radius: 20px;
     width: 100%; max-width: 520px;
     max-height: 90vh; overflow-y: auto;
     box-shadow: 0 30px 80px rgba(0,0,0,0.3);
-    animation: modalIn 0.2s ease;
-  }
-  @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.96) translateY(10px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
   }
   .modal-head {
     padding: 22px 26px 16px;
@@ -413,7 +391,6 @@
 </head>
 <body>
 
-<!-- ===== MOBILE TOP ===== -->
 <div class="mobile-top">
   <div class="logo" style="padding:0; border:none; margin:0;">
     <div class="logo-mark">Z</div>
@@ -424,7 +401,6 @@
 
 <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-<!-- ===== SIDEBAR ===== -->
 <aside class="sidebar" id="sidebar">
   <div class="logo">
     <div class="logo-mark">Z</div>
@@ -455,7 +431,6 @@
   </a>
 </aside>
 
-<!-- ===== MAIN ===== -->
 <main class="main">
   <div class="topbar">
     <h1 id="pageTitle">Overview <span id="pageSub">/ Welcome to Admin Panel</span></h1>
@@ -472,7 +447,6 @@
   </div>
 </main>
 
-<!-- ===== MODAL ===== -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-head">
@@ -484,7 +458,6 @@
   </div>
 </div>
 
-<!-- ===== TOAST ===== -->
 <div class="toast" id="toast"></div>
 
 <script>
@@ -534,7 +507,7 @@
   let currentTab = 'overview';
 
   /* ============================================================
-     DEFAULT DATA (for seed)
+     DEFAULT DATA
   ============================================================ */
   const DEFAULT_PRODUCTS = [
     { id: 'whatsapp',  name: 'WhatsApp',    icon: '✆', cls: 'ic-whatsapp',  stock: 113 },
@@ -684,7 +657,7 @@
   }
 
   /* ============================================================
-     HELPERS — next order number
+     HELPERS
   ============================================================ */
   function nextProductOrder() {
     if (products.length === 0) return 1;
@@ -826,7 +799,7 @@
     document.getElementById('contentArea').innerHTML = `
       <div class="sec-head">
         <div><h2>Products <span style="color:var(--gray); font-weight:500; font-size:14px;">(${products.length})</span></h2>
-        <div class="sub">New products go to the <strong>bottom</strong> — continue from where you stopped</div></div>
+        <div class="sub">New products go to the <strong>bottom</strong></div></div>
         <div class="actions">
           <div class="search-box">
             <span class="ico">🔍</span>
@@ -904,7 +877,7 @@
     document.getElementById('contentArea').innerHTML = `
       <div class="sec-head">
         <div><h2>Countries <span style="color:var(--gray); font-weight:500; font-size:14px;">(${countries.length})</span></h2>
-        <div class="sub">Change price + stock anytime. New ones go to the <strong>bottom</strong>.</div></div>
+        <div class="sub">Change price + stock anytime.</div></div>
         <div class="actions">
           <div class="search-box">
             <span class="ico">🔍</span>
@@ -1169,8 +1142,8 @@
       d.status === 'rejected'  ? 'pill-red' : 'pill-gray';
 
     const actions = d.status === 'pending'
-      ? `<button class="act-btn approve" onclick="approveDeposit('${d.id}')" title="Approve">✓</button>
-         <button class="act-btn del" onclick="rejectDeposit('${d.id}')" title="Reject" style="margin-left:6px;">✕</button>`
+      ? `<button class="act-btn approve" id="approve-${d.id}" onclick="approveDeposit('${d.id}')" title="Approve">✓</button>
+         <button class="act-btn del" id="reject-${d.id}" onclick="rejectDeposit('${d.id}')" title="Reject" style="margin-left:6px;">✕</button>`
       : `<span style="color:var(--gray); font-size:12px;">—</span>`;
 
     return `
@@ -1186,22 +1159,57 @@
     `;
   }
 
+  /* ============================================================
+     APPROVE / REJECT DEPOSIT (WITH DOUBLE-CLICK PROTECTION)
+  ============================================================ */
   window.approveDeposit = async function (id) {
-    const d = allDeposits.find(x => x.id === id);
-    if (!d) return;
-    if (!confirm(`Approve deposit?\n\nUser: ${d.email}\nAmount: ₦${Number(d.amount).toLocaleString()}\n\nThis will credit the user's wallet immediately.`)) return;
+    // Prevent double-clicks globally
+    if (window.__approvingDeposit) return;
+    window.__approvingDeposit = true;
+
+    // Disable buttons in UI immediately
+    const approveBtn = document.getElementById(`approve-${id}`);
+    const rejectBtn  = document.getElementById(`reject-${id}`);
+    if (approveBtn) { approveBtn.disabled = true; approveBtn.textContent = '...'; }
+    if (rejectBtn)  { rejectBtn.disabled = true; }
 
     try {
-      // Credit user's wallet
-      await updateDoc(doc(db, 'users', d.uid), {
-        walletBalance: increment(d.amount || 0)
-      });
+      // 1. Re-fetch fresh data from Firestore
+      const depRef = doc(db, 'deposits', id);
+      const freshSnap = await getDoc(depRef);
 
-      // Mark deposit completed
-      await updateDoc(doc(db, 'deposits', id), {
+      if (!freshSnap.exists()) {
+        showToast('Deposit no longer exists', 'error');
+        return;
+      }
+
+      const d = freshSnap.data();
+
+      // 2. Guard: already processed?
+      if (d.status !== 'pending') {
+        showToast(`This deposit was already ${d.status}.`, 'error');
+        await loadDeposits();
+        await loadUsers();
+        updateSidebarCounts();
+        renderDeposits();
+        return;
+      }
+
+      // 3. Ask for confirmation
+      if (!confirm(`Approve deposit?\n\nUser: ${d.email}\nAmount: ₦${Number(d.amount).toLocaleString()}\n\nThis will credit the user's wallet immediately.`)) {
+        return;
+      }
+
+      // 4. Mark as completed FIRST (before crediting wallet)
+      await updateDoc(depRef, {
         status: 'completed',
         approvedAt: serverTimestamp(),
         approvedBy: currentUser.uid
+      });
+
+      // 5. NOW credit the wallet
+      await updateDoc(doc(db, 'users', d.uid), {
+        walletBalance: increment(d.amount || 0)
       });
 
       showToast(`✅ Credited ₦${Number(d.amount).toLocaleString()}`, 'success');
@@ -1209,30 +1217,65 @@
       await loadUsers();
       updateSidebarCounts();
       renderDeposits();
+
     } catch (err) {
       console.error(err);
       showToast('Could not approve deposit', 'error');
+      await loadDeposits();
+      renderDeposits();
+    } finally {
+      window.__approvingDeposit = false;
     }
   };
 
   window.rejectDeposit = async function (id) {
-    const d = allDeposits.find(x => x.id === id);
-    if (!d) return;
-    if (!confirm(`Reject this deposit?\n\nUser: ${d.email}\nAmount: ₦${Number(d.amount).toLocaleString()}`)) return;
+    if (window.__rejectingDeposit) return;
+    window.__rejectingDeposit = true;
+
+    const approveBtn = document.getElementById(`approve-${id}`);
+    const rejectBtn  = document.getElementById(`reject-${id}`);
+    if (approveBtn) approveBtn.disabled = true;
+    if (rejectBtn) { rejectBtn.disabled = true; rejectBtn.textContent = '...'; }
 
     try {
-      await updateDoc(doc(db, 'deposits', id), {
+      const depRef = doc(db, 'deposits', id);
+      const freshSnap = await getDoc(depRef);
+
+      if (!freshSnap.exists()) {
+        showToast('Deposit no longer exists', 'error');
+        return;
+      }
+
+      const d = freshSnap.data();
+
+      if (d.status !== 'pending') {
+        showToast(`This deposit was already ${d.status}.`, 'error');
+        await loadDeposits();
+        updateSidebarCounts();
+        renderDeposits();
+        return;
+      }
+
+      if (!confirm(`Reject this deposit?\n\nUser: ${d.email}\nAmount: ₦${Number(d.amount).toLocaleString()}`)) {
+        return;
+      }
+
+      await updateDoc(depRef, {
         status: 'rejected',
         rejectedAt: serverTimestamp(),
         rejectedBy: currentUser.uid
       });
+
       showToast('Deposit rejected', 'success');
       await loadDeposits();
       updateSidebarCounts();
       renderDeposits();
+
     } catch (err) {
       console.error(err);
       showToast('Could not reject deposit', 'error');
+    } finally {
+      window.__rejectingDeposit = false;
     }
   };
 
@@ -1285,7 +1328,7 @@
         <input type="number" id="pStock" value="100" min="0" />
       </div>
       <div style="padding:12px 14px; background:var(--blue-light); border-radius:10px; font-size:13px; color:var(--blue-dark); font-weight:600;">
-        ℹ️ This product will be added as <strong>#${nextOrder}</strong> (at the bottom of the list)
+        ℹ️ This product will be added as <strong>#${nextOrder}</strong> (at the bottom)
       </div>`,
       `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
        <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>`
@@ -1430,7 +1473,7 @@
         <div class="hint">Unique ID used internally</div>
       </div>
       <div style="padding:12px 14px; background:var(--blue-light); border-radius:10px; font-size:13px; color:var(--blue-dark); font-weight:600;">
-        ℹ️ This country will be added as <strong>#${nextOrder}</strong> (at the bottom of the list)
+        ℹ️ This country will be added as <strong>#${nextOrder}</strong> (at the bottom)
       </div>`,
       `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
        <button class="btn btn-primary" onclick="saveCountry()">Save Country</button>`
