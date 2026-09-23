@@ -17,6 +17,7 @@ import {
   setDoc,
   getDoc,
   updateDoc,
+  deleteDoc,
   collection,
   addDoc,
   query,
@@ -49,7 +50,7 @@ export {
   signOut,
   onAuthStateChanged,
   updateProfile,
-  doc, setDoc, getDoc, updateDoc,
+  doc, setDoc, getDoc, updateDoc, deleteDoc,
   collection, addDoc,
   query, where, orderBy, getDocs,
   serverTimestamp, increment
