@@ -18,22 +18,31 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'verificationId is required' });
     }
 
-    // Step 1: Generate bearer token
-    const tokenRes = await fetch('https://www.textverified.com/api/v2/auth/token', {
+    if (!API_USERNAME || !API_KEY) {
+      return res.status(500).json({ error: 'TextVerified credentials not configured' });
+    }
+
+    // Step 1: Get bearer token
+    const tokenRes = await fetch('https://www.textverified.com/api/pub/v2/auth', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username: API_USERNAME,
-        api_key: API_KEY
-      })
+      headers: {
+        'X-API-KEY': API_KEY,
+        'X-API-USERNAME': API_USERNAME,
+        'Accept': 'application/json'
+      }
     });
 
+    if (!tokenRes.ok) {
+      const errText = await tokenRes.text();
+      return res.status(500).json({ error: 'Failed to authenticate', details: errText.substring(0, 300) });
+    }
+
     const tokenData = await tokenRes.json();
-    const bearerToken = tokenData.token || tokenData.access_token;
+    const bearerToken = tokenData.token;
 
     // Step 2: Cancel verification
     const cancelRes = await fetch(
-      `https://www.textverified.com/api/v2/verifications/${verificationId}/cancel`,
+      `https://www.textverified.com/api/pub/v2/verifications/${verificationId}/cancel`,
       {
         method: 'POST',
         headers: {
@@ -44,13 +53,15 @@ export default async function handler(req, res) {
     );
 
     if (!cancelRes.ok) {
-      return res.status(500).json({ error: 'Failed to cancel' });
+      const errText = await cancelRes.text();
+      console.error('Cancel error:', cancelRes.status, errText);
+      return res.status(500).json({ error: 'Failed to cancel', details: errText.substring(0, 300) });
     }
 
     return res.status(200).json({ success: true, message: 'Cancelled successfully' });
 
   } catch (error) {
     console.error('tv-cancel error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error', message: error.message });
   }
 }
