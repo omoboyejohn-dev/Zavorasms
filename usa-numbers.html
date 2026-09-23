@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Buy USA Number — Zavora SMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --blue: #1E5EFF; --blue-dark: #1547c4; --blue-light: #e8efff;
+    --black: #0A0A0A; --gray: #6b7280; --gray-light: #f5f7fb;
+    --border: #e5e7eb; --white: #ffffff; --green: #10b981;
+    --yellow: #f59e0b; --red: #ef4444; --purple: #8b5cf6;
+    --sidebar-w: 250px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: var(--gray-light); color: var(--black); line-height: 1.5; }
+  a { text-decoration: none; color: inherit; }
+  button { font-family: inherit; cursor: pointer; }
+
+  /* SIDEBAR */
+  .sidebar { position: fixed; left: 0; top: 0; width: var(--sidebar-w); height: 100vh; background: var(--black); color: white; padding: 24px 18px; display: flex; flex-direction: column; z-index: 50; overflow-y: auto; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; padding: 6px 8px 26px; border-bottom: 1px solid #1e1e1e; margin-bottom: 20px; }
+  .logo-mark { width: 34px; height: 34px; background: var(--blue); border-radius: 9px; display: grid; place-items: center; color: white; font-weight: 900; font-size: 16px; }
+  .side-link { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 10px; font-size: 14.5px; font-weight: 500; color: #b0b0b0; margin-bottom: 4px; }
+  .side-link:hover { background: #161616; color: white; }
+  .side-link.active { background: var(--blue); color: white; font-weight: 600; }
+  .side-link .ic { width: 20px; text-align: center; font-size: 16px; }
+  .side-link .badge-new { margin-left: auto; font-size: 10px; background: var(--blue); color: white; padding: 2px 7px; border-radius: 999px; font-weight: 700; }
+  .side-link .badge-admin { margin-left: auto; font-size: 10px; background: var(--purple); color: white; padding: 2px 7px; border-radius: 999px; font-weight: 700; }
+  .sidebar-spacer { flex: 1; }
+  .user-mini { display: flex; align-items: center; gap: 10px; padding: 12px; background: #141414; border-radius: 12px; margin-top: 10px; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--blue); display: grid; place-items: center; font-weight: 700; font-size: 14px; color: white; flex-shrink: 0; }
+  .user-mini .info { overflow: hidden; }
+  .user-mini .name { font-size: 13.5px; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-mini .email { font-size: 11.5px; color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* MAIN */
+  .main { margin-left: var(--sidebar-w); min-height: 100vh; }
+  .topbar { background: white; border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
+  .topbar h1 { font-size: 20px; font-weight: 700; }
+  .topbar h1 span { color: var(--gray); font-weight: 500; font-size: 15px; }
+  .icon-btn { width: 40px; height: 40px; border-radius: 10px; border: 1.5px solid var(--border); background: white; display: grid; place-items: center; font-size: 16px; }
+  .content { padding: 26px 32px 60px; max-width: 900px; }
+
+  .hero { background: linear-gradient(135deg, #1E5EFF, #1547c4); color: white; border-radius: 22px; padding: 32px; margin-bottom: 24px; position: relative; overflow: hidden; }
+  .hero::after { content: ''; position: absolute; width: 300px; height: 300px; background: rgba(255,255,255,0.1); border-radius: 50%; top: -100px; right: -80px; }
+  .hero .flag { font-size: 44px; margin-bottom: 8px; display: block; position: relative; }
+  .hero h2 { font-size: 30px; font-weight: 800; margin-bottom: 6px; position: relative; letter-spacing: -0.5px; }
+  .hero p { font-size: 15px; opacity: 0.9; position: relative; max-width: 480px; }
+
+  .sec-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .sec-head h2 { font-size: 20px; font-weight: 800; }
+  .search-wrap { position: relative; max-width: 320px; flex: 1; }
+  .search-wrap input { width: 100%; padding: 11px 16px 11px 40px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 14px; font-family: inherit; background: white; }
+  .search-wrap input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(30,94,255,0.1); }
+  .search-wrap .ico { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--gray); font-size: 15px; pointer-events: none; }
+
+  .usa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .usa-card { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 16px; display: flex; align-items: center; gap: 14px; transition: all 0.15s; }
+  .usa-card:hover { border-color: var(--blue); box-shadow: 0 10px 24px rgba(30,94,255,0.08); }
+  .usa-icon { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; color: white; font-size: 20px; font-weight: 800; flex-shrink: 0; }
+  .usa-info { flex: 1; overflow: hidden; }
+  .usa-info h4 { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+  .usa-info .price { font-size: 15px; font-weight: 800; color: var(--blue); letter-spacing: -0.3px; }
+  .usa-buy { padding: 10px 20px; border-radius: 10px; background: var(--blue); color: white; font-weight: 700; font-size: 13.5px; border: none; transition: all 0.15s; }
+  .usa-buy:hover { background: var(--blue-dark); transform: translateY(-1px); }
+
+  .ic-whatsapp  { background: #25D366; }
+  .ic-telegram  { background: #229ED9; }
+  .ic-facebook  { background: #1877F2; }
+  .ic-instagram { background: linear-gradient(135deg,#F58529,#DD2A7B,#8134AF); }
+  .ic-google    { background: #EA4335; }
+  .ic-tiktok    { background: #0A0A0A; }
+  .ic-twitter   { background: #0A0A0A; }
+  .ic-amazon    { background: #FF9900; color: #0A0A0A; }
+  .ic-apple     { background: #0A0A0A; }
+  .ic-snapchat  { background: #FFFC00; color: #0A0A0A; }
+  .ic-discord   { background: #5865F2; }
+  .ic-signal    { background: #3A76F0; }
+  .ic-more      { background: var(--black); }
+
+  .mobile-top { display: none; background: white; padding: 14px 20px; border-bottom: 1px solid var(--border); align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
+  .drawer { position: fixed; top: 0; right: 0; width: 300px; max-width: 85vw; height: 100vh; background: white; z-index: 60; transform: translateX(100%); transition: transform 0.25s; box-shadow: -10px 0 40px rgba(0,0,0,0.15); display: flex; flex-direction: column; overflow-y: auto; }
+  .drawer.open { transform: translateX(0); }
+  .drawer-head { padding: 22px 20px; border-bottom: 1.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .drawer-head .logo { padding: 0; border: none; margin: 0; font-size: 18px; }
+  .drawer-close { width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid var(--border); background: white; display: grid; place-items: center; font-size: 18px; color: var(--gray); }
+  .drawer-user { padding: 20px; background: var(--gray-light); border-bottom: 1.5px solid var(--border); display: flex; align-items: center; gap: 12px; }
+  .drawer-user .avatar { width: 44px; height: 44px; font-size: 16px; }
+  .drawer-body { padding: 16px 12px; flex: 1; }
+  .drawer-link { display: flex; align-items: center; gap: 14px; padding: 13px 14px; border-radius: 12px; font-size: 14.5px; font-weight: 500; color: var(--black); margin-bottom: 3px; }
+  .drawer-link:hover { background: var(--gray-light); }
+  .drawer-link .ic { width: 38px; height: 38px; border-radius: 10px; background: var(--blue-light); color: var(--blue); display: grid; place-items: center; font-size: 17px; flex-shrink: 0; }
+  .drawer-link.wa .ic { background: #dcfce7; color: #15803d; }
+  .drawer-link.tg .ic { background: #dbeafe; color: #229ED9; }
+  .drawer-link.social .ic { background: #fef3c7; color: #b45309; }
+  .drawer-link.logout .ic { background: #fee2e2; color: #b91c1c; }
+  .drawer-link.admin .ic { background: #ede9fe; color: #6d28d9; }
+  .drawer-link .badge-new { margin-left: auto; font-size: 10px; background: var(--blue); color: white; padding: 3px 8px; border-radius: 999px; font-weight: 700; }
+  .drawer-link .badge-admin { margin-left: auto; font-size: 10px; background: var(--purple); color: white; padding: 3px 8px; border-radius: 999px; font-weight: 700; }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 55; }
+  .overlay.show { display: block; }
+  @media (max-width: 900px) {
+    :root { --sidebar-w: 0px; }
+    .sidebar { transform: translateX(-100%); transition: transform 0.25s; width: 250px; }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .mobile-top { display: flex; }
+    .topbar { display: none; }
+    .content { padding: 20px 16px 60px; }
+    .hero { padding: 24px 20px; }
+    .hero h2 { font-size: 24px; }
+    .usa-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="mobile-top">
+  <div class="logo" style="padding:0; border:none; margin:0;">
+    <div class="logo-mark">Z</div> Zavora <span style="color:var(--blue)">SMS</span>
+  </div>
+  <button class="icon-btn" onclick="openDrawer()">☰</button>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeAll()"></div>
+
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div class="logo"><div class="logo-mark">Z</div> Zavora <span style="color:var(--blue)">SMS</span></div>
+    <button class="drawer-close" onclick="closeAll()">✕</button>
+  </div>
+  <div class="drawer-user">
+    <div class="avatar" id="drawerAvatar">--</div>
+    <div class="info">
+      <div class="name" id="drawerName">Loading...</div>
+      <div class="email" id="drawerEmail">...</div>
+    </div>
+  </div>
+  <div class="drawer-body">
+    <a class="drawer-link" href="dashboard.html"><span class="ic">▦</span> Dashboard</a>
+    <a class="drawer-link" href="profile.html"><span class="ic">👤</span> Profile</a>
+    <a class="drawer-link" href="usa-numbers.html"><span class="ic">🇺🇸</span> Buy USA Number <span class="badge-new">NEW</span></a>
+    <a class="drawer-link" href="dashboard.html"><span class="ic">🌍</span> Buy All Countries</a>
+    <a class="drawer-link" href="deposit.html"><span class="ic">↗</span> Deposit</a>
+    <a class="drawer-link" href="payment-history.html"><span class="ic">📜</span> Payment History</a>
+    <a class="drawer-link" href="orders.html"><span class="ic">🧾</span> My Orders</a>
+    <a class="drawer-link" href="help.html"><span class="ic">💡</span> Help</a>
+    <a class="drawer-link social" href="social-logs.html"><span class="ic">🛒</span> Buy Social Logs</a>
+    <a class="drawer-link wa" href="whatsapp-channel.html"><span class="ic">💬</span> WhatsApp Channel <span class="badge-new">NEW</span></a>
+    <a class="drawer-link tg" href="telegram-channel.html"><span class="ic">✈</span> Telegram Channel <span class="badge-new">NEW</span></a>
+    <a class="drawer-link admin" id="drawerAdminLink" href="admin.html" style="display:none;"><span class="ic">🔧</span> Admin Panel <span class="badge-admin">ADMIN</span></a>
+    <a class="drawer-link" href="settings.html"><span class="ic">⚙</span> Setting</a>
+    <a class="drawer-link" href="support.html"><span class="ic">?</span> Support</a>
+    <a class="drawer-link logout" id="drawerLogout"><span class="ic">⎋</span> Logout</a>
+  </div>
+</aside>
+
+<aside class="sidebar" id="sidebar">
+  <div class="logo"><div class="logo-mark">Z</div> Zavora <span style="color:var(--blue)">SMS</span></div>
+  <a class="side-link" href="dashboard.html"><span class="ic">▦</span> Dashboard</a>
+  <a class="side-link" href="profile.html"><span class="ic">👤</span> Profile</a>
+  <a class="side-link active" href="usa-numbers.html"><span class="ic">🇺🇸</span> Buy USA Number <span class="badge-new">NEW</span></a>
+  <a class="side-link" href="dashboard.html"><span class="ic">🌍</span> Buy All Countries</a>
+  <a class="side-link" href="deposit.html"><span class="ic">↗</span> Deposit</a>
+  <a class="side-link" href="payment-history.html"><span class="ic">📜</span> Payment History</a>
+  <a class="side-link" href="orders.html"><span class="ic">🧾</span> My Orders</a>
+  <a class="side-link" href="help.html"><span class="ic">💡</span> Help</a>
+  <a class="side-link" href="social-logs.html"><span class="ic">🛒</span> Buy Social Logs</a>
+  <a class="side-link" href="whatsapp-channel.html"><span class="ic">💬</span> WhatsApp Channel <span class="badge-new">NEW</span></a>
+  <a class="side-link" href="telegram-channel.html"><span class="ic">✈</span> Telegram Channel <span class="badge-new">NEW</span></a>
+  <a class="side-link" id="sidebarAdminLink" href="admin.html" style="display:none;"><span class="ic">🔧</span> Admin Panel <span class="badge-admin">ADMIN</span></a>
+  <a class="side-link" href="settings.html"><span class="ic">⚙</span> Setting</a>
+  <a class="side-link" href="support.html"><span class="ic">?</span> Support</a>
+  <a class="side-link" id="logoutBtn"><span class="ic">⎋</span> Logout</a>
+  <div class="sidebar-spacer"></div>
+  <div class="user-mini">
+    <div class="avatar" id="avatar">--</div>
+    <div class="info">
+      <div class="name" id="userName">Loading...</div>
+      <div class="email" id="userEmail">...</div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <h1>Buy USA Number <span>/ American phone numbers</span></h1>
+    <button class="icon-btn">🔔</button>
+  </div>
+
+  <div class="content">
+
+    <div class="hero">
+      <span class="flag">🇺🇸</span>
+      <h2>Buy USA Number</h2>
+      <p>American virtual phone numbers for SMS verification. Select a service below to start.</p>
+    </div>
+
+    <div class="sec-head">
+      <h2>Select a product</h2>
+      <div class="search-wrap">
+        <span class="ico">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search by product" />
+      </div>
+    </div>
+
+    <div class="usa-grid" id="usaGrid"></div>
+
+  </div>
+</main>
+
+<script>
+  function openDrawer() { document.getElementById('drawer').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
+  function closeAll() { document.getElementById('drawer').classList.remove('open'); document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+  window.openDrawer = openDrawer;
+  window.closeAll = closeAll;
+</script>
+
+<script type="module">
+  import { auth, db, onAuthStateChanged, signOut, doc, getDoc } from './firebase-config.js';
+
+  /* USA PRODUCTS — edit prices here anytime */
+  const USA_PRODUCTS = [
+    { id: 'whatsapp',  name: 'WhatsApp',    icon: '✆',  cls: 'ic-whatsapp',  price: 5600 },
+    { id: 'telegram',  name: 'Telegram',    icon: '✈',  cls: 'ic-telegram',  price: 6500 },
+    { id: 'facebook',  name: 'Facebook',    icon: 'f',  cls: 'ic-facebook',  price: 709  },
+    { id: 'instagram', name: 'Instagram',   icon: '◉',  cls: 'ic-instagram', price: 578  },
+    { id: 'google',    name: 'Google',      icon: 'G',  cls: 'ic-google',    price: 850  },
+    { id: 'tiktok',    name: 'TikTok',      icon: '♪',  cls: 'ic-tiktok',    price: 950  },
+    { id: 'twitter',   name: 'Twitter / X', icon: '𝕏',  cls: 'ic-twitter',   price: 780  },
+    { id: 'apple',     name: 'Apple',       icon: '',   cls: 'ic-apple',     price: 1200 },
+    { id: 'snapchat',  name: 'Snapchat',    icon: '👻', cls: 'ic-snapchat',  price: 700  }
+  ];
+
+  let ALL_PRODUCTS = [...USA_PRODUCTS];
+
+  function renderProducts(filter = '') {
+    const grid = document.getElementById('usaGrid');
+    const f = filter.toLowerCase().trim();
+    const list = f
+      ? ALL_PRODUCTS.filter(p => p.name.toLowerCase().includes(f) || p.id.includes(f))
+      : ALL_PRODUCTS;
+
+    if (list.length === 0) {
+      grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px 20px; color:var(--gray);">
+        No products match "${filter}"
+      </div>`;
+      return;
+    }
+
+    grid.innerHTML = '';
+    list.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'usa-card';
+      card.innerHTML = `
+        <div class="usa-icon ${p.cls}">${p.icon}</div>
+        <div class="usa-info">
+          <h4>${p.name}</h4>
+          <div class="price">₦${p.price.toLocaleString()}</div>
+        </div>
+        <button class="usa-buy">Buy</button>
+      `;
+      card.querySelector('.usa-buy').onclick = () => buyProduct(p);
+      grid.appendChild(card);
+    });
+  }
+
+  function buyProduct(p) {
+    // Redirect to dashboard with product + country preselected
+    window.location.href = `dashboard.html?product=${p.id}&country=us`;
+  }
+
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    renderProducts(e.target.value);
+  });
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href = 'login.html'; return; }
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (!snap.exists()) return;
+    const data = snap.data();
+    const first = data.firstName || 'User';
+    const last = data.lastName || '';
+    const initials = (first[0] + (last[0] || '')).toUpperCase();
+
+    document.getElementById('avatar').textContent = initials;
+    document.getElementById('drawerAvatar').textContent = initials;
+    document.getElementById('userName').textContent = `${first} ${last}`.trim();
+    document.getElementById('drawerName').textContent = `${first} ${last}`.trim();
+    document.getElementById('userEmail').textContent = data.email || '';
+    document.getElementById('drawerEmail').textContent = data.email || '';
+
+    if (data.role === 'admin') {
+      document.getElementById('sidebarAdminLink').style.display = 'flex';
+      document.getElementById('drawerAdminLink').style.display = 'flex';
+    }
+
+    renderProducts();
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => { await signOut(auth); window.location.href = 'login.html'; });
+  document.getElementById('drawerLogout').addEventListener('click', async () => { await signOut(auth); window.location.href = 'login.html'; });
+</script>
+
+</body>
+</html>
