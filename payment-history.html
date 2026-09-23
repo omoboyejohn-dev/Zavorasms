@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Payment History — Zavora SMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --blue: #1E5EFF; --blue-dark: #1547c4; --blue-light: #e8efff;
+    --black: #0A0A0A; --gray: #6b7280; --gray-light: #f5f7fb;
+    --border: #e5e7eb; --white: #ffffff; --green: #10b981;
+    --yellow: #f59e0b; --red: #ef4444; --purple: #8b5cf6;
+    --sidebar-w: 250px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: var(--gray-light); color: var(--black); line-height: 1.5; }
+  a { text-decoration: none; color: inherit; }
+  button { font-family: inherit; cursor: pointer; }
+  .sidebar { position: fixed; left: 0; top: 0; width: var(--sidebar-w); height: 100vh; background: var(--black); color: white; padding: 24px 18px; display: flex; flex-direction: column; z-index: 50; overflow-y: auto; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; padding: 6px 8px 26px; border-bottom: 1px solid #1e1e1e; margin-bottom: 20px; }
+  .logo-mark { width: 34px; height: 34px; background: var(--blue); border-radius: 9px; display: grid; place-items: center; color: white; font-weight: 900; font-size: 16px; }
+  .side-link { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 10px; font-size: 14.5px; font-weight: 500; color: #b0b0b0; margin-bottom: 4px; }
+  .side-link:hover { background: #161616; color: white; }
+  .side-link.active { background: var(--blue); color: white; font-weight: 600; }
+  .side-link .ic { width: 20px; text-align: center; font-size: 16px; }
+  .side-link .badge-new { margin-left: auto; font-size: 10px; background: var(--blue); color: white; padding: 2px 7px; border-radius: 999px; font-weight: 700; }
+  .side-link .badge-admin { margin-left: auto; font-size: 10px; background: var(--purple); color: white; padding: 2px 7px; border-radius: 999px; font-weight: 700; }
+  .sidebar-spacer { flex: 1; }
+  .user-mini { display: flex; align-items: center; gap: 10px; padding: 12px; background: #141414; border-radius: 12px; margin-top: 10px; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--blue); display: grid; place-items: center; font-weight: 700; font-size: 14px; color: white; flex-shrink: 0; }
+  .user-mini .info { overflow: hidden; }
+  .user-mini .name { font-size: 13.5px; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-mini .email { font-size: 11.5px; color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .main { margin-left: var(--sidebar-w); min-height: 100vh; }
+  .topbar { background: white; border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
+  .topbar h1 { font-size: 20px; font-weight: 700; }
+  .topbar h1 span { color: var(--gray); font-weight: 500; font-size: 15px; }
+  .icon-btn { width: 40px; height: 40px; border-radius: 10px; border: 1.5px solid var(--border); background: white; display: grid; place-items: center; font-size: 16px; }
+  .content { padding: 26px 32px 60px; max-width: 1100px; }
+
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .sum-card { background: white; border: 1.5px solid var(--border); border-radius: 16px; padding: 22px; }
+  .sum-card .ic { width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; font-size: 19px; margin-bottom: 14px; }
+  .sum-card .ic.green { background: #dcfce7; color: #15803d; }
+  .sum-card .ic.blue { background: var(--blue-light); color: var(--blue); }
+  .sum-card .ic.yellow { background: #fef3c7; color: #b45309; }
+  .sum-card .num { font-size: 24px; font-weight: 800; letter-spacing: -0.6px; line-height: 1; }
+  .sum-card .lbl { font-size: 13px; color: var(--gray); font-weight: 500; margin-top: 6px; }
+
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab { padding: 10px 18px; border-radius: 10px; background: white; border: 1.5px solid var(--border); font-size: 13.5px; font-weight: 600; color: var(--gray); cursor: pointer; transition: all 0.15s; }
+  .tab:hover { border-color: var(--black); color: var(--black); }
+  .tab.active { background: var(--blue); color: white; border-color: var(--blue); }
+
+  .table-card { background: white; border: 1.5px solid var(--border); border-radius: 16px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { text-align: left; padding: 14px 20px; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray); background: var(--gray-light); border-bottom: 1px solid var(--border); white-space: nowrap; }
+  tbody td { padding: 16px 20px; font-size: 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #fafbff; }
+
+  .amount { font-weight: 800; font-size: 14.5px; letter-spacing: -0.2px; }
+  .amount.plus { color: var(--green); }
+  .amount.minus { color: var(--red); }
+
+  .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
+  .badge-green { background: #dcfce7; color: #15803d; }
+  .badge-yellow { background: #fef3c7; color: #b45309; }
+  .badge-red { background: #fee2e2; color: #b91c1c; }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-gray { background: #f3f4f6; color: #4b5563; }
+
+  .empty { padding: 60px 20px; text-align: center; color: var(--gray); font-size: 14px; }
+  .empty .emoji { font-size: 40px; display: block; margin-bottom: 12px; opacity: 0.5; }
+
+  .date-cell { color: var(--gray); font-size: 12.5px; }
+  .date-cell .time { display: block; font-size: 11.5px; }
+
+  .mobile-top { display: none; background: white; padding: 14px 20px; border-bottom: 1px solid var(--border); align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
+  .drawer { position: fixed; top: 0; right: 0; width: 300px; max-width: 85vw; height: 100vh; background: white; z-index: 60; transform: translateX(100%); transition: transform 0.25s; box-shadow: -10px 0 40px rgba(0,0,0,0.15); display: flex; flex-direction: column; overflow-y: auto; }
+  .drawer.open { transform: translateX(0); }
+  .drawer-head { padding: 22px 20px; border-bottom: 1.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .drawer-head .logo { padding: 0; border: none; margin: 0; font-size: 18px; }
+  .drawer-close { width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid var(--border); background: white; display: grid; place-items: center; font-size: 18px; color: var(--gray); }
+  .drawer-user { padding: 20px; background: var(--gray-light); border-bottom: 1.5px solid var(--border); display: flex; align-items: center; gap: 12px; }
+  .drawer-user .avatar { width: 44px; height: 44px; font-size: 16px; }
+  .drawer-body { padding: 16px 12px; flex: 1; }
+  .drawer-link { display: flex; align-items: center; gap: 14px; padding: 13px 14px; border-radius: 12px; font-size: 14.5px; font-weight: 500; color: var(--black); }
+  .drawer-link .ic { width: 38px; height: 38px; border-radius: 10px; background: var(--blue-light); color: var(--blue); display: grid; place-items: center; font-size: 17px; flex-shrink: 0; }
+  .drawer-link.wa .ic { background: #dcfce7; color: #15803d; }
+  .drawer-link.social .ic { background: #fef3c7; color: #b45309; }
+  .drawer-link.logout .ic { background: #fee2e2; color: #b91c1c; }
+  .drawer-link.admin .ic { background: #ede9fe; color: #6d28d9; }
+  .drawer-link .badge-new { margin-left: auto; font-size: 10px; background: var(--blue); color: white; padding: 3px 8px; border-radius: 999px; font-weight: 700; }
+  .drawer-link .badge-admin { margin-left: auto; font-size: 10px; background: var(--purple); color: white; padding: 3px 8px; border-radius: 999px; font-weight: 700; }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 55; }
+  .overlay.show { display: block; }
+
+  @media (max-width: 900px) {
+    :root { --sidebar-w: 0px; }
+    .sidebar { transform: translateX(-100%); transition: transform 0.25s; width: 250px; }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .mobile-top { display: flex; }
+    .topbar { display: none; }
+    .content { padding: 20px 16px 60px; }
+    .table-card { overflow-x: auto; }
+    table { min-width: 700px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="mobile-top">
+  <div class="logo" style="padding:0; border:none; margin:0;">
+    <div class="logo-mark">Z</div> Zavora <span style="color:var(--blue)">SMS</span>
+  </div>
+  <button class="icon-btn" onclick="openDrawer()">☰</button>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeAll()"></div>
+
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div class="logo"><div class="logo-mark">Z</div> Zavora <span style="color:var(--blue)">SMS</span></div>
+    <button class="drawer-close" onclick="closeAll()">✕</button>
+  </div>
+  <div class="drawer-user">
+    <div class="avatar" id="drawerAvatar">--</div>
+    <div class="info">
+      <div class="name" id="drawerName">Loading...</div>
+      <div class="email" id="drawerEmail">...</div>
+    </div>
+  </div>
+  <div class="drawer-body">
+    <a class="drawer-link" href="dashboard.html"><span class="ic">▦</span> Dashboard</a>
+    <a class="drawer-link" href="orders.html"><span class="ic">🧾</span> My Orders</a>
+    <a class="drawer-link" href="wallet.html"><span class="ic">💳</span> Wallet</a>
+    <a class="drawer-link" href="deposit.html"><span class="ic">↗</span> Deposit</a>
+    <a class="drawer-link" href="payment-history.html"><span class="ic">📜</span> Payment History</a>
+    <a class="drawer-link" href="profile.html"><span class="ic">👤</span> Profile</a>
+    <a class="drawer-link wa" href="whatsapp-channel.html"><span class="ic">💬</span> WhatsApp Channel <span class="badge-new">NEW</span></a>
+    <a class="drawer-link social" href="social-logs.html"><span class="ic">🛒</span> Buy Social Logs</a>
+    <a class="drawer-link admin" id="drawerAdminLink" href="admin.html" style="display:none;"><span class="ic">🔧</span> Admin Panel <span class="badge-admin">ADMIN</span></a>
+    <a class="drawer-link" href="settings.html"><span class="ic">⚙</span> Setting</a>
+    <a class="drawer-link" href="support.html"><span class="ic">?</span> Support</a>
+    <a class="drawer-link logout" id="drawerLogout"><span class="ic">⎋</span> Logout</a>
+  </div>
+</aside>
+
+<aside class="sidebar" id="sidebar">
+  <div class="logo"><div class="logo-mark">Z</div> Zavora <span style="color:var(--blue)">SMS</span></div>
+  <a class="side-link" href="dashboard.html"><span class="ic">▦</span> Dashboard</a>
+  <a class="side-link" href="orders.html"><span class="ic">🧾</span> My Orders</a>
+  <a class="side-link" href="wallet.html"><span class="ic">💳</span> Wallet</a>
+  <a class="side-link" href="deposit.html"><span class="ic">↗</span> Deposit</a>
+  <a class="side-link active" href="payment-history.html"><span class="ic">📜</span> Payment History</a>
+  <a class="side-link" href="profile.html"><span class="ic">👤</span> Profile</a>
+  <a class="side-link" href="whatsapp-channel.html"><span class="ic">💬</span> WhatsApp Channel <span class="badge-new">NEW</span></a>
+  <a class="side-link" href="social-logs.html"><span class="ic">🛒</span> Buy Social Logs</a>
+  <a class="side-link" id="sidebarAdminLink" href="admin.html" style="display:none;"><span class="ic">🔧</span> Admin Panel <span class="badge-admin">ADMIN</span></a>
+  <a class="side-link" href="settings.html"><span class="ic">⚙</span> Setting</a>
+  <a class="side-link" href="support.html"><span class="ic">?</span> Support</a>
+  <a class="side-link" id="logoutBtn"><span class="ic">⎋</span> Logout</a>
+  <div class="sidebar-spacer"></div>
+  <div class="user-mini">
+    <div class="avatar" id="avatar">--</div>
+    <div class="info">
+      <div class="name" id="userName">Loading...</div>
+      <div class="email" id="userEmail">...</div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <h1>Payment History <span>/ Your transactions</span></h1>
+    <button class="icon-btn">🔔</button>
+  </div>
+
+  <div class="content">
+
+    <div class="summary-grid">
+      <div class="sum-card">
+        <div class="ic green">₦</div>
+        <div class="num" id="totalSpent">₦0</div>
+        <div class="lbl">Total Spent</div>
+      </div>
+      <div class="sum-card">
+        <div class="ic blue">📥</div>
+        <div class="num" id="totalDeposited">₦0</div>
+        <div class="lbl">Total Deposited</div>
+      </div>
+      <div class="sum-card">
+        <div class="ic yellow">🧾</div>
+        <div class="num" id="totalTransactions">0</div>
+        <div class="lbl">Total Transactions</div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-filter="all">All</div>
+      <div class="tab" data-filter="purchase">Purchases</div>
+      <div class="tab" data-filter="deposit">Deposits</div>
+    </div>
+
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="historyBody">
+          <tr><td colspan="5" class="empty">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<script>
+  function openDrawer() {
+    document.getElementById('drawer').classList.add('open');
+    document.getElementById('overlay').classList.add('show');
+  }
+  function closeAll() {
+    document.getElementById('drawer').classList.remove('open');
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('show');
+  }
+  window.openDrawer = openDrawer;
+  window.closeAll = closeAll;
+</script>
+
+<script type="module">
+  import { auth, db, onAuthStateChanged, signOut, doc, getDoc, collection, query, where, getDocs } from './firebase-config.js';
+
+  let allTransactions = [];
+  let currentFilter = 'all';
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href = 'login.html'; return; }
+
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (!snap.exists()) return;
+    const data = snap.data();
+    const first = data.firstName || 'User';
+    const last = data.lastName || '';
+    const initials = (first[0] + (last[0] || '')).toUpperCase();
+
+    document.getElementById('avatar').textContent = initials;
+    document.getElementById('drawerAvatar').textContent = initials;
+    document.getElementById('userName').textContent = `${first} ${last}`.trim();
+    document.getElementById('drawerName').textContent = `${first} ${last}`.trim();
+    document.getElementById('userEmail').textContent = data.email || '';
+    document.getElementById('drawerEmail').textContent = data.email || '';
+
+    if (data.role === 'admin') {
+      document.getElementById('sidebarAdminLink').style.display = 'flex';
+      document.getElementById('drawerAdminLink').style.display = 'flex';
+    }
+
+    await loadTransactions(user.uid);
+  });
+
+  async function loadTransactions(uid) {
+    const tbody = document.getElementById('historyBody');
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">Loading...</td></tr>';
+
+    try {
+      allTransactions = [];
+
+      // Load orders (purchases)
+      const orderSnap = await getDocs(query(collection(db, 'orders'), where('uid', '==', uid)));
+      orderSnap.forEach(d => {
+        const o = d.data();
+        allTransactions.push({
+          type: 'purchase',
+          date: o.createdAt?.toDate ? o.createdAt.toDate() : new Date(o.createdAt?.seconds * 1000 || 0),
+          desc: `${o.product || '—'} — ${o.flag || ''} ${o.country || ''}`.trim(),
+          amount: -(o.price || 0),
+          status: o.status || 'pending'
+        });
+      });
+
+      // Load deposits (if they exist)
+      try {
+        const depSnap = await getDocs(query(collection(db, 'deposits'), where('uid', '==', uid)));
+        depSnap.forEach(d => {
+          const dep = d.data();
+          allTransactions.push({
+            type: 'deposit',
+            date: dep.createdAt?.toDate ? dep.createdAt.toDate() : new Date(dep.createdAt?.seconds * 1000 || 0),
+            desc: `Wallet deposit${dep.reference ? ' • ' + dep.reference : ''}`,
+            amount: dep.amount || 0,
+            status: dep.status || 'completed'
+          });
+        });
+      } catch (err) { /* deposits collection may not exist */ }
+
+      // Sort newest first
+      allTransactions.sort((a, b) => b.date - a.date);
+
+      // Summary
+      const totalSpent = allTransactions
+        .filter(t => t.type === 'purchase' && t.status === 'completed')
+        .reduce((s, t) => s + Math.abs(t.amount), 0);
+      const totalDeposited = allTransactions
+        .filter(t => t.type === 'deposit' && t.status === 'completed')
+        .reduce((s, t) => s + t.amount, 0);
+
+      document.getElementById('totalSpent').textContent = `₦${totalSpent.toLocaleString()}`;
+      document.getElementById('totalDeposited').textContent = `₦${totalDeposited.toLocaleString()}`;
+      document.getElementById('totalTransactions').textContent = allTransactions.length;
+
+      renderTable();
+    } catch (err) {
+      console.error(err);
+      tbody.innerHTML = '<tr><td colspan="5" class="empty">Could not load history.</td></tr>';
+    }
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('historyBody');
+    let list = allTransactions;
+    if (currentFilter === 'purchase') list = list.filter(t => t.type === 'purchase');
+    if (currentFilter === 'deposit')  list = list.filter(t => t.type === 'deposit');
+
+    if (list.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" class="empty">
+        <span class="emoji">📜</span>
+        No ${currentFilter === 'all' ? '' : currentFilter + ' '}transactions yet.
+      </td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = '';
+    list.forEach(t => {
+      const tr = document.createElement('tr');
+      const isPlus = t.amount > 0;
+      const amt = Math.abs(t.amount);
+      const statusClass =
+        t.status === 'completed' ? 'badge-green' :
+        t.status === 'pending'   ? 'badge-yellow' :
+        t.status === 'cancelled' ? 'badge-gray' :
+        'badge-red';
+
+      const dateStr = t.date.toLocaleDateString('en-NG', { year: 'numeric', month: 'short', day: 'numeric' });
+      const timeStr = t.date.toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit' });
+
+      tr.innerHTML = `
+        <td class="date-cell">${dateStr}<span class="time">${timeStr}</span></td>
+        <td><span class="badge ${t.type === 'deposit' ? 'badge-blue' : 'badge-gray'}">${t.type}</span></td>
+        <td>${t.desc}</td>
+        <td><span class="amount ${isPlus ? 'plus' : 'minus'}">${isPlus ? '+' : '−'}₦${amt.toLocaleString()}</span></td>
+        <td><span class="badge ${statusClass}">${t.status}</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentFilter = tab.dataset.filter;
+      renderTable();
+    });
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await signOut(auth); window.location.href = 'login.html';
+  });
+  document.getElementById('drawerLogout').addEventListener('click', async () => {
+    await signOut(auth); window.location.href = 'login.html';
+  });
+</script>
+
+</body>
+</html>
