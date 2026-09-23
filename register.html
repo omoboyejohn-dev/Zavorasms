@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Create Account — Zavora SMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --blue: #1E5EFF;
+    --blue-dark: #1547c4;
+    --blue-light: #e8efff;
+    --black: #0A0A0A;
+    --gray: #6b7280;
+    --gray-light: #f5f7fb;
+    --border: #e5e7eb;
+    --white: #ffffff;
+    --green: #10b981;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--gray-light);
+    color: var(--black);
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  a { text-decoration: none; color: inherit; }
+
+  /* ===== LEFT PANEL (BRAND) ===== */
+  .brand-panel {
+    background: var(--black);
+    color: white;
+    padding: 60px 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+  .brand-panel::before {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    background: var(--blue);
+    border-radius: 50%;
+    filter: blur(150px);
+    opacity: 0.5;
+    top: -180px; left: -120px;
+  }
+  .brand-panel::after {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    background: var(--blue);
+    border-radius: 50%;
+    filter: blur(140px);
+    opacity: 0.35;
+    bottom: -150px; right: -100px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 22px;
+    position: relative;
+    z-index: 2;
+  }
+  .logo-mark {
+    width: 38px;
+    height: 38px;
+    background: var(--blue);
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    color: white;
+    font-weight: 900;
+    font-size: 18px;
+  }
+
+  .brand-content { position: relative; z-index: 2; }
+  .brand-content h1 {
+    font-size: 40px;
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+  }
+  .brand-content h1 span { color: var(--blue); }
+  .brand-content p {
+    color: #b0b0b0;
+    font-size: 16px;
+    max-width: 420px;
+    margin-bottom: 34px;
+  }
+
+  .perks { display: flex; flex-direction: column; gap: 16px; }
+  .perk {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: #e5e5e5;
+  }
+  .perk .tick {
+    width: 26px; height: 26px;
+    background: rgba(30,94,255,0.25);
+    border: 1px solid var(--blue);
+    color: var(--blue);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .brand-footer {
+    position: relative;
+    z-index: 2;
+    font-size: 13px;
+    color: #666;
+  }
+
+  /* ===== RIGHT PANEL (FORM) ===== */
+  .form-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: white;
+    overflow-y: auto;
+  }
+
+  .form-box {
+    width: 100%;
+    max-width: 440px;
+    padding: 20px 0;
+  }
+
+  .form-box h2 {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+  .form-box .sub {
+    color: var(--gray);
+    font-size: 15px;
+    margin-bottom: 32px;
+  }
+  .form-box .sub a {
+    color: var(--blue);
+    font-weight: 600;
+  }
+  .form-box .sub a:hover { text-decoration: underline; }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .field {
+    margin-bottom: 18px;
+  }
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--black);
+  }
+  .field input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: inherit;
+    transition: all 0.2s;
+    background: white;
+  }
+  .field input:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 4px rgba(30,94,255,0.1);
+  }
+  .field input::placeholder { color: #aaa; }
+
+  /* password strength */
+  .strength {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .strength .bar {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 999px;
+    transition: background 0.2s;
+  }
+  .strength.s1 .bar:nth-child(1) { background: #ef4444; }
+  .strength.s2 .bar:nth-child(-n+2) { background: #f59e0b; }
+  .strength.s3 .bar:nth-child(-n+3) { background: #3b82f6; }
+  .strength.s4 .bar { background: var(--green); }
+
+  .terms {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 22px 0 26px;
+    font-size: 13px;
+    color: var(--gray);
+    line-height: 1.5;
+  }
+  .terms input {
+    width: 17px; height: 17px;
+    accent-color: var(--blue);
+    cursor: pointer;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .terms a { color: var(--blue); font-weight: 600; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 22px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    width: 100%;
+  }
+  .btn-primary {
+    background: var(--blue);
+    color: white;
+  }
+  .btn-primary:hover {
+    background: var(--blue-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(30,94,255,0.25);
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 26px 0;
+    color: var(--gray);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .divider::before,
+  .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .social-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 13px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .social-btn:hover { border-color: var(--black); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    body { grid-template-columns: 1fr; }
+    .brand-panel { display: none; }
+    .form-panel { padding: 30px 24px; min-height: 100vh; align-items: flex-start; }
+    .grid-2 { grid-template-columns: 1fr; gap: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== LEFT: BRAND ===== -->
+<div class="brand-panel">
+  <div class="logo">
+    <div class="logo-mark">Z</div>
+    Zavora <span style="color:var(--blue)">SMS</span>
+  </div>
+
+  <div class="brand-content">
+    <h1>Join <span>Zavora SMS</span> today</h1>
+    <p>Create your free account and start buying virtual numbers from 150+ countries in minutes.</p>
+
+    <div class="perks">
+      <div class="perk"><span class="tick">✓</span> Instant number delivery</div>
+      <div class="perk"><span class="tick">✓</span> 500+ apps supported</div>
+      <div class="perk"><span class="tick">✓</span> Secure wallet & payments</div>
+      <div class="perk"><span class="tick">✓</span> 24/7 customer support</div>
+    </div>
+  </div>
+
+  <div class="brand-footer">
+    © 2025 Zavora SMS. All rights reserved.
+  </div>
+</div>
+
+<!-- ===== RIGHT: FORM ===== -->
+<div class="form-panel">
+  <div class="form-box">
+    <h2>Create your account</h2>
+    <p class="sub">Already have an account? <a href="login.html">Sign in</a></p>
+
+    <form onsubmit="event.preventDefault(); alert('Register backend not connected yet.');">
+      <div class="grid-2">
+        <div class="field">
+          <label for="firstname">First name</label>
+          <input type="text" id="firstname" placeholder="John" required />
+        </div>
+        <div class="field">
+          <label for="lastname">Last name</label>
+          <input type="text" id="lastname" placeholder="Doe" required />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="email">Email address</label>
+        <input type="email" id="email" placeholder="you@example.com" required />
+      </div>
+
+      <div class="field">
+        <label for="phone">Phone number (optional)</label>
+        <input type="tel" id="phone" placeholder="+1 415 000 0000" />
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Create a strong password" oninput="checkStrength(this.value)" required />
+        <div class="strength" id="strength">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="confirm">Confirm password</label>
+        <input type="password" id="confirm" placeholder="Re-enter your password" required />
+      </div>
+
+      <label class="terms">
+        <input type="checkbox" required />
+        <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a> of Zavora SMS.</span>
+      </label>
+
+      <button type="submit" class="btn btn-primary">Create Account</button>
+    </form>
+
+    <div class="divider">or sign up with</div>
+
+    <div class="social-row">
+      <button class="social-btn"><span style="color:#1877F2;font-weight:800">f</span> Facebook</button>
+      <button class="social-btn"><span style="color:#EA4335;font-weight:800">G</span> Google</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function checkStrength(val) {
+    const el = document.getElementById('strength');
+    let score = 0;
+    if (val.length >= 8) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+    el.className = 'strength' + (score > 0 ? ' s' + score : '');
+  }
+</script>
+
+</body>
+</html>
