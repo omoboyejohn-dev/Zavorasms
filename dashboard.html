@@ -66,6 +66,10 @@
     margin-left: auto; font-size: 10px; background: var(--blue);
     color: white; padding: 2px 7px; border-radius: 999px; font-weight: 700;
   }
+  .side-link .badge-admin {
+    margin-left: auto; font-size: 10px; background: #8b5cf6;
+    color: white; padding: 2px 7px; border-radius: 999px; font-weight: 700;
+  }
   .sidebar-spacer { flex: 1; }
   .user-mini {
     display: flex; align-items: center; gap: 10px;
@@ -329,6 +333,22 @@
   }
   .empty-msg .emoji { font-size: 32px; display: block; margin-bottom: 10px; }
 
+  .loading-skeleton {
+    grid-column: 1 / -1;
+    text-align: center; padding: 40px 20px;
+    color: var(--gray); font-size: 14px;
+  }
+  .loading-skeleton .spin {
+    display: inline-block;
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-right: 8px; vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
   /* ===== RECENT ORDERS ===== */
   .orders-card {
     background: white; border: 1.5px solid var(--border);
@@ -397,7 +417,6 @@
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
 
   .badge {
     display: inline-block; padding: 4px 10px;
@@ -534,10 +553,16 @@
   .drawer-link.wa .ic { background: #dcfce7; color: #15803d; }
   .drawer-link.social .ic { background: #fef3c7; color: #b45309; }
   .drawer-link.logout .ic { background: #fee2e2; color: #b91c1c; }
+  .drawer-link.admin .ic { background: #ede9fe; color: #6d28d9; }
   .drawer-link .arrow { margin-left: auto; color: var(--gray); font-size: 14px; }
   .drawer-link .badge-new {
     margin-left: auto; font-size: 10px;
     background: var(--blue); color: white;
+    padding: 3px 8px; border-radius: 999px; font-weight: 700;
+  }
+  .drawer-link .badge-admin {
+    margin-left: auto; font-size: 10px;
+    background: #8b5cf6; color: white;
     padding: 3px 8px; border-radius: 999px; font-weight: 700;
   }
 
@@ -632,6 +657,9 @@
       <span class="ic">💬</span> WhatsApp Channel <span class="badge-new">NEW</span>
     </a>
     <a class="drawer-link social" href="social-logs.html"><span class="ic">🛒</span> Buy Social Logs <span class="arrow">›</span></a>
+    <a class="drawer-link admin" id="drawerAdminLink" href="admin.html" style="display:none;">
+      <span class="ic">🔧</span> Admin Panel <span class="badge-admin">ADMIN</span>
+    </a>
     <div class="drawer-section">Account</div>
     <a class="drawer-link" href="settings.html"><span class="ic">⚙</span> Settings <span class="arrow">›</span></a>
     <a class="drawer-link" href="support.html"><span class="ic">?</span> Support <span class="arrow">›</span></a>
@@ -653,6 +681,9 @@
     <span class="ic">💬</span> WhatsApp Channel <span class="badge-new">NEW</span>
   </a>
   <a class="side-link" href="social-logs.html"><span class="ic">🛒</span> Buy Social Logs</a>
+  <a class="side-link" id="sidebarAdminLink" href="admin.html" style="display:none;">
+    <span class="ic">🔧</span> Admin Panel <span class="badge-admin">ADMIN</span>
+  </a>
   <div class="nav-section-label" style="margin-top:20px;">Account</div>
   <a class="side-link" href="settings.html"><span class="ic">⚙</span> Settings</a>
   <a class="side-link" href="support.html"><span class="ic">?</span> Support</a>
@@ -693,7 +724,36 @@
         </div>
       </div>
 
-      
+      <div class="stat-card">
+        <div class="ic-wrap">📊</div>
+        <div class="stat-split">
+          <div class="stat-half">
+            <div class="num" id="totalOrders">0</div>
+            <div class="lbl">Total</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-half">
+            <div class="num" id="completedOrders">0</div>
+            <div class="lbl">Done</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="ic-wrap">⏱</div>
+        <div class="stat-split">
+          <div class="stat-half">
+            <div class="num" id="pendingOrders">0</div>
+            <div class="lbl">Pending</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-half">
+            <div class="num" id="failedOrders">0</div>
+            <div class="lbl">Failed</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- SERVICES -->
     <div class="sec-head">
@@ -704,7 +764,9 @@
       </div>
     </div>
 
-    <div class="services-grid" id="servicesGrid"></div>
+    <div class="services-grid" id="servicesGrid">
+      <div class="loading-skeleton"><span class="spin"></span> Loading services...</div>
+    </div>
 
     <!-- COUNTRIES -->
     <div class="sec-head">
@@ -783,7 +845,6 @@
     if (window.updateBuyButton) window.updateBuyButton();
   });
 
-  // Global toast helper
   window.showToast = function (msg, type = 'success') {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -803,53 +864,55 @@
   } from './firebase-config.js';
 
   /* ============================================================
-     DATA
+     STATE — now loaded from Firestore
   ============================================================ */
-  const SERVICES = [
-    { id: 'whatsapp',  name: 'WhatsApp',    icon: '✆', cls: 'ic-whatsapp',  stock: 113 },
-    { id: 'telegram',  name: 'Telegram',    icon: '✈', cls: 'ic-telegram',  stock: 340 },
-    { id: 'facebook',  name: 'Facebook',    icon: 'f', cls: 'ic-facebook',  stock: 665 },
-    { id: 'instagram', name: 'Instagram',   icon: '◉', cls: 'ic-instagram', stock: 210 },
-    { id: 'google',    name: 'Google',      icon: 'G', cls: 'ic-google',    stock: 332 },
-    { id: 'tiktok',    name: 'TikTok',      icon: '♪', cls: 'ic-tiktok',    stock: 180 },
-    { id: 'twitter',   name: 'Twitter / X', icon: '𝕏', cls: 'ic-twitter',   stock: 145 },
-    { id: 'amazon',    name: 'Amazon',      icon: 'a', cls: 'ic-amazon',    stock: 84  },
-    { id: 'apple',     name: 'Apple',       icon: '',  cls: 'ic-apple',     stock: 62  },
-    { id: 'snapchat',  name: 'Snapchat',    icon: '👻', cls: 'ic-snapchat', stock: 95  },
-    { id: 'discord',   name: 'Discord',     icon: '◈', cls: 'ic-discord',   stock: 120 },
-    { id: 'signal',    name: 'Signal',      icon: '◐', cls: 'ic-signal',    stock: 88  },
-    { id: 'pof',       name: 'POF',         icon: '❤', cls: 'ic-pof',       stock: 42  },
-    { id: 'match',     name: 'Match',       icon: 'M', cls: 'ic-match',     stock: 56  },
-    { id: 'tagged',    name: 'Tagged',      icon: 'T', cls: 'ic-tagged',    stock: 33  },
-    { id: 'uber',      name: 'Uber',        icon: 'U', cls: 'ic-uber',      stock: 74  },
-    { id: 'more',      name: '+ More',      icon: '⋯', cls: 'ic-more',      stock: 5000 }
-  ];
-
-  const COUNTRIES = [
-    { id: 'us', name: 'United States',  flag: '🇺🇸', price: 4350,  stock: 637216, dial: '+1'  },
-    { id: 'uk', name: 'United Kingdom', flag: '🇬🇧', price: 3700,  stock: 280875, dial: '+44' },
-    { id: 'ca', name: 'Canada',         flag: '🇨🇦', price: 3000,  stock: 1249262, dial: '+1' },
-    { id: 'ng', name: 'Nigeria',        flag: '🇳🇬', price: 1500,  stock: 172400, dial: '+234' },
-    { id: 'in', name: 'India',          flag: '🇮🇳', price: 6100,  stock: 622489, dial: '+91' },
-    { id: 'ph', name: 'Philippines',    flag: '🇵🇭', price: 750,   stock: 1563292, dial: '+63' },
-    { id: 'pl', name: 'Poland',         flag: '🇵🇱', price: 2400,  stock: 89000,  dial: '+48' },
-    { id: 'cn', name: 'China',          flag: '🇨🇳', price: 2900,  stock: 215000, dial: '+86' },
-    { id: 'sa', name: 'Saudi Arabia',   flag: '🇸🇦', price: 4200,  stock: 78000,  dial: '+966' },
-    { id: 'za', name: 'South Africa',   flag: '🇿🇦', price: 800,   stock: 172400, dial: '+27' },
-    { id: 'hk', name: 'Hong Kong',      flag: '🇭🇰', price: 12500, stock: 996541, dial: '+852' },
-    { id: 'mx', name: 'Mexico',         flag: '🇲🇽', price: 5400,  stock: 3015414, dial: '+52' },
-    { id: 'de', name: 'Germany',        flag: '🇩🇪', price: 3200,  stock: 145000, dial: '+49' },
-    { id: 'fr', name: 'France',         flag: '🇫🇷', price: 3100,  stock: 132000, dial: '+33' },
-    { id: 'br', name: 'Brazil',         flag: '🇧🇷', price: 1900,  stock: 420000, dial: '+55' },
-    { id: 'more', name: '+ 171 more',   flag: '🌍', price: 0,     stock: 0 }
-  ];
+  let SERVICES = [];    // loaded from config_products
+  let COUNTRIES = [];   // loaded from config_countries
 
   let currentUser = null;
   let currentUserData = null;
   let selectedService = null;
   let selectedCountry = null;
   let sortByPrice = true;
-  let liveUnsubscribers = [];
+  let dataReady = false;
+
+  /* ============================================================
+     LOAD FROM FIRESTORE
+  ============================================================ */
+  async function loadServicesFromFirestore() {
+    try {
+      const snap = await getDocs(collection(db, 'config_products'));
+      SERVICES = [];
+      snap.forEach(d => SERVICES.push({ id: d.id, ...d.data() }));
+
+      // Sort by order field if exists
+      SERVICES.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+      // Add "+More" tile at end
+      SERVICES.push({ id: 'more', name: '+ More', icon: '⋯', cls: 'ic-more', stock: 5000 });
+
+      console.log(`Loaded ${SERVICES.length - 1} services from Firestore`);
+    } catch (err) {
+      console.error('Load services error:', err);
+      // Fallback to empty
+      SERVICES = [{ id: 'more', name: '+ More', icon: '⋯', cls: 'ic-more', stock: 0 }];
+    }
+  }
+
+  async function loadCountriesFromFirestore() {
+    try {
+      const snap = await getDocs(collection(db, 'config_countries'));
+      COUNTRIES = [];
+      snap.forEach(d => COUNTRIES.push({ id: d.id, ...d.data() }));
+
+      COUNTRIES.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+      console.log(`Loaded ${COUNTRIES.length} countries from Firestore`);
+    } catch (err) {
+      console.error('Load countries error:', err);
+      COUNTRIES = [];
+    }
+  }
 
   /* ============================================================
      RENDER SERVICES
@@ -857,16 +920,27 @@
   function renderServices(filter = '') {
     const grid = document.getElementById('servicesGrid');
     const f = filter.toLowerCase();
-    const list = SERVICES.filter(s => s.name.toLowerCase().includes(f) || s.id.includes(f));
+    const list = SERVICES.filter(s =>
+      s.name.toLowerCase().includes(f) || s.id.includes(f)
+    );
+
+    if (list.length === 0) {
+      grid.innerHTML = `<div class="empty-msg" style="grid-column:1/-1;">
+        <span class="emoji">📦</span>
+        No services available. Admin needs to add products.
+      </div>`;
+      return;
+    }
+
     grid.innerHTML = '';
     list.forEach(s => {
       const tile = document.createElement('div');
       tile.className = 'service-tile' + (selectedService?.id === s.id ? ' selected' : '');
       tile.innerHTML = `
-        <div class="service-icon ${s.cls}">${s.icon}</div>
+        <div class="service-icon ${s.cls || 'ic-more'}">${s.icon || '?'}</div>
         <div class="service-info">
           <h4>${s.name}</h4>
-          <div class="stock">${s.stock.toLocaleString()} pcs</div>
+          <div class="stock">${(s.stock || 0).toLocaleString()} pcs</div>
         </div>
       `;
       tile.onclick = () => selectService(s);
@@ -899,15 +973,27 @@
       return;
     }
 
+    if (COUNTRIES.length === 0) {
+      grid.innerHTML = `<div class="empty-msg">
+        <span class="emoji">🌍</span>
+        No countries available. Admin needs to add countries.
+      </div>`;
+      return;
+    }
+
     let list = COUNTRIES.filter(c => c.name.toLowerCase().includes(f));
-    if (sortByPrice) list.sort((a, b) => a.price - b.price);
+    if (sortByPrice) list.sort((a, b) => (a.price || 0) - (b.price || 0));
     else list.sort((a, b) => a.name.localeCompare(b.name));
+
+    // Add "+ More" card at end
+    list.push({ id: 'more', name: '+ More countries', flag: '🌍', isMore: true });
 
     grid.innerHTML = '';
     list.forEach(c => {
       const card = document.createElement('div');
       card.className = 'country-card' + (selectedCountry?.id === c.id ? ' selected' : '');
-      if (c.id === 'more') {
+
+      if (c.isMore) {
         card.innerHTML = `
           <div class="flag">${c.flag}</div>
           <div class="country-info"><h4>${c.name}</h4><div class="stock">Browse all</div></div>
@@ -915,13 +1001,13 @@
         card.onclick = () => alert('Full country list coming soon!');
       } else {
         card.innerHTML = `
-          <div class="flag">${c.flag}</div>
+          <div class="flag">${c.flag || '🌍'}</div>
           <div class="country-info">
             <h4>${c.name}</h4>
-            <div class="stock">${c.stock.toLocaleString()} pcs</div>
+            <div class="stock">${(c.stock || 0).toLocaleString()} pcs</div>
           </div>
           <div class="country-price">
-            <div class="price">₦${c.price.toLocaleString()}</div>
+            <div class="price">₦${(c.price || 0).toLocaleString()}</div>
             <button class="buy-btn">Buy SMS</button>
           </div>
         `;
@@ -948,7 +1034,7 @@
       btn.textContent = 'Select service & country';
       return;
     }
-    const total = doubleSms ? selectedCountry.price * 2 : selectedCountry.price;
+    const total = doubleSms ? (selectedCountry.price || 0) * 2 : (selectedCountry.price || 0);
     btn.disabled = false;
     btn.textContent = `Buy SMS ₦${total.toLocaleString()}`;
   }
@@ -963,7 +1049,6 @@
     try {
       const total = doubleSms ? selectedCountry.price * 2 : selectedCountry.price;
 
-      // Check wallet
       const snap = await getDoc(doc(db, 'users', currentUser.uid));
       const data = snap.data() || {};
       const balance = data.walletBalance || 0;
@@ -975,10 +1060,8 @@
         return;
       }
 
-      // Generate demo number
       const num = generateDemoNumber(selectedCountry.dial);
 
-      // Create order — pending, wallet NOT deducted yet
       const orderRef = await addDoc(collection(db, 'orders'), {
         uid: currentUser.uid,
         email: currentUser.email,
@@ -996,11 +1079,7 @@
       });
 
       showToast('Order placed! Waiting for SMS...', 'success');
-
-      // Start demo SMS simulation
       simulateSmsArrival(orderRef.id, total);
-
-      // Refresh orders view
       renderOrders();
 
       btn.disabled = false;
@@ -1029,25 +1108,21 @@
     return String(Math.floor(100000 + Math.random() * 900000));
   }
 
-  // Simulates SMS arriving ~10 seconds after purchase
   async function simulateSmsArrival(orderId, amount) {
     setTimeout(async () => {
       try {
-        // 1. Update order with code + completed status
         await updateDoc(doc(db, 'orders', orderId), {
           smsCode: generateDemoCode(),
           status: 'completed',
           completedAt: serverTimestamp()
         });
 
-        // 2. NOW deduct wallet
         await updateDoc(doc(db, 'users', currentUser.uid), {
           walletBalance: increment(-amount),
           totalOrders: increment(1),
           completedOrders: increment(1)
         });
 
-        // 3. Refresh UI
         await refreshUserData();
         renderOrders();
         showToast('✅ SMS received! Order completed.', 'success');
@@ -1055,11 +1130,11 @@
       } catch (err) {
         console.error('SMS simulation error:', err);
       }
-    }, 10000); // 10 seconds
+    }, 10000);
   }
 
   /* ============================================================
-     RENDER ORDERS (filtered by selected service + country)
+     RENDER ORDERS
   ============================================================ */
   async function renderOrders() {
     const tbody = document.getElementById('ordersBody');
@@ -1076,14 +1151,12 @@
       let orders = [];
       snap.forEach(d => orders.push({ id: d.id, ...d.data() }));
 
-      // Sort newest first
       orders.sort((a, b) => {
         const ta = a.createdAt?.seconds || 0;
         const tb = b.createdAt?.seconds || 0;
         return tb - ta;
       });
 
-      // Filter by selected service + country
       if (selectedService && selectedCountry) {
         orders = orders.filter(o =>
           o.productId === selectedService.id && o.countryId === selectedCountry.id
@@ -1091,7 +1164,7 @@
       } else if (selectedService) {
         orders = orders.filter(o => o.productId === selectedService.id);
       } else {
-        orders = orders.slice(0, 5); // Top 5 recent
+        orders = orders.slice(0, 5);
       }
 
       if (orders.length === 0) {
@@ -1113,17 +1186,14 @@
 
   function buildOrderRow(o) {
     const svc = SERVICES.find(s => s.id === o.productId) || { icon: '?', cls: 'ic-more' };
-
     const tr = document.createElement('tr');
 
-    // Status badge
     let statusBadge = '';
     if (o.status === 'completed') statusBadge = '<span class="badge badge-green">Completed</span>';
     else if (o.status === 'pending') statusBadge = '<span class="badge badge-yellow">Pending</span>';
     else if (o.status === 'cancelled') statusBadge = '<span class="badge badge-gray">Cancelled</span>';
     else statusBadge = '<span class="badge badge-red">' + (o.status || 'Failed') + '</span>';
 
-    // Number cell with copy + cancel
     let numberCell = '—';
     if (o.number) {
       numberCell = `
@@ -1136,7 +1206,6 @@
       }
     }
 
-    // SMS Code cell
     let codeCell = '';
     if (o.smsCode) {
       codeCell = `
@@ -1168,10 +1237,9 @@
   }
 
   /* ============================================================
-     COPY + CANCEL (event delegation)
+     COPY + CANCEL
   ============================================================ */
   document.getElementById('ordersBody').addEventListener('click', async (e) => {
-    // Copy button
     const copyBtn = e.target.closest('.copy-btn');
     if (copyBtn) {
       const val = copyBtn.dataset.copy;
@@ -1190,7 +1258,6 @@
       return;
     }
 
-    // Cancel button
     const cancelBtn = e.target.closest('.cancel-btn');
     if (cancelBtn) {
       const orderId = cancelBtn.dataset.cancel;
@@ -1252,6 +1319,12 @@
       minimumFractionDigits: 2, maximumFractionDigits: 2
     });
     document.getElementById('walletBalance').textContent = `₦${bal}`;
+
+    // Show admin link if this user is admin
+    if (data.role === 'admin') {
+      document.getElementById('sidebarAdminLink').style.display = 'flex';
+      document.getElementById('drawerAdminLink').style.display = 'flex';
+    }
   }
 
   onAuthStateChanged(auth, async (user) => {
@@ -1262,12 +1335,36 @@
     if (!snap.exists()) { window.location.href = 'register.html'; return; }
 
     currentUserData = snap.data();
+
+    // 👇 Load live data from Firestore FIRST
+    await Promise.all([
+      loadServicesFromFirestore(),
+      loadCountriesFromFirestore()
+    ]);
+    dataReady = true;
+
+    // Then render everything
     renderUser(currentUserData);
+    renderServices();
+    renderCountries();
     loadStats(user.uid, currentUserData);
     renderOrders();
+    updateBuyButton();
 
-    // Auto-refresh orders every 5 seconds (for pending → completed)
+    // Auto-refresh orders every 5 seconds
     setInterval(renderOrders, 5000);
+
+    // Auto-reload products/countries every 30 seconds
+    // (so admin price changes appear automatically)
+    setInterval(async () => {
+      await Promise.all([
+        loadServicesFromFirestore(),
+        loadCountriesFromFirestore()
+      ]);
+      renderServices(document.getElementById('serviceSearch').value);
+      if (selectedService) renderCountries(document.getElementById('countrySearch').value);
+      updateBuyButton();
+    }, 30000);
   });
 
   /* ============================================================
@@ -1306,12 +1403,6 @@
   document.getElementById('logoutBtn').addEventListener('click', doLogout);
   document.getElementById('drawerLogout').addEventListener('click', doLogout);
 
-  /* ============================================================
-     INIT
-  ============================================================ */
-  renderServices();
-  renderCountries();
-  updateBuyButton();
 </script>
 
 </body>
