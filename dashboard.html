@@ -123,7 +123,7 @@
 
   .content { padding: 26px 32px 60px; max-width: 1400px; }
 
-  /* ===== TOP GRID (WALLET + STATS) ===== */
+  /* ===== TOP GRID ===== */
   .top-grid {
     display: grid;
     grid-template-columns: 1.5fr 1fr 1fr;
@@ -152,15 +152,11 @@
     display: flex; align-items: baseline; gap: 10px;
   }
   .wallet-card .balance small {
-    font-size: 15px; font-weight: 600; opacity: 0.75;
-    letter-spacing: 0;
+    font-size: 15px; font-weight: 600; opacity: 0.75; letter-spacing: 0;
   }
-  .wallet-card .actions {
-    display: flex; gap: 10px; position: relative;
-  }
+  .wallet-card .actions { display: flex; gap: 10px; position: relative; }
   .wallet-card .actions .btn {
-    background: white; color: var(--blue);
-    padding: 11px 20px; font-size: 14px;
+    background: white; color: var(--blue); padding: 11px 20px; font-size: 14px;
   }
   .wallet-card .actions .btn:hover { background: #f0f0f0; }
   .wallet-card .actions .btn.ghost {
@@ -169,7 +165,6 @@
   }
   .wallet-card .actions .btn.ghost:hover { background: rgba(255,255,255,0.28); }
 
-  /* ⭐ STAT CARD WITH SPLIT NUMBERS (1 | 2) */
   .stat-card {
     background: white; border: 1.5px solid var(--border);
     border-radius: 22px; padding: 24px;
@@ -185,21 +180,17 @@
     display: flex; align-items: center; justify-content: space-between;
     gap: 14px;
   }
-  .stat-half {
-    flex: 1; text-align: center;
-  }
+  .stat-half { flex: 1; text-align: center; }
   .stat-half .num {
     font-size: 30px; font-weight: 800;
     letter-spacing: -1px; line-height: 1;
   }
   .stat-half .lbl {
-    font-size: 12px; color: var(--gray);
-    font-weight: 600; margin-top: 6px;
-    text-transform: uppercase; letter-spacing: 0.4px;
+    font-size: 12px; color: var(--gray); font-weight: 600;
+    margin-top: 6px; text-transform: uppercase; letter-spacing: 0.4px;
   }
   .stat-divider {
-    width: 1.5px; height: 40px; background: var(--border);
-    flex-shrink: 0;
+    width: 1.5px; height: 40px; background: var(--border); flex-shrink: 0;
   }
 
   /* ===== SECTION HEADER ===== */
@@ -233,13 +224,16 @@
     font-weight: 500; color: var(--gray);
   }
   .sec-head .sort-btn:hover { border-color: var(--black); color: var(--black); }
+  .sec-head .view-all {
+    color: var(--blue); font-size: 14px; font-weight: 700;
+  }
+  .sec-head .view-all:hover { text-decoration: underline; }
 
   /* ===== SERVICES GRID ===== */
   .services-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    gap: 12px;
-    margin-bottom: 34px;
+    gap: 12px; margin-bottom: 34px;
   }
   .service-tile {
     background: white; border: 1.5px solid var(--border);
@@ -253,8 +247,7 @@
     box-shadow: 0 10px 24px rgba(30,94,255,0.1);
   }
   .service-tile.selected {
-    border-color: var(--blue);
-    background: var(--blue-light);
+    border-color: var(--blue); background: var(--blue-light);
     box-shadow: 0 0 0 3px rgba(30,94,255,0.15);
   }
   .service-icon {
@@ -292,8 +285,7 @@
   .countries-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 14px;
-    margin-bottom: 30px;
+    gap: 14px; margin-bottom: 30px;
   }
   .country-card {
     background: white; border: 1.5px solid var(--border);
@@ -306,8 +298,7 @@
     box-shadow: 0 10px 24px rgba(30,94,255,0.08);
   }
   .country-card.selected {
-    border-color: var(--blue);
-    background: var(--blue-light);
+    border-color: var(--blue); background: var(--blue-light);
     box-shadow: 0 0 0 3px rgba(30,94,255,0.15);
   }
   .flag { font-size: 30px; line-height: 1; flex-shrink: 0; }
@@ -333,11 +324,105 @@
   }
 
   .empty-msg {
-    grid-column: 1 / -1;
-    text-align: center; padding: 50px 20px;
-    color: var(--gray); font-size: 14px;
+    grid-column: 1 / -1; text-align: center;
+    padding: 50px 20px; color: var(--gray); font-size: 14px;
   }
   .empty-msg .emoji { font-size: 32px; display: block; margin-bottom: 10px; }
+
+  /* ===== RECENT ORDERS ===== */
+  .orders-card {
+    background: white; border: 1.5px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+  }
+  .orders-table {
+    width: 100%; border-collapse: collapse;
+  }
+  .orders-table thead th {
+    text-align: left; padding: 14px 20px;
+    font-size: 11.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--gray); background: var(--gray-light);
+    border-bottom: 1px solid var(--border);
+  }
+  .orders-table tbody td {
+    padding: 16px 20px; font-size: 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .orders-table tbody tr:last-child td { border-bottom: none; }
+  .orders-table tbody tr:hover { background: #fafbff; }
+
+  .cell-product {
+    display: flex; align-items: center; gap: 10px; font-weight: 600;
+  }
+  .mini-icon {
+    width: 30px; height: 30px; border-radius: 8px;
+    display: grid; place-items: center; color: white;
+    font-size: 14px; font-weight: 800; flex-shrink: 0;
+  }
+
+  .num-val {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'Courier New', monospace;
+    font-weight: 700; font-size: 13.5px;
+    color: var(--black);
+  }
+  .code-val {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'Courier New', monospace;
+    font-weight: 700; font-size: 14px;
+    color: var(--blue); background: var(--blue-light);
+    padding: 5px 10px; border-radius: 8px;
+    letter-spacing: 1.5px;
+  }
+
+  .copy-btn {
+    width: 26px; height: 26px;
+    border: none; border-radius: 6px;
+    background: var(--gray-light); color: var(--gray);
+    display: inline-grid; place-items: center;
+    font-size: 12px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { background: var(--blue); color: white; }
+  .copy-btn.copied { background: var(--green); color: white; }
+
+  .waiting {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600; color: var(--yellow);
+  }
+  .waiting .spinner {
+    width: 12px; height: 12px;
+    border: 2px solid var(--yellow); border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .badge {
+    display: inline-block; padding: 4px 10px;
+    border-radius: 999px; font-size: 11px;
+    font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .badge-green  { background: #dcfce7; color: #15803d; }
+  .badge-yellow { background: #fef3c7; color: #b45309; }
+  .badge-red    { background: #fee2e2; color: #b91c1c; }
+  .badge-gray   { background: #f3f4f6; color: #4b5563; }
+
+  .cancel-btn {
+    padding: 5px 10px; margin-left: 6px;
+    border: 1.5px solid #fecaca; border-radius: 7px;
+    background: white; color: var(--red);
+    font-size: 11.5px; font-weight: 700;
+    transition: all 0.15s;
+  }
+  .cancel-btn:hover { background: var(--red); color: white; border-color: var(--red); }
+
+  .empty-orders {
+    padding: 48px 20px; text-align: center;
+    color: var(--gray); font-size: 14px;
+  }
 
   /* ===== BOTTOM BAR ===== */
   .bottom-bar {
@@ -384,7 +469,7 @@
     cursor: not-allowed; transform: none; box-shadow: none;
   }
 
-  /* ===== MOBILE DRAWER (☰) ===== */
+  /* ===== DRAWER ===== */
   .mobile-top {
     display: none; background: white; padding: 14px 20px;
     border-bottom: 1px solid var(--border);
@@ -398,25 +483,20 @@
     transform: translateX(100%);
     transition: transform 0.25s ease;
     box-shadow: -10px 0 40px rgba(0,0,0,0.15);
-    display: flex; flex-direction: column;
-    overflow-y: auto;
+    display: flex; flex-direction: column; overflow-y: auto;
   }
   .drawer.open { transform: translateX(0); }
   .drawer-head {
     padding: 22px 20px; border-bottom: 1.5px solid var(--border);
     display: flex; align-items: center; justify-content: space-between;
   }
-  .drawer-head .logo {
-    padding: 0; border: none; margin: 0; font-size: 18px;
-  }
+  .drawer-head .logo { padding: 0; border: none; margin: 0; font-size: 18px; }
   .drawer-close {
     width: 36px; height: 36px; border-radius: 10px;
     border: 1.5px solid var(--border); background: white;
-    display: grid; place-items: center; font-size: 18px;
-    color: var(--gray);
+    display: grid; place-items: center; font-size: 18px; color: var(--gray);
   }
   .drawer-close:hover { border-color: var(--red); color: var(--red); }
-
   .drawer-user {
     padding: 20px; background: var(--gray-light);
     border-bottom: 1.5px solid var(--border);
@@ -432,7 +512,6 @@
     font-size: 12.5px; color: var(--gray);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-
   .drawer-body { padding: 16px 12px; flex: 1; }
   .drawer-section {
     font-size: 11px; color: var(--gray); font-weight: 700;
@@ -455,14 +534,30 @@
   .drawer-link.wa .ic { background: #dcfce7; color: #15803d; }
   .drawer-link.social .ic { background: #fef3c7; color: #b45309; }
   .drawer-link.logout .ic { background: #fee2e2; color: #b91c1c; }
-  .drawer-link .arrow {
-    margin-left: auto; color: var(--gray); font-size: 14px;
-  }
+  .drawer-link .arrow { margin-left: auto; color: var(--gray); font-size: 14px; }
   .drawer-link .badge-new {
     margin-left: auto; font-size: 10px;
     background: var(--blue); color: white;
     padding: 3px 8px; border-radius: 999px; font-weight: 700;
   }
+
+  /* ===== TOAST ===== */
+  .toast {
+    position: fixed; bottom: 110px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--black); color: white;
+    padding: 12px 22px; border-radius: 12px;
+    font-size: 14px; font-weight: 600;
+    opacity: 0; pointer-events: none;
+    transition: all 0.25s; z-index: 200;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .toast.success { background: var(--green); }
+  .toast.error   { background: var(--red); }
 
   /* ===== RESPONSIVE ===== */
   @media (max-width: 1100px) {
@@ -488,6 +583,8 @@
     .services-grid { grid-template-columns: repeat(2, 1fr); }
     .countries-grid { grid-template-columns: 1fr; }
     .sec-head .search-wrap { max-width: 100%; width: 100%; }
+    .orders-card { overflow-x: auto; }
+    .orders-table { min-width: 700px; }
   }
   .overlay {
     display: none; position: fixed; inset: 0;
@@ -508,7 +605,7 @@
 
 <div class="overlay" id="overlay" onclick="closeAll()"></div>
 
-<!-- ===== MOBILE DRAWER ===== -->
+<!-- ===== DRAWER ===== -->
 <aside class="drawer" id="drawer">
   <div class="drawer-head">
     <div class="logo">
@@ -516,7 +613,6 @@
     </div>
     <button class="drawer-close" onclick="closeAll()">✕</button>
   </div>
-
   <div class="drawer-user">
     <div class="avatar" id="drawerAvatar">--</div>
     <div class="info">
@@ -524,70 +620,43 @@
       <div class="email" id="drawerEmail">...</div>
     </div>
   </div>
-
   <div class="drawer-body">
     <div class="drawer-section">Main</div>
-    <a class="drawer-link" href="dashboard.html">
-      <span class="ic">▦</span> Dashboard <span class="arrow">›</span>
-    </a>
-    <a class="drawer-link" href="orders.html">
-      <span class="ic">🧾</span> My Orders <span class="arrow">›</span>
-    </a>
-    <a class="drawer-link" href="wallet.html">
-      <span class="ic">💳</span> Wallet <span class="arrow">›</span>
-    </a>
-    <a class="drawer-link" href="deposit.html">
-      <span class="ic">↗</span> Deposit <span class="arrow">›</span>
-    </a>
-
+    <a class="drawer-link" href="dashboard.html"><span class="ic">▦</span> Dashboard <span class="arrow">›</span></a>
+    <a class="drawer-link" href="orders.html"><span class="ic">🧾</span> My Orders <span class="arrow">›</span></a>
+    <a class="drawer-link" href="wallet.html"><span class="ic">💳</span> Wallet <span class="arrow">›</span></a>
+    <a class="drawer-link" href="deposit.html"><span class="ic">↗</span> Deposit <span class="arrow">›</span></a>
     <div class="drawer-section">Extras</div>
-    <a class="drawer-link" href="profile.html">
-      <span class="ic">👤</span> My Profile <span class="arrow">›</span>
-    </a>
+    <a class="drawer-link" href="profile.html"><span class="ic">👤</span> My Profile <span class="arrow">›</span></a>
     <a class="drawer-link wa" href="https://whatsapp.com/channel/" target="_blank" rel="noopener">
-      <span class="ic">💬</span> WhatsApp Channel
-      <span class="badge-new">NEW</span>
+      <span class="ic">💬</span> WhatsApp Channel <span class="badge-new">NEW</span>
     </a>
-    <a class="drawer-link social" href="social-logs.html">
-      <span class="ic">🛒</span> Buy Social Logs <span class="arrow">›</span>
-    </a>
-
+    <a class="drawer-link social" href="social-logs.html"><span class="ic">🛒</span> Buy Social Logs <span class="arrow">›</span></a>
     <div class="drawer-section">Account</div>
-    <a class="drawer-link" href="settings.html">
-      <span class="ic">⚙</span> Settings <span class="arrow">›</span>
-    </a>
-    <a class="drawer-link" href="support.html">
-      <span class="ic">?</span> Support <span class="arrow">›</span>
-    </a>
-    <a class="drawer-link logout" id="drawerLogout">
-      <span class="ic">⎋</span> Logout
-    </a>
+    <a class="drawer-link" href="settings.html"><span class="ic">⚙</span> Settings <span class="arrow">›</span></a>
+    <a class="drawer-link" href="support.html"><span class="ic">?</span> Support <span class="arrow">›</span></a>
+    <a class="drawer-link logout" id="drawerLogout"><span class="ic">⎋</span> Logout</a>
   </div>
 </aside>
 
-<!-- ===== DESKTOP SIDEBAR ===== -->
+<!-- ===== SIDEBAR ===== -->
 <aside class="sidebar" id="sidebar">
-  <div class="logo">
-    <div class="logo-mark">Z</div> Zavora <span style="color:var(--blue)">SMS</span>
-  </div>
+  <div class="logo"><div class="logo-mark">Z</div> Zavora <span style="color:var(--blue)">SMS</span></div>
   <div class="nav-section-label">Main</div>
   <a class="side-link active"><span class="ic">▦</span> Dashboard</a>
   <a class="side-link" href="orders.html"><span class="ic">🧾</span> My Orders</a>
   <a class="side-link" href="wallet.html"><span class="ic">💳</span> Wallet</a>
   <a class="side-link" href="deposit.html"><span class="ic">↗</span> Deposit</a>
-
   <div class="nav-section-label" style="margin-top:20px;">Extras</div>
   <a class="side-link" href="profile.html"><span class="ic">👤</span> My Profile</a>
   <a class="side-link" href="https://whatsapp.com/channel/" target="_blank" rel="noopener">
     <span class="ic">💬</span> WhatsApp Channel <span class="badge-new">NEW</span>
   </a>
   <a class="side-link" href="social-logs.html"><span class="ic">🛒</span> Buy Social Logs</a>
-
   <div class="nav-section-label" style="margin-top:20px;">Account</div>
   <a class="side-link" href="settings.html"><span class="ic">⚙</span> Settings</a>
   <a class="side-link" href="support.html"><span class="ic">?</span> Support</a>
   <a class="side-link" id="logoutBtn"><span class="ic">⎋</span> Logout</a>
-
   <div class="sidebar-spacer"></div>
   <div class="user-mini">
     <div class="avatar" id="avatar">--</div>
@@ -600,7 +669,6 @@
 
 <!-- ===== MAIN ===== -->
 <main class="main">
-
   <div class="topbar">
     <h1>Dashboard <span id="welcomeMsg">/ Loading...</span></h1>
     <div class="top-actions">
@@ -611,7 +679,7 @@
 
   <div class="content">
 
-    <!-- ===== WALLET + STATS ===== -->
+    <!-- WALLET + STATS -->
     <div class="top-grid">
       <div class="wallet-card">
         <div class="label">Wallet Balance</div>
@@ -625,7 +693,6 @@
         </div>
       </div>
 
-      <!-- ⭐ SPLIT STAT CARD — Total Orders | Completed -->
       <div class="stat-card">
         <div class="ic-wrap">📊</div>
         <div class="stat-split">
@@ -641,7 +708,6 @@
         </div>
       </div>
 
-      <!-- ⭐ SPLIT STAT CARD — Pending | Failed -->
       <div class="stat-card">
         <div class="ic-wrap">⏱</div>
         <div class="stat-split">
@@ -658,7 +724,7 @@
       </div>
     </div>
 
-    <!-- ===== SERVICES ===== -->
+    <!-- SERVICES -->
     <div class="sec-head">
       <h2>Select a service</h2>
       <div class="search-wrap">
@@ -669,7 +735,7 @@
 
     <div class="services-grid" id="servicesGrid"></div>
 
-    <!-- ===== COUNTRIES ===== -->
+    <!-- COUNTRIES -->
     <div class="sec-head">
       <h2>Select your country</h2>
       <div class="search-wrap">
@@ -686,10 +752,34 @@
       </div>
     </div>
 
+    <!-- RECENT ORDERS -->
+    <div class="sec-head" style="margin-top:34px;">
+      <h2>Recent Orders</h2>
+      <a href="orders.html" class="view-all">View all →</a>
+    </div>
+
+    <div class="orders-card">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Country</th>
+            <th>Number</th>
+            <th>SMS Code</th>
+            <th>Price</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="ordersBody">
+          <tr><td colspan="6" class="empty-orders">No orders yet. Buy your first number!</td></tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
 </main>
 
-<!-- ===== BOTTOM BAR ===== -->
+<!-- BOTTOM BAR -->
 <div class="bottom-bar">
   <div class="toggle-wrap">
     <span>Double SMS</span>
@@ -698,18 +788,13 @@
   <button class="buy-main" id="buyBtn" disabled>Select service & country</button>
 </div>
 
+<!-- TOAST -->
+<div class="toast" id="toast">Copied!</div>
+
 <script>
   function openDrawer() {
     document.getElementById('drawer').classList.add('open');
     document.getElementById('overlay').classList.add('show');
-  }
-  function closeDrawer() {
-    document.getElementById('drawer').classList.remove('open');
-    document.getElementById('overlay').classList.remove('show');
-  }
-  function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
-    document.getElementById('overlay').classList.toggle('show');
   }
   function closeAll() {
     document.getElementById('drawer').classList.remove('open');
@@ -718,7 +803,6 @@
   }
   window.openDrawer = openDrawer;
   window.closeAll = closeAll;
-  window.toggleSidebar = toggleSidebar;
 
   const dbl = document.getElementById('doubleSms');
   let doubleSms = false;
@@ -727,16 +811,28 @@
     dbl.classList.toggle('on', doubleSms);
     if (window.updateBuyButton) window.updateBuyButton();
   });
+
+  // Global toast helper
+  window.showToast = function (msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + type;
+    clearTimeout(window.__toastTimer);
+    window.__toastTimer = setTimeout(() => {
+      t.className = 'toast ' + type;
+    }, 2000);
+  };
 </script>
 
 <script type="module">
   import {
     auth, db, onAuthStateChanged, signOut,
-    doc, getDoc, collection, addDoc, query, where, getDocs, serverTimestamp
+    doc, getDoc, updateDoc, collection, addDoc,
+    query, where, getDocs, serverTimestamp, increment
   } from './firebase-config.js';
 
   /* ============================================================
-     DATA — edit prices/stock here anytime
+     DATA
   ============================================================ */
   const SERVICES = [
     { id: 'whatsapp',  name: 'WhatsApp',    icon: '✆', cls: 'ic-whatsapp',  stock: 113 },
@@ -759,28 +855,30 @@
   ];
 
   const COUNTRIES = [
-    { id: 'us', name: 'United States',  flag: '🇺🇸', price: 4350,  stock: 637216 },
-    { id: 'uk', name: 'United Kingdom', flag: '🇬🇧', price: 3700,  stock: 280875 },
-    { id: 'ca', name: 'Canada',         flag: '🇨🇦', price: 3000,  stock: 1249262 },
-    { id: 'ng', name: 'Nigeria',        flag: '🇳🇬', price: 1500,  stock: 172400 },
-    { id: 'in', name: 'India',          flag: '🇮🇳', price: 6100,  stock: 622489 },
-    { id: 'ph', name: 'Philippines',    flag: '🇵🇭', price: 750,   stock: 1563292 },
-    { id: 'pl', name: 'Poland',         flag: '🇵🇱', price: 2400,  stock: 89000 },
-    { id: 'cn', name: 'China',          flag: '🇨🇳', price: 2900,  stock: 215000 },
-    { id: 'sa', name: 'Saudi Arabia',   flag: '🇸🇦', price: 4200,  stock: 78000 },
-    { id: 'za', name: 'South Africa',   flag: '🇿🇦', price: 800,   stock: 172400 },
-    { id: 'hk', name: 'Hong Kong',      flag: '🇭🇰', price: 12500, stock: 996541 },
-    { id: 'mx', name: 'Mexico',         flag: '🇲🇽', price: 5400,  stock: 3015414 },
-    { id: 'de', name: 'Germany',        flag: '🇩🇪', price: 3200,  stock: 145000 },
-    { id: 'fr', name: 'France',         flag: '🇫🇷', price: 3100,  stock: 132000 },
-    { id: 'br', name: 'Brazil',         flag: '🇧🇷', price: 1900,  stock: 420000 },
+    { id: 'us', name: 'United States',  flag: '🇺🇸', price: 4350,  stock: 637216, dial: '+1'  },
+    { id: 'uk', name: 'United Kingdom', flag: '🇬🇧', price: 3700,  stock: 280875, dial: '+44' },
+    { id: 'ca', name: 'Canada',         flag: '🇨🇦', price: 3000,  stock: 1249262, dial: '+1' },
+    { id: 'ng', name: 'Nigeria',        flag: '🇳🇬', price: 1500,  stock: 172400, dial: '+234' },
+    { id: 'in', name: 'India',          flag: '🇮🇳', price: 6100,  stock: 622489, dial: '+91' },
+    { id: 'ph', name: 'Philippines',    flag: '🇵🇭', price: 750,   stock: 1563292, dial: '+63' },
+    { id: 'pl', name: 'Poland',         flag: '🇵🇱', price: 2400,  stock: 89000,  dial: '+48' },
+    { id: 'cn', name: 'China',          flag: '🇨🇳', price: 2900,  stock: 215000, dial: '+86' },
+    { id: 'sa', name: 'Saudi Arabia',   flag: '🇸🇦', price: 4200,  stock: 78000,  dial: '+966' },
+    { id: 'za', name: 'South Africa',   flag: '🇿🇦', price: 800,   stock: 172400, dial: '+27' },
+    { id: 'hk', name: 'Hong Kong',      flag: '🇭🇰', price: 12500, stock: 996541, dial: '+852' },
+    { id: 'mx', name: 'Mexico',         flag: '🇲🇽', price: 5400,  stock: 3015414, dial: '+52' },
+    { id: 'de', name: 'Germany',        flag: '🇩🇪', price: 3200,  stock: 145000, dial: '+49' },
+    { id: 'fr', name: 'France',         flag: '🇫🇷', price: 3100,  stock: 132000, dial: '+33' },
+    { id: 'br', name: 'Brazil',         flag: '🇧🇷', price: 1900,  stock: 420000, dial: '+55' },
     { id: 'more', name: '+ 171 more',   flag: '🌍', price: 0,     stock: 0 }
   ];
 
   let currentUser = null;
+  let currentUserData = null;
   let selectedService = null;
   let selectedCountry = null;
   let sortByPrice = true;
+  let liveUnsubscribers = [];
 
   /* ============================================================
      RENDER SERVICES
@@ -789,7 +887,6 @@
     const grid = document.getElementById('servicesGrid');
     const f = filter.toLowerCase();
     const list = SERVICES.filter(s => s.name.toLowerCase().includes(f) || s.id.includes(f));
-
     grid.innerHTML = '';
     list.forEach(s => {
       const tile = document.createElement('div');
@@ -813,6 +910,7 @@
     renderServices(document.getElementById('serviceSearch').value);
     renderCountries();
     updateBuyButton();
+    renderOrders();
   }
 
   /* ============================================================
@@ -838,14 +936,10 @@
     list.forEach(c => {
       const card = document.createElement('div');
       card.className = 'country-card' + (selectedCountry?.id === c.id ? ' selected' : '');
-
       if (c.id === 'more') {
         card.innerHTML = `
           <div class="flag">${c.flag}</div>
-          <div class="country-info">
-            <h4>${c.name}</h4>
-            <div class="stock">Browse all</div>
-          </div>
+          <div class="country-info"><h4>${c.name}</h4><div class="stock">Browse all</div></div>
         `;
         card.onclick = () => alert('Full country list coming soon!');
       } else {
@@ -870,6 +964,7 @@
     selectedCountry = c;
     renderCountries(document.getElementById('countrySearch').value);
     updateBuyButton();
+    renderOrders();
   }
 
   /* ============================================================
@@ -896,18 +991,24 @@
 
     try {
       const total = doubleSms ? selectedCountry.price * 2 : selectedCountry.price;
-      const userSnap = await getDoc(doc(db, 'users', currentUser.uid));
-      const userData = userSnap.data() || {};
-      const balance = userData.walletBalance || 0;
+
+      // Check wallet
+      const snap = await getDoc(doc(db, 'users', currentUser.uid));
+      const data = snap.data() || {};
+      const balance = data.walletBalance || 0;
 
       if (balance < total) {
-        alert(`Insufficient balance.\n\nYou need: ₦${total.toLocaleString()}\nYour wallet: ₦${balance.toLocaleString()}\n\nPlease deposit first.`);
+        showToast(`Insufficient balance. Need ₦${total.toLocaleString()}`, 'error');
         btn.disabled = false;
         updateBuyButton();
         return;
       }
 
-      await addDoc(collection(db, 'orders'), {
+      // Generate demo number
+      const num = generateDemoNumber(selectedCountry.dial);
+
+      // Create order — pending, wallet NOT deducted yet
+      const orderRef = await addDoc(collection(db, 'orders'), {
         uid: currentUser.uid,
         email: currentUser.email,
         product: selectedService.name,
@@ -918,19 +1019,223 @@
         price: total,
         doubleSms: doubleSms,
         status: 'pending',
-        number: null,
+        number: num,
         smsCode: null,
         createdAt: serverTimestamp()
       });
 
-      alert(`✅ Order placed!\n\n${selectedService.name} — ${selectedCountry.name}\nAmount: ₦${total.toLocaleString()}\n\nWe're fetching your number...`);
-      window.location.href = 'orders.html';
+      showToast('Order placed! Waiting for SMS...', 'success');
+
+      // Start demo SMS simulation
+      simulateSmsArrival(orderRef.id, total);
+
+      // Refresh orders view
+      renderOrders();
+
+      btn.disabled = false;
+      updateBuyButton();
 
     } catch (err) {
       console.error(err);
-      alert('Could not place order. Please try again.');
+      showToast('Could not place order. Try again.', 'error');
       btn.disabled = false;
       updateBuyButton();
+    }
+  });
+
+  /* ============================================================
+     DEMO: Generate number + SMS
+  ============================================================ */
+  function generateDemoNumber(dial) {
+    const d = dial || '+1';
+    const a = Math.floor(100 + Math.random() * 900);
+    const b = Math.floor(100 + Math.random() * 900);
+    const c = Math.floor(1000 + Math.random() * 9000);
+    return `${d} ${a} ${b} ${c}`;
+  }
+
+  function generateDemoCode() {
+    return String(Math.floor(100000 + Math.random() * 900000));
+  }
+
+  // Simulates SMS arriving ~10 seconds after purchase
+  async function simulateSmsArrival(orderId, amount) {
+    setTimeout(async () => {
+      try {
+        // 1. Update order with code + completed status
+        await updateDoc(doc(db, 'orders', orderId), {
+          smsCode: generateDemoCode(),
+          status: 'completed',
+          completedAt: serverTimestamp()
+        });
+
+        // 2. NOW deduct wallet
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+          walletBalance: increment(-amount),
+          totalOrders: increment(1),
+          completedOrders: increment(1)
+        });
+
+        // 3. Refresh UI
+        await refreshUserData();
+        renderOrders();
+        showToast('✅ SMS received! Order completed.', 'success');
+
+      } catch (err) {
+        console.error('SMS simulation error:', err);
+      }
+    }, 10000); // 10 seconds
+  }
+
+  /* ============================================================
+     RENDER ORDERS (filtered by selected service + country)
+  ============================================================ */
+  async function renderOrders() {
+    const tbody = document.getElementById('ordersBody');
+    if (!currentUser) return;
+
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-orders">Loading...</td></tr>';
+
+    try {
+      const snap = await getDocs(query(
+        collection(db, 'orders'),
+        where('uid', '==', currentUser.uid)
+      ));
+
+      let orders = [];
+      snap.forEach(d => orders.push({ id: d.id, ...d.data() }));
+
+      // Sort newest first
+      orders.sort((a, b) => {
+        const ta = a.createdAt?.seconds || 0;
+        const tb = b.createdAt?.seconds || 0;
+        return tb - ta;
+      });
+
+      // Filter by selected service + country
+      if (selectedService && selectedCountry) {
+        orders = orders.filter(o =>
+          o.productId === selectedService.id && o.countryId === selectedCountry.id
+        );
+      } else if (selectedService) {
+        orders = orders.filter(o => o.productId === selectedService.id);
+      } else {
+        orders = orders.slice(0, 5); // Top 5 recent
+      }
+
+      if (orders.length === 0) {
+        const msg = (selectedService && selectedCountry)
+          ? `No orders yet for ${selectedService.name} — ${selectedCountry.name}. Buy your first number!`
+          : `No orders yet. Buy your first number!`;
+        tbody.innerHTML = `<tr><td colspan="6" class="empty-orders">${msg}</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = '';
+      orders.forEach(o => tbody.appendChild(buildOrderRow(o)));
+
+    } catch (err) {
+      console.error('Load orders error:', err);
+      tbody.innerHTML = '<tr><td colspan="6" class="empty-orders">Could not load orders.</td></tr>';
+    }
+  }
+
+  function buildOrderRow(o) {
+    const svc = SERVICES.find(s => s.id === o.productId) || { icon: '?', cls: 'ic-more' };
+
+    const tr = document.createElement('tr');
+
+    // Status badge
+    let statusBadge = '';
+    if (o.status === 'completed') statusBadge = '<span class="badge badge-green">Completed</span>';
+    else if (o.status === 'pending') statusBadge = '<span class="badge badge-yellow">Pending</span>';
+    else if (o.status === 'cancelled') statusBadge = '<span class="badge badge-gray">Cancelled</span>';
+    else statusBadge = '<span class="badge badge-red">' + (o.status || 'Failed') + '</span>';
+
+    // Number cell with copy + cancel
+    let numberCell = '—';
+    if (o.number) {
+      numberCell = `
+        <span class="num-val">${o.number}
+          <button class="copy-btn" data-copy="${o.number}" title="Copy number">📋</button>
+        </span>
+      `;
+      if (o.status === 'pending') {
+        numberCell += ` <button class="cancel-btn" data-cancel="${o.id}">✕ Cancel</button>`;
+      }
+    }
+
+    // SMS Code cell
+    let codeCell = '';
+    if (o.smsCode) {
+      codeCell = `
+        <span class="code-val">${o.smsCode}
+          <button class="copy-btn" data-copy="${o.smsCode}" title="Copy code">📋</button>
+        </span>
+      `;
+    } else if (o.status === 'pending') {
+      codeCell = `<span class="waiting"><span class="spinner"></span> Waiting...</span>`;
+    } else {
+      codeCell = '—';
+    }
+
+    tr.innerHTML = `
+      <td>
+        <div class="cell-product">
+          <div class="mini-icon ${svc.cls}">${svc.icon}</div>
+          ${o.product || '—'}
+        </div>
+      </td>
+      <td>${o.flag || ''} ${o.country || '—'}</td>
+      <td>${numberCell}</td>
+      <td>${codeCell}</td>
+      <td>₦${Number(o.price || 0).toLocaleString()}</td>
+      <td>${statusBadge}</td>
+    `;
+
+    return tr;
+  }
+
+  /* ============================================================
+     COPY + CANCEL (event delegation)
+  ============================================================ */
+  document.getElementById('ordersBody').addEventListener('click', async (e) => {
+    // Copy button
+    const copyBtn = e.target.closest('.copy-btn');
+    if (copyBtn) {
+      const val = copyBtn.dataset.copy;
+      try {
+        await navigator.clipboard.writeText(val);
+        copyBtn.textContent = '✓';
+        copyBtn.classList.add('copied');
+        showToast('Copied to clipboard!', 'success');
+        setTimeout(() => {
+          copyBtn.textContent = '📋';
+          copyBtn.classList.remove('copied');
+        }, 1500);
+      } catch (err) {
+        showToast('Copy failed', 'error');
+      }
+      return;
+    }
+
+    // Cancel button
+    const cancelBtn = e.target.closest('.cancel-btn');
+    if (cancelBtn) {
+      const orderId = cancelBtn.dataset.cancel;
+      if (!confirm('Cancel this order?\n\nYou will NOT be charged.')) return;
+
+      try {
+        await updateDoc(doc(db, 'orders', orderId), {
+          status: 'cancelled',
+          cancelledAt: serverTimestamp()
+        });
+        showToast('Order cancelled. No charge.', 'success');
+        renderOrders();
+      } catch (err) {
+        console.error(err);
+        showToast('Could not cancel order.', 'error');
+      }
     }
   });
 
@@ -950,19 +1255,20 @@
   /* ============================================================
      AUTH
   ============================================================ */
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) { window.location.href = 'login.html'; return; }
-    currentUser = user;
+  async function refreshUserData() {
+    if (!currentUser) return;
+    const snap = await getDoc(doc(db, 'users', currentUser.uid));
+    if (!snap.exists()) return;
+    currentUserData = snap.data();
+    renderUser(currentUserData);
+    loadStats(currentUser.uid, currentUserData);
+  }
 
-    const snap = await getDoc(doc(db, 'users', user.uid));
-    if (!snap.exists()) { window.location.href = 'register.html'; return; }
-
-    const data = snap.data();
+  function renderUser(data) {
     const first = data.firstName || 'User';
     const last  = data.lastName  || '';
     const initials = (first[0] + (last[0] || '')).toUpperCase();
 
-    // Fill both desktop sidebar + drawer
     document.getElementById('avatar').textContent       = initials;
     document.getElementById('drawerAvatar').textContent = initials;
     document.getElementById('userName').textContent     = `${first} ${last}`.trim();
@@ -975,36 +1281,44 @@
       minimumFractionDigits: 2, maximumFractionDigits: 2
     });
     document.getElementById('walletBalance').textContent = `₦${bal}`;
+  }
 
-    // Load real order stats
-    loadStats(user.uid, data);
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href = 'login.html'; return; }
+    currentUser = user;
+
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (!snap.exists()) { window.location.href = 'register.html'; return; }
+
+    currentUserData = snap.data();
+    renderUser(currentUserData);
+    loadStats(user.uid, currentUserData);
+    renderOrders();
+
+    // Auto-refresh orders every 5 seconds (for pending → completed)
+    setInterval(renderOrders, 5000);
   });
 
   /* ============================================================
-     LOAD STATS (real from Firestore)
+     STATS
   ============================================================ */
   async function loadStats(uid, userData) {
-    // Prefer live count from orders collection
     try {
       const snap = await getDocs(query(collection(db, 'orders'), where('uid', '==', uid)));
-
       let total = 0, completed = 0, pending = 0, failed = 0;
       snap.forEach(d => {
         total++;
         const s = (d.data().status || 'pending').toLowerCase();
-        if (s === 'completed' || s === 'success') completed++;
-        else if (s === 'pending')  pending++;
+        if (s === 'completed') completed++;
+        else if (s === 'pending') pending++;
         else if (s === 'failed' || s === 'expired') failed++;
       });
-
       document.getElementById('totalOrders').textContent     = total;
       document.getElementById('completedOrders').textContent = completed;
       document.getElementById('pendingOrders').textContent   = pending;
       document.getElementById('failedOrders').textContent    = failed;
-
     } catch (err) {
-      console.error('Stats error:', err);
-      document.getElementById('totalOrders').textContent     = userData.totalOrders     || 0;
+      document.getElementById('totalOrders').textContent     = userData.totalOrders || 0;
       document.getElementById('completedOrders').textContent = userData.completedOrders || 0;
       document.getElementById('pendingOrders').textContent   = 0;
       document.getElementById('failedOrders').textContent    = 0;
@@ -1012,7 +1326,7 @@
   }
 
   /* ============================================================
-     LOGOUT (desktop + drawer)
+     LOGOUT
   ============================================================ */
   async function doLogout() {
     await signOut(auth);
