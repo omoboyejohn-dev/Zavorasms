@@ -63,6 +63,7 @@
   .usa-info .price { font-size: 15px; font-weight: 800; color: var(--blue); letter-spacing: -0.3px; }
   .usa-buy { padding: 10px 20px; border-radius: 10px; background: var(--blue); color: white; font-weight: 700; font-size: 13.5px; border: none; transition: all 0.15s; }
   .usa-buy:hover { background: var(--blue-dark); transform: translateY(-1px); }
+  .usa-buy:disabled { background: var(--border); color: var(--gray); cursor: not-allowed; transform: none; }
 
   .ic-whatsapp  { background: #25D366; }
   .ic-telegram  { background: #229ED9; }
@@ -108,6 +109,12 @@
   .drawer-link .badge-admin { margin-left: auto; font-size: 10px; background: var(--purple); color: white; padding: 3px 8px; border-radius: 999px; font-weight: 700; }
   .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 55; }
   .overlay.show { display: block; }
+
+  .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--black); color: white; padding: 14px 26px; border-radius: 12px; font-size: 14px; font-weight: 700; opacity: 0; pointer-events: none; transition: all 0.25s; z-index: 200; box-shadow: 0 12px 32px rgba(0,0,0,0.25); white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.success { background: var(--green); }
+  .toast.error { background: var(--red); }
+
   @media (max-width: 900px) {
     :root { --sidebar-w: 0px; }
     .sidebar { transform: translateX(-100%); transition: transform 0.25s; width: 250px; }
@@ -193,7 +200,7 @@
 
 <main class="main">
   <div class="topbar">
-    <h1>Buy USA Number <span>/ American phone numbers</span></h1>
+    <h1>Buy USA Number <span>/ Real US numbers (Non-VoIP)</span></h1>
     <button class="icon-btn">🔔</button>
   </div>
 
@@ -202,7 +209,7 @@
     <div class="hero">
       <span class="flag">🇺🇸</span>
       <h2>Buy USA Number</h2>
-      <p>American virtual phone numbers for SMS verification. Select a service below to start.</p>
+      <p>Real US phone numbers for SMS verification. High success rate for WhatsApp, Google, and banking apps.</p>
     </div>
 
     <div class="sec-head">
@@ -222,28 +229,73 @@
   </div>
 </main>
 
+<div class="toast" id="toast"></div>
+
 <script>
   function openDrawer() { document.getElementById('drawer').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
   function closeAll() { document.getElementById('drawer').classList.remove('open'); document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
   window.openDrawer = openDrawer;
   window.closeAll = closeAll;
+
+  window.showToast = function (msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + type;
+    clearTimeout(window.__toastTimer);
+    window.__toastTimer = setTimeout(() => { t.className = 'toast ' + type; }, 3000);
+  };
 </script>
 
 <script type="module">
-  import { auth, db, onAuthStateChanged, signOut, doc, getDoc, collection, getDocs } from './firebase-config.js';
+  import { auth, db, onAuthStateChanged, signOut, doc, getDoc, collection, addDoc, serverTimestamp } from './firebase-config.js';
 
   let ALL_PRODUCTS = [];
+  let currentUser = null;
 
-  // ⭐ LOAD USA PRODUCTS FROM FIRESTORE
-  async function loadUsaProducts() {
+  const ICON_MAP = {
+    whatsapp:  { icon: '✆', cls: 'ic-whatsapp' },
+    telegram:  { icon: '✈', cls: 'ic-telegram' },
+    facebook:  { icon: 'f', cls: 'ic-facebook' },
+    instagram: { icon: '◉', cls: 'ic-instagram' },
+    google:    { icon: 'G', cls: 'ic-google' },
+    tiktok:    { icon: '♪', cls: 'ic-tiktok' },
+    twitter:   { icon: '𝕏', cls: 'ic-twitter' },
+    apple:     { icon: '',  cls: 'ic-apple' },
+    snapchat:  { icon: '👻', cls: 'ic-snapchat' },
+    discord:   { icon: '◈', cls: 'ic-discord' },
+    signal:    { icon: '◐', cls: 'ic-signal' }
+  };
+
+  async function loadServices() {
+    const grid = document.getElementById('usaGrid');
     try {
-      const snap = await getDocs(collection(db, 'config_usa_products'));
-      ALL_PRODUCTS = [];
-      snap.forEach(d => ALL_PRODUCTS.push({ id: d.id, ...d.data() }));
-      ALL_PRODUCTS.sort((a, b) => (a.order || 0) - (b.order || 0));
+      const res = await fetch('/api/tv-services');
+      const data = await res.json();
+
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to load');
+      }
+
+      // Filter to only services we have icons for
+      ALL_PRODUCTS = (data.services || [])
+        .filter(s => ICON_MAP[s.id])
+        .map(s => ({
+          id: s.id,
+          name: s.name,
+          price: s.price,
+          icon: ICON_MAP[s.id].icon,
+          cls: ICON_MAP[s.id].cls
+        }))
+        .sort((a, b) => (a.price || 0) - (b.price || 0));
+
+      renderProducts();
+
     } catch (err) {
-      console.error('Load USA products error:', err);
-      ALL_PRODUCTS = [];
+      console.error('Load services error:', err);
+      grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px 20px; color:var(--gray); font-size:14px;">
+        <div style="font-size:32px; margin-bottom:10px;">⚠️</div>
+        Could not load USA products. Please try again later.
+      </div>`;
     }
   }
 
@@ -257,7 +309,7 @@
     if (list.length === 0) {
       grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px 20px; color:var(--gray); font-size:14px;">
         <div style="font-size:32px; margin-bottom:10px;">🇺🇸</div>
-        ${f ? `No products match "${filter}"` : 'No USA products available yet.'}
+        ${f ? `No products match "${filter}"` : 'No USA products available.'}
       </div>`;
       return;
     }
@@ -267,21 +319,87 @@
       const card = document.createElement('div');
       card.className = 'usa-card';
       card.innerHTML = `
-        <div class="usa-icon ${p.cls || 'ic-more'}">${p.icon || '?'}</div>
+        <div class="usa-icon ${p.cls}">${p.icon}</div>
         <div class="usa-info">
           <h4>${p.name}</h4>
-          <div class="price">₦${(p.price || 0).toLocaleString()}</div>
+          <div class="price">$${(p.price || 0.25).toFixed(2)}</div>
         </div>
-        <button class="usa-buy">Buy</button>
+        <button class="usa-buy" data-service="${p.id}">Buy</button>
       `;
-      card.querySelector('.usa-buy').onclick = () => buyProduct(p);
+      card.querySelector('.usa-buy').onclick = () => buyProduct(p, card);
       grid.appendChild(card);
     });
   }
 
-  function buyProduct(p) {
-    // Redirect with provider=usa so dashboard uses override price
-    window.location.href = `dashboard.html?product=${p.id}&country=us&price=${p.price}&provider=usa`;
+  async function buyProduct(p, card) {
+    const btn = card.querySelector('.usa-buy');
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Buying...';
+
+    try {
+      // Check balance first
+      const userSnap = await getDoc(doc(db, 'users', currentUser.uid));
+      const userData = userSnap.data() || {};
+      const balance = userData.walletBalance || 0;
+
+      // Price in ₦ (we'll convert from USD later — for now, use a fixed rate)
+      const priceNGN = Math.round((p.price || 0.25) * 1600);
+
+      if (balance < priceNGN) {
+        showToast(`⚠️ Insufficient balance. Need ₦${priceNGN.toLocaleString()}`, 'error');
+        btn.disabled = false;
+        btn.textContent = originalText;
+        return;
+      }
+
+      // Call TextVerified API
+      const res = await fetch('/api/tv-buy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ service: p.id, capability: 'sms' })
+      });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to buy');
+      }
+
+      // Save order to Firestore
+      const orderRef = await addDoc(collection(db, 'orders'), {
+        uid: currentUser.uid,
+        email: currentUser.email,
+        product: p.name,
+        productId: p.id,
+        country: 'United States',
+        countryId: 'us',
+        flag: '🇺🇸',
+        price: priceNGN,
+        provider: 'usa',
+        status: 'pending',
+        number: data.number,
+        smsCode: null,
+        verificationId: data.verificationId,
+        createdAt: serverTimestamp()
+      });
+
+      // Store verification ID for polling
+      sessionStorage.setItem('tv_verification_' + orderRef.id, data.verificationId);
+
+      showToast(`✅ Number bought: ${data.number}`, 'success');
+
+      // Redirect to dashboard
+      setTimeout(() => {
+        window.location.href = 'dashboard.html?tv_order=' + orderRef.id;
+      }, 1500);
+
+    } catch (err) {
+      console.error('Buy error:', err);
+      showToast('⚠️ Could not buy number. Try again.', 'error');
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
   }
 
   document.getElementById('searchInput').addEventListener('input', (e) => {
@@ -290,6 +408,8 @@
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) { window.location.href = 'login.html'; return; }
+    currentUser = user;
+
     const snap = await getDoc(doc(db, 'users', user.uid));
     if (!snap.exists()) return;
     const data = snap.data();
@@ -309,9 +429,7 @@
       document.getElementById('drawerAdminLink').style.display = 'flex';
     }
 
-    // Load USA products from Firestore
-    await loadUsaProducts();
-    renderProducts();
+    await loadServices();
   });
 
   document.getElementById('logoutBtn').addEventListener('click', async () => { await signOut(auth); window.location.href = 'login.html'; });
@@ -319,4 +437,4 @@
 </script>
 
 </body>
-      </html>
+</html>
