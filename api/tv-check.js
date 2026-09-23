@@ -17,23 +17,32 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'verificationId is required' });
   }
 
+  if (!API_USERNAME || !API_KEY) {
+    return res.status(500).json({ error: 'TextVerified credentials not configured' });
+  }
+
   try {
-    // Step 1: Generate bearer token
-    const tokenRes = await fetch('https://www.textverified.com/api/v2/auth/token', {
+    // Step 1: Get bearer token
+    const tokenRes = await fetch('https://www.textverified.com/api/pub/v2/auth', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username: API_USERNAME,
-        api_key: API_KEY
-      })
+      headers: {
+        'X-API-KEY': API_KEY,
+        'X-API-USERNAME': API_USERNAME,
+        'Accept': 'application/json'
+      }
     });
 
-    const tokenData = await tokenRes.json();
-    const bearerToken = tokenData.token || tokenData.access_token;
+    if (!tokenRes.ok) {
+      const errText = await tokenRes.text();
+      return res.status(500).json({ error: 'Failed to authenticate', details: errText.substring(0, 300) });
+    }
 
-    // Step 2: Check for incoming SMS
+    const tokenData = await tokenRes.json();
+    const bearerToken = tokenData.token;
+
+    // Step 2: Check SMS
     const checkRes = await fetch(
-      `https://www.textverified.com/api/v2/verifications/${verificationId}/sms`,
+      `https://www.textverified.com/api/pub/v2/verifications/${verificationId}/sms`,
       {
         headers: {
           'Authorization': `Bearer ${bearerToken}`,
@@ -43,21 +52,22 @@ export default async function handler(req, res) {
     );
 
     if (!checkRes.ok) {
-      return res.status(500).json({ error: 'Failed to check SMS' });
+      const errText = await checkRes.text();
+      console.error('Check error:', checkRes.status, errText);
+      return res.status(500).json({ error: 'Failed to check SMS', details: errText.substring(0, 300) });
     }
 
     const checkData = await checkRes.json();
-    const messages = checkData.messages || [];
+    const messages = checkData.messages || checkData.sms || [];
 
     if (messages.length > 0) {
-      // SMS arrived!
       return res.status(200).json({
         success: true,
         received: true,
         messages: messages.map(m => ({
-          content: m.sms_content || m.content,
+          content: m.sms_content || m.content || m.message,
           from: m.from_value || m.from,
-          receivedAt: m.received_at
+          receivedAt: m.received_at || m.created_at
         }))
       });
     }
@@ -70,6 +80,6 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('tv-check error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error', message: error.message });
   }
 }
