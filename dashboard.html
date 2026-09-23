@@ -622,7 +622,6 @@
     opacity: 0; pointer-events: none;
     transition: all 0.25s; z-index: 200;
     box-shadow: 0 12px 32px rgba(0,0,0,0.25);
-    display: flex; align-items: center; gap: 8px;
     white-space: nowrap;
   }
   .toast.show {
@@ -693,10 +692,12 @@
   <div class="drawer-body">
     <a class="drawer-link" href="dashboard.html"><span class="ic">▦</span> Dashboard</a>
     <a class="drawer-link" href="profile.html"><span class="ic">👤</span> Profile</a>
+    <a class="drawer-link" href="usa-numbers.html"><span class="ic">🇺🇸</span> Buy USA Number <span class="badge-new">NEW</span></a>
+    <a class="drawer-link" href="dashboard.html"><span class="ic">🌍</span> Buy All Countries</a>
     <a class="drawer-link" href="deposit.html"><span class="ic">↗</span> Deposit</a>
     <a class="drawer-link" href="payment-history.html"><span class="ic">📜</span> Payment History</a>
     <a class="drawer-link" href="orders.html"><span class="ic">🧾</span> My Orders</a>
-    <a class="drawer-link" href="wallet.html"><span class="ic">💳</span> Wallet</a>
+    <a class="drawer-link" href="help.html"><span class="ic">💡</span> Help</a>
     <a class="drawer-link social" href="social-logs.html"><span class="ic">🛒</span> Buy Social Logs</a>
     <a class="drawer-link wa" href="whatsapp-channel.html"><span class="ic">💬</span> WhatsApp Channel <span class="badge-new">NEW</span></a>
     <a class="drawer-link tg" href="telegram-channel.html"><span class="ic">✈</span> Telegram Channel <span class="badge-new">NEW</span></a>
@@ -713,10 +714,12 @@
 
   <a class="side-link active" href="dashboard.html"><span class="ic">▦</span> Dashboard</a>
   <a class="side-link" href="profile.html"><span class="ic">👤</span> Profile</a>
+  <a class="side-link" href="usa-numbers.html"><span class="ic">🇺🇸</span> Buy USA Number <span class="badge-new">NEW</span></a>
+  <a class="side-link" href="dashboard.html"><span class="ic">🌍</span> Buy All Countries</a>
   <a class="side-link" href="deposit.html"><span class="ic">↗</span> Deposit</a>
   <a class="side-link" href="payment-history.html"><span class="ic">📜</span> Payment History</a>
   <a class="side-link" href="orders.html"><span class="ic">🧾</span> My Orders</a>
-  <a class="side-link" href="wallet.html"><span class="ic">💳</span> Wallet</a>
+  <a class="side-link" href="help.html"><span class="ic">💡</span> Help</a>
   <a class="side-link" href="social-logs.html"><span class="ic">🛒</span> Buy Social Logs</a>
   <a class="side-link" href="whatsapp-channel.html"><span class="ic">💬</span> WhatsApp Channel <span class="badge-new">NEW</span></a>
   <a class="side-link" href="telegram-channel.html"><span class="ic">✈</span> Telegram Channel <span class="badge-new">NEW</span></a>
@@ -872,7 +875,6 @@
     if (window.updateBuyButton) window.updateBuyButton();
   });
 
-  // ✅ UPDATED: toast accepts HTML for icon + message
   window.showToast = function (msg, type = 'success') {
     const t = document.getElementById('toast');
     t.innerHTML = msg;
@@ -883,7 +885,6 @@
     }, 2200);
   };
 
-  /* SERVICES MODAL */
   window.openServicesModal = function() {
     document.getElementById('servicesModal').classList.add('show');
     document.body.style.overflow = 'hidden';
@@ -897,7 +898,6 @@
     document.getElementById('servicesModalSearch').value = '';
   };
 
-  /* COUNTRIES MODAL */
   window.openCountriesModal = function() {
     document.getElementById('countriesModal').classList.add('show');
     document.body.style.overflow = 'hidden';
@@ -1318,7 +1318,6 @@
     else if (o.status === 'cancelled') statusBadge = '<span class="badge badge-gray">Cancelled</span>';
     else statusBadge = '<span class="badge badge-red">' + (o.status || 'Failed') + '</span>';
 
-    // ✅ Number cell — has data-copy-type="number"
     let numberCell = '—';
     if (o.number) {
       numberCell = `
@@ -1331,7 +1330,6 @@
       }
     }
 
-    // ✅ Code cell — has data-copy-type="code"
     let codeCell = '';
     if (o.smsCode) {
       codeCell = `
@@ -1361,7 +1359,7 @@
     return tr;
   }
 
-  /* COPY + CANCEL — now with specific messages */
+  /* COPY + CANCEL */
   document.getElementById('ordersBody').addEventListener('click', async (e) => {
     const copyBtn = e.target.closest('.copy-btn');
     if (copyBtn) {
@@ -1372,11 +1370,10 @@
         copyBtn.textContent = '✓';
         copyBtn.classList.add('copied');
 
-        // ✅ SPECIFIC message per type
         const messages = {
           number: '📞 Purchased number copied ✅',
           code:   '🔑 SMS code copied ✅',
-          text:   '✅ Copied to clipboard'
+          text:   '✅ Copied'
         };
         showToast(messages[type] || messages.text, 'success');
 
@@ -1468,6 +1465,34 @@
     renderCountries();
     renderOrders();
     updateBuyButton();
+
+    /* ✅ URL PARAM SUPPORT — auto-select service/country */
+    const params = new URLSearchParams(window.location.search);
+    const urlProduct = params.get('product');
+    const urlCountry = params.get('country');
+
+    if (urlProduct) {
+      const svc = ALL_SERVICES.find(s => s.id === urlProduct);
+      if (svc) {
+        selectedService = svc;
+        renderServices();
+      }
+    }
+    if (urlCountry) {
+      const ctry = ALL_COUNTRIES.find(c => c.id === urlCountry);
+      if (ctry) {
+        selectedCountry = ctry;
+        renderCountries();
+      }
+    }
+    updateBuyButton();
+
+    // If both service + country selected from URL, scroll to Buy button
+    if (urlProduct && urlCountry) {
+      setTimeout(() => {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }, 500);
+    }
 
     setInterval(renderOrders, 5000);
     setInterval(async () => {
