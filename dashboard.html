@@ -180,6 +180,20 @@
   }
   .sec-head .view-all:hover { background: var(--blue); color: white; }
 
+  /* PROVIDER BANNER */
+  .provider-banner {
+    display: none;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border: 1.5px solid #fbbf24;
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    align-items: center; gap: 12px;
+    font-size: 14px; font-weight: 600; color: #78350f;
+  }
+  .provider-banner.show { display: flex; }
+  .provider-banner .emoji { font-size: 24px; }
+
   /* SERVICES GRID */
   .services-grid {
     display: grid;
@@ -749,6 +763,17 @@
 
   <div class="content">
 
+    <!-- PROVIDER BANNER (only shows when coming from USA page) -->
+    <div class="provider-banner" id="providerBanner">
+      <span class="emoji">🇺🇸</span>
+      <div>
+        <div style="font-weight: 800;">Buying from USA Provider</div>
+        <div style="font-size: 12.5px; opacity: 0.85; margin-top: 2px;">
+          You're viewing USA-specific prices. This is a different provider from All Countries.
+        </div>
+      </div>
+    </div>
+
     <!-- WALLET CARD -->
     <div class="wallet-card">
       <div class="label">Wallet Balance</div>
@@ -939,6 +964,10 @@
   let selectedCountry = null;
   let sortByPrice = true;
 
+  /* ⭐ PROVIDER OVERRIDE STATE */
+  let urlProvider = null;      // "usa" or null
+  let urlPriceOverride = null; // number or null
+
   /* LOAD */
   async function loadServicesFromFirestore() {
     try {
@@ -962,6 +991,12 @@
       console.error('Load countries error:', err);
       ALL_COUNTRIES = [];
     }
+  }
+
+  /* PRICE HELPER — applies override if set */
+  function getCountryPrice(c) {
+    if (urlPriceOverride && c.id === selectedCountry?.id) return urlPriceOverride;
+    return c.price || 0;
   }
 
   /* RENDER SERVICES */
@@ -1071,11 +1106,15 @@
   function buildCountryTile(c) {
     const tile = document.createElement('div');
     tile.className = 'country-tile' + (selectedCountry?.id === c.id ? ' selected' : '');
+    // ⭐ Show override price if this country is the selected one
+    const displayPrice = (urlPriceOverride && selectedCountry?.id === c.id)
+      ? urlPriceOverride
+      : (c.price || 0);
     tile.innerHTML = `
       <div class="country-flag">${c.flag || '🌍'}</div>
       <div class="country-info">
         <h4>${c.name}</h4>
-        <div class="stock">₦${(c.price || 0).toLocaleString()}</div>
+        <div class="stock">₦${displayPrice.toLocaleString()}</div>
       </div>
     `;
     tile.onclick = () => selectCountry(c);
@@ -1142,11 +1181,14 @@
     list.forEach(c => {
       const tile = document.createElement('div');
       tile.className = 'country-tile' + (selectedCountry?.id === c.id ? ' selected' : '');
+      const displayPrice = (urlPriceOverride && selectedCountry?.id === c.id)
+        ? urlPriceOverride
+        : (c.price || 0);
       tile.innerHTML = `
         <div class="country-flag">${c.flag || '🌍'}</div>
         <div class="country-info">
           <h4>${c.name}</h4>
-          <div class="stock">₦${(c.price || 0).toLocaleString()}</div>
+          <div class="stock">₦${displayPrice.toLocaleString()}</div>
         </div>
       `;
       tile.onclick = () => {
@@ -1185,7 +1227,11 @@
       btn.textContent = 'Select service & country';
       return;
     }
-    const total = doubleSms ? (selectedCountry.price || 0) * 2 : (selectedCountry.price || 0);
+    // ⭐ Use override price if set
+    const basePrice = (urlPriceOverride && selectedCountry?.id === 'us')
+      ? urlPriceOverride
+      : (selectedCountry.price || 0);
+    const total = doubleSms ? basePrice * 2 : basePrice;
     btn.disabled = false;
     btn.textContent = `Buy SMS ₦${total.toLocaleString()}`;
   }
@@ -1198,7 +1244,11 @@
     btn.textContent = 'Placing order...';
 
     try {
-      const total = doubleSms ? selectedCountry.price * 2 : selectedCountry.price;
+      // ⭐ Use override price if set
+      const basePrice = (urlPriceOverride && selectedCountry?.id === 'us')
+        ? urlPriceOverride
+        : (selectedCountry.price || 0);
+      const total = doubleSms ? basePrice * 2 : basePrice;
 
       const snap = await getDoc(doc(db, 'users', currentUser.uid));
       const data = snap.data() || {};
@@ -1213,6 +1263,7 @@
 
       const num = generateDemoNumber(selectedCountry.dial);
 
+      // ⭐ Save order with provider tag
       const orderRef = await addDoc(collection(db, 'orders'), {
         uid: currentUser.uid,
         email: currentUser.email,
@@ -1223,6 +1274,7 @@
         flag: selectedCountry.flag,
         price: total,
         doubleSms: doubleSms,
+        provider: urlProvider || 'main', // ⭐ "usa" or "main"
         status: 'pending',
         number: num,
         smsCode: null,
@@ -1455,6 +1507,25 @@
     if (!snap.exists()) { window.location.href = 'register.html'; return; }
     currentUserData = snap.data();
 
+    // ⭐ READ URL PARAMS FIRST
+    const params = new URLSearchParams(window.location.search);
+    const urlProduct = params.get('product');
+    const urlCountry = params.get('country');
+    const urlPrice = params.get('price');
+    urlProvider = params.get('provider'); // "usa" or null
+
+    if (urlPrice) {
+      const parsed = parseInt(urlPrice);
+      if (!isNaN(parsed) && parsed > 0) {
+        urlPriceOverride = parsed;
+      }
+    }
+
+    // Show USA provider banner
+    if (urlProvider === 'usa') {
+      document.getElementById('providerBanner').classList.add('show');
+    }
+
     await Promise.all([
       loadServicesFromFirestore(),
       loadCountriesFromFirestore()
@@ -1466,11 +1537,7 @@
     renderOrders();
     updateBuyButton();
 
-    /* ✅ URL PARAM SUPPORT — auto-select service/country */
-    const params = new URLSearchParams(window.location.search);
-    const urlProduct = params.get('product');
-    const urlCountry = params.get('country');
-
+    // ⭐ Auto-select from URL params
     if (urlProduct) {
       const svc = ALL_SERVICES.find(s => s.id === urlProduct);
       if (svc) {
@@ -1487,7 +1554,7 @@
     }
     updateBuyButton();
 
-    // If both service + country selected from URL, scroll to Buy button
+    // Scroll to bottom if coming from USA page
     if (urlProduct && urlCountry) {
       setTimeout(() => {
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
