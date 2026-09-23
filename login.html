@@ -7,269 +7,54 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 <style>
   :root {
-    --blue: #1E5EFF;
-    --blue-dark: #1547c4;
-    --blue-light: #e8efff;
-    --black: #0A0A0A;
-    --gray: #6b7280;
-    --gray-light: #f5f7fb;
-    --border: #e5e7eb;
-    --white: #ffffff;
-    --red: #ef4444;
+    --blue: #1E5EFF; --blue-dark: #1547c4; --blue-light: #e8efff;
+    --black: #0A0A0A; --gray: #6b7280; --gray-light: #f5f7fb;
+    --border: #e5e7eb; --white: #ffffff;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background: var(--gray-light);
-    color: var(--black);
-    min-height: 100vh;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-
+  body { font-family: 'Inter', system-ui, sans-serif; background: var(--gray-light); color: var(--black); min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; }
   a { text-decoration: none; color: inherit; }
-
-  /* ===== LEFT PANEL (BRAND) ===== */
-  .brand-panel {
-    background: var(--black);
-    color: white;
-    padding: 60px 70px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    position: relative;
-    overflow: hidden;
-  }
-  .brand-panel::before {
-    content: '';
-    position: absolute;
-    width: 500px; height: 500px;
-    background: var(--blue);
-    border-radius: 50%;
-    filter: blur(150px);
-    opacity: 0.5;
-    top: -180px; left: -120px;
-  }
-  .brand-panel::after {
-    content: '';
-    position: absolute;
-    width: 400px; height: 400px;
-    background: var(--blue);
-    border-radius: 50%;
-    filter: blur(140px);
-    opacity: 0.35;
-    bottom: -150px; right: -100px;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 800;
-    font-size: 22px;
-    position: relative;
-    z-index: 2;
-  }
-  .logo-mark {
-    width: 38px;
-    height: 38px;
-    background: var(--blue);
-    border-radius: 10px;
-    display: grid;
-    place-items: center;
-    color: white;
-    font-weight: 900;
-    font-size: 18px;
-  }
-
+  .brand-panel { background: var(--black); color: white; padding: 60px 70px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+  .brand-panel::before { content: ''; position: absolute; width: 500px; height: 500px; background: var(--blue); border-radius: 50%; filter: blur(150px); opacity: 0.5; top: -180px; left: -120px; }
+  .brand-panel::after { content: ''; position: absolute; width: 400px; height: 400px; background: var(--blue); border-radius: 50%; filter: blur(140px); opacity: 0.35; bottom: -150px; right: -100px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 22px; position: relative; z-index: 2; }
+  .logo-mark { width: 38px; height: 38px; background: var(--blue); border-radius: 10px; display: grid; place-items: center; color: white; font-weight: 900; font-size: 18px; }
   .brand-content { position: relative; z-index: 2; }
-  .brand-content h1 {
-    font-size: 42px;
-    line-height: 1.15;
-    font-weight: 800;
-    letter-spacing: -1px;
-    margin-bottom: 20px;
-  }
+  .brand-content h1 { font-size: 42px; line-height: 1.15; font-weight: 800; letter-spacing: -1px; margin-bottom: 20px; }
   .brand-content h1 span { color: var(--blue); }
-  .brand-content p {
-    color: #b0b0b0;
-    font-size: 16px;
-    max-width: 420px;
-    margin-bottom: 40px;
-  }
-
-  .brand-stats {
-    display: flex;
-    gap: 40px;
-  }
-  .brand-stat .num {
-    font-size: 24px;
-    font-weight: 800;
-    color: white;
-  }
-  .brand-stat .lbl {
-    font-size: 13px;
-    color: #888;
-    font-weight: 500;
-  }
-
-  .brand-footer {
-    position: relative;
-    z-index: 2;
-    font-size: 13px;
-    color: #666;
-  }
-
-  /* ===== RIGHT PANEL (FORM) ===== */
-  .form-panel {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-    background: white;
-  }
-
-  .form-box {
-    width: 100%;
-    max-width: 420px;
-  }
-
-  .form-box h2 {
-    font-size: 32px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    margin-bottom: 8px;
-  }
-  .form-box .sub {
-    color: var(--gray);
-    font-size: 15px;
-    margin-bottom: 36px;
-  }
-  .form-box .sub a {
-    color: var(--blue);
-    font-weight: 600;
-  }
+  .brand-content p { color: #b0b0b0; font-size: 16px; max-width: 420px; margin-bottom: 40px; }
+  .brand-stats { display: flex; gap: 40px; }
+  .brand-stat .num { font-size: 24px; font-weight: 800; color: white; }
+  .brand-stat .lbl { font-size: 13px; color: #888; font-weight: 500; }
+  .brand-footer { position: relative; z-index: 2; font-size: 13px; color: #666; }
+  .form-panel { display: flex; align-items: center; justify-content: center; padding: 40px; background: white; }
+  .form-box { width: 100%; max-width: 420px; }
+  .form-box h2 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+  .form-box .sub { color: var(--gray); font-size: 15px; margin-bottom: 36px; }
+  .form-box .sub a { color: var(--blue); font-weight: 600; }
   .form-box .sub a:hover { text-decoration: underline; }
-
-  .field {
-    margin-bottom: 20px;
-  }
-  .field label {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: var(--black);
-  }
-  .field input {
-    width: 100%;
-    padding: 14px 16px;
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    font-size: 15px;
-    font-family: inherit;
-    transition: all 0.2s;
-    background: white;
-  }
-  .field input:focus {
-    outline: none;
-    border-color: var(--blue);
-    box-shadow: 0 0 0 4px rgba(30,94,255,0.1);
-  }
+  .field { margin-bottom: 20px; }
+  .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+  .field input { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 15px; font-family: inherit; transition: all 0.2s; background: white; }
+  .field input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(30,94,255,0.1); }
   .field input::placeholder { color: #aaa; }
-
-  .field-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 26px;
-    font-size: 14px;
-  }
-  .checkbox {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--gray);
-    cursor: pointer;
-  }
-  .checkbox input {
-    width: 16px; height: 16px;
-    accent-color: var(--blue);
-    cursor: pointer;
-  }
-  .forgot {
-    color: var(--blue);
-    font-weight: 600;
-  }
+  .field-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 26px; font-size: 14px; }
+  .checkbox { display: flex; align-items: center; gap: 8px; color: var(--gray); cursor: pointer; }
+  .checkbox input { width: 16px; height: 16px; accent-color: var(--blue); cursor: pointer; }
+  .forgot { color: var(--blue); font-weight: 600; }
   .forgot:hover { text-decoration: underline; }
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 15px 22px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 15px;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s ease;
-    font-family: inherit;
-    width: 100%;
-  }
-  .btn-primary {
-    background: var(--blue);
-    color: white;
-  }
-  .btn-primary:hover {
-    background: var(--blue-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 10px 20px rgba(30,94,255,0.25);
-  }
-
-  .divider {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin: 26px 0;
-    color: var(--gray);
-    font-size: 13px;
-    font-weight: 500;
-  }
-  .divider::before,
-  .divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  .social-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-  .social-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 13px;
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 14px;
-    background: white;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: inherit;
-  }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 15px 22px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; border: none; transition: all 0.2s ease; font-family: inherit; width: 100%; }
+  .btn-primary { background: var(--blue); color: white; }
+  .btn-primary:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 10px 20px rgba(30,94,255,0.25); }
+  .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .divider { display: flex; align-items: center; gap: 16px; margin: 26px 0; color: var(--gray); font-size: 13px; font-weight: 500; }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .social-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .social-btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 13px; border: 1.5px solid var(--border); border-radius: 12px; font-weight: 600; font-size: 14px; background: white; cursor: pointer; transition: all 0.2s; font-family: inherit; }
   .social-btn:hover { border-color: var(--black); }
-  .social-btn .ic { font-weight: 800; }
-
-  /* ===== RESPONSIVE ===== */
+  .msg { padding: 12px 16px; border-radius: 10px; font-size: 14px; font-weight: 500; margin-bottom: 18px; display: none; }
+  .msg.error { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; display: block; }
+  .msg.success { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; display: block; }
   @media (max-width: 900px) {
     body { grid-template-columns: 1fr; }
     .brand-panel { display: none; }
@@ -279,45 +64,28 @@
 </head>
 <body>
 
-<!-- ===== LEFT: BRAND ===== -->
 <div class="brand-panel">
-  <div class="logo">
-    <div class="logo-mark">Z</div>
-    Zavora <span style="color:var(--blue)">SMS</span>
-  </div>
-
+  <div class="logo"><div class="logo-mark">Z</div>Zavora <span style="color:var(--blue)">SMS</span></div>
   <div class="brand-content">
     <h1>Welcome back to <span>Zavora SMS</span></h1>
     <p>Login to buy virtual numbers, receive SMS codes, and manage your wallet — all in one place.</p>
-
     <div class="brand-stats">
-      <div class="brand-stat">
-        <div class="num">150+</div>
-        <div class="lbl">Countries</div>
-      </div>
-      <div class="brand-stat">
-        <div class="num">500+</div>
-        <div class="lbl">Apps</div>
-      </div>
-      <div class="brand-stat">
-        <div class="num">24/7</div>
-        <div class="lbl">Support</div>
-      </div>
+      <div class="brand-stat"><div class="num">150+</div><div class="lbl">Countries</div></div>
+      <div class="brand-stat"><div class="num">500+</div><div class="lbl">Apps</div></div>
+      <div class="brand-stat"><div class="num">24/7</div><div class="lbl">Support</div></div>
     </div>
   </div>
-
-  <div class="brand-footer">
-    © 2025 Zavora SMS. All rights reserved.
-  </div>
+  <div class="brand-footer">© 2025 Zavora SMS. All rights reserved.</div>
 </div>
 
-<!-- ===== RIGHT: FORM ===== -->
 <div class="form-panel">
   <div class="form-box">
     <h2>Sign in</h2>
     <p class="sub">Don't have an account? <a href="register.html">Create one free</a></p>
 
-    <form onsubmit="event.preventDefault(); alert('Login backend not connected yet.');">
+    <div class="msg" id="msg"></div>
+
+    <form id="loginForm">
       <div class="field">
         <label for="email">Email address</label>
         <input type="email" id="email" placeholder="you@example.com" required />
@@ -329,24 +97,65 @@
       </div>
 
       <div class="field-row">
-        <label class="checkbox">
-          <input type="checkbox" />
-          Remember me
-        </label>
+        <label class="checkbox"><input type="checkbox" /> Remember me</label>
         <a href="#" class="forgot">Forgot password?</a>
       </div>
 
-      <button type="submit" class="btn btn-primary">Sign In</button>
+      <button type="submit" class="btn btn-primary" id="submitBtn">Sign In</button>
     </form>
 
     <div class="divider">or continue with</div>
-
     <div class="social-row">
-      <button class="social-btn"><span class="ic" style="color:#1877F2">f</span> Facebook</button>
-      <button class="social-btn"><span class="ic" style="color:#EA4335">G</span> Google</button>
+      <button class="social-btn" type="button"><span style="color:#1877F2;font-weight:800">f</span> Facebook</button>
+      <button class="social-btn" type="button"><span style="color:#EA4335;font-weight:800">G</span> Google</button>
     </div>
   </div>
 </div>
+
+<script type="module">
+  import {
+    auth, signInWithEmailAndPassword, onAuthStateChanged
+  } from './firebase-config.js';
+
+  const form = document.getElementById('loginForm');
+  const msg = document.getElementById('msg');
+  const btn = document.getElementById('submitBtn');
+
+  function showMsg(text, type) {
+    msg.textContent = text;
+    msg.className = 'msg ' + type;
+  }
+
+  // If already logged in → go straight to dashboard
+  onAuthStateChanged(auth, (user) => {
+    if (user) window.location.href = 'dashboard.html';
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    btn.disabled = true;
+    btn.textContent = 'Signing in...';
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      showMsg('Login successful! Redirecting...', 'success');
+      setTimeout(() => window.location.href = 'dashboard.html', 800);
+    } catch (err) {
+      console.error(err);
+      let m = 'Login failed.';
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+        m = 'Wrong email or password.';
+      }
+      if (err.code === 'auth/invalid-email') m = 'Invalid email address.';
+      showMsg(m, 'error');
+      btn.disabled = false;
+      btn.textContent = 'Sign In';
+    }
+  });
+</script>
 
 </body>
 </html>
