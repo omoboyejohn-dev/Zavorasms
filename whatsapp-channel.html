@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WhatsApp Channel — Zavora SMS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --blue: #1E5EFF; --blue-dark: #1547c4; --blue-light: #e8efff;
+    --black: #0A0A0A; --gray: #6b7280; --gray-light: #f5f7fb;
+    --border: #e5e7eb; --white: #ffffff; --green: #10b981;
+    --purple: #8b5cf6; --sidebar-w: 250px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: var(--gray-light); color: var(--black); line-height: 1.5; }
+  a { text-decoration: none; color: inherit; }
+  button { font-family: inherit; cursor: pointer; }
+  .sidebar { position: fixed; left: 0; top: 0; width: var(--sidebar-w); height: 100vh; background: var(--black); color: white; padding: 24px 18px; display: flex; flex-direction: column; z-index: 50; overflow-y: auto; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; padding: 6px 8px 26px; border-bottom: 1px solid #1e1e1e; margin-bottom: 20px; }
+  .logo-mark { width: 34px; height: 34px; background: var(--blue); border-radius: 9px; display: grid; place-items: center; color: white; font-weight: 900; font-size: 16px; }
+  .side-link { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 10px; font-size: 14.5px; font-weight: 500; color: #b0b0b0; margin-bottom: 4px; }
+  .side-link:hover { background: #161616; color: white; }
+  .side-link.active { background: var(--blue); color: white; font-weight: 600; }
+  .side-link .ic { width: 20px; text-align: center; font-size: 16px; }
+  .side-link .badge-new { margin-left: auto; font-size: 10px; background: var(--blue); color: white; padding: 2px 7px; border-radius: 999px; font-weight: 700; }
+  .side-link .badge-admin { margin-left: auto; font-size: 10px; background: var(--purple); color: white; padding: 2px 7px; border-radius: 999px; font-weight: 700; }
+  .sidebar-spacer { flex: 1; }
+  .user-mini { display: flex; align-items: center; gap: 10px; padding: 12px; background: #141414; border-radius: 12px; margin-top: 10px; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--blue); display: grid; place-items: center; font-weight: 700; font-size: 14px; color: white; flex-shrink: 0; }
+  .user-mini .info { overflow: hidden; }
+  .user-mini .name { font-size: 13.5px; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-mini .email { font-size: 11.5px; color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .main { margin-left: var(--sidebar-w); min-height: 100vh; }
+  .topbar { background: white; border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
+  .topbar h1 { font-size: 20px; font-weight: 700; }
+  .topbar h1 span { color: var(--gray); font-weight: 500; font-size: 15px; }
+  .icon-btn { width: 40px; height: 40px; border-radius: 10px; border: 1.5px solid var(--border); background: white; display: grid; place-items: center; font-size: 16px; }
+  .content { padding: 26px 32px 60px; max-width: 700px; }
+  .card { background: white; border: 1.5px solid var(--border); border-radius: 20px; padding: 40px 32px; text-align: center; }
+  .icon-big { width: 80px; height: 80px; border-radius: 22px; background: #dcfce7; color: #25D366; display: grid; place-items: center; font-size: 40px; margin: 0 auto 20px; }
+  .card h2 { font-size: 26px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
+  .card p { color: var(--gray); font-size: 15px; margin-bottom: 30px; max-width: 400px; margin-left: auto; margin-right: auto; }
+  .btn-wa { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 16px 32px; background: #25D366; color: white; border-radius: 14px; font-weight: 800; font-size: 16px; box-shadow: 0 12px 24px rgba(37,211,102,0.3); transition: all 0.2s; }
+  .btn-wa:hover { background: #1da851; transform: translateY(-2px); }
+  .mobile-top { display: none; background: white; padding: 14px 20px; border-bottom: 1px solid var(--border); align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
+  .drawer { position: fixed; top: 0; right: 0; width: 300px; max-width: 85vw; height: 100vh; background: white; z-index: 60; transform: translateX(100%); transition: transform 0.25s; box-shadow: -10px 0 40px rgba(0,0,0,0.15); display: flex; flex-direction: column; overflow-y: auto; }
+  .drawer.open { transform: translateX(0); }
+  .drawer-head { padding: 22px 20px; border-bottom: 1.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .drawer-head .logo { padding: 0; border: none; margin: 0; font-size: 18px; }
+  .drawer-close { width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid var(--border); background: white; display: grid; place-items: center; font-size: 18px; color: var(--gray); }
+  .drawer-user { padding: 20px; background: var(--gray-light); border-bottom: 1.5px solid var(--border); display: flex; align-items: center; gap: 12px; }
+  .drawer-user .avatar { width: 44px; height: 44px; font-size: 16px; }
+  .drawer-body { padding: 16px 12px; flex: 1; }
+  .drawer-link { display: flex; align-items: center; gap: 14px; padding: 13px 14px; border-radius: 12px; font-size: 14.5px; font-weight: 500; color: var(--black); }
+  .drawer-link .ic { width: 38px; height: 38px; border-radius: 10px; background: var(--blue-light); color: var(--blue); display: grid; place-items: center; font-size: 17px; flex-shrink: 0; }
+  .drawer-link.wa .ic { background: #dcfce7; color: #15803d; }
+  .drawer-link.social .ic { background: #fef3c7; color: #b45309; }
+  .drawer-link.logout .ic { background: #fee2e2; color: #b91c1c; }
+  .drawer-link.admin .ic { background: #ede9fe; color: #6d28d9; }
+  .drawer-link .badge-new { margin-left: auto; font-size: 10px; background: var(--blue); color: white; padding: 3px 8px; border-radius: 999px; font-weight: 700; }
+  .drawer-link .badge-admin { margin-left: auto; font-size: 10px; background: var(--purple); color: white; padding: 3px 8px; border-radius: 999px; font-weight: 700; }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 55; }
+  .overlay.show { display: block; }
+  @media (max-width: 900px) {
+    :root { --sidebar-w: 0px; }
+    .sidebar { transform: translateX(-100%); transition: transform 0.25s; width: 250px; }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .mobile-top { display: flex; }
+    .topbar { display: none; }
+    .content { padding: 20px 16px 60px; }
+    .card { padding: 28px 20px; }
+    .card h2 { font-size: 22px; }
+    .btn-wa { width: 100%; padding: 15px 20px; font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="mobile-top">
+  <div class="logo" style="padding:0; border:none; margin:0;">
+    <div class="logo-mark">Z</div> Zavora <span style="color:var(--blue)">SMS</span>
+  </div>
+  <button class="icon-btn" onclick="openDrawer()">☰</button>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeAll()"></div>
+
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div class="logo"><div class="logo-mark">Z</div> Zavora <span style="color:var(--blue)">SMS</span></div>
+    <button class="drawer-close" onclick="closeAll()">✕</button>
+  </div>
+  <div class="drawer-user">
+    <div class="avatar" id="drawerAvatar">--</div>
+    <div class="info">
+      <div class="name" id="drawerName">Loading...</div>
+      <div class="email" id="drawerEmail">...</div>
+    </div>
+  </div>
+  <div class="drawer-body">
+    <a class="drawer-link" href="dashboard.html"><span class="ic">▦</span> Dashboard</a>
+    <a class="drawer-link" href="orders.html"><span class="ic">🧾</span> My Orders</a>
+    <a class="drawer-link" href="wallet.html"><span class="ic">💳</span> Wallet</a>
+    <a class="drawer-link" href="deposit.html"><span class="ic">↗</span> Deposit</a>
+    <a class="drawer-link" href="payment-history.html"><span class="ic">📜</span> Payment History</a>
+    <a class="drawer-link" href="profile.html"><span class="ic">👤</span> Profile</a>
+    <a class="drawer-link wa" href="whatsapp-channel.html"><span class="ic">💬</span> WhatsApp Channel <span class="badge-new">NEW</span></a>
+    <a class="drawer-link social" href="social-logs.html"><span class="ic">🛒</span> Buy Social Logs</a>
+    <a class="drawer-link admin" id="drawerAdminLink" href="admin.html" style="display:none;"><span class="ic">🔧</span> Admin Panel <span class="badge-admin">ADMIN</span></a>
+    <a class="drawer-link" href="settings.html"><span class="ic">⚙</span> Setting</a>
+    <a class="drawer-link" href="support.html"><span class="ic">?</span> Support</a>
+    <a class="drawer-link logout" id="drawerLogout"><span class="ic">⎋</span> Logout</a>
+  </div>
+</aside>
+
+<aside class="sidebar" id="sidebar">
+  <div class="logo"><div class="logo-mark">Z</div> Zavora <span style="color:var(--blue)">SMS</span></div>
+  <a class="side-link" href="dashboard.html"><span class="ic">▦</span> Dashboard</a>
+  <a class="side-link" href="orders.html"><span class="ic">🧾</span> My Orders</a>
+  <a class="side-link" href="wallet.html"><span class="ic">💳</span> Wallet</a>
+  <a class="side-link" href="deposit.html"><span class="ic">↗</span> Deposit</a>
+  <a class="side-link" href="payment-history.html"><span class="ic">📜</span> Payment History</a>
+  <a class="side-link" href="profile.html"><span class="ic">👤</span> Profile</a>
+  <a class="side-link active" href="whatsapp-channel.html"><span class="ic">💬</span> WhatsApp Channel <span class="badge-new">NEW</span></a>
+  <a class="side-link" href="social-logs.html"><span class="ic">🛒</span> Buy Social Logs</a>
+  <a class="side-link" id="sidebarAdminLink" href="admin.html" style="display:none;"><span class="ic">🔧</span> Admin Panel <span class="badge-admin">ADMIN</span></a>
+  <a class="side-link" href="settings.html"><span class="ic">⚙</span> Setting</a>
+  <a class="side-link" href="support.html"><span class="ic">?</span> Support</a>
+  <a class="side-link" id="logoutBtn"><span class="ic">⎋</span> Logout</a>
+  <div class="sidebar-spacer"></div>
+  <div class="user-mini">
+    <div class="avatar" id="avatar">--</div>
+    <div class="info">
+      <div class="name" id="userName">Loading...</div>
+      <div class="email" id="userEmail">...</div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <h1>WhatsApp Channel <span>/ Get updates</span></h1>
+    <button class="icon-btn">🔔</button>
+  </div>
+
+  <div class="content">
+    <div class="card">
+      <div class="icon-big">💬</div>
+      <h2>Join Our WhatsApp Channel</h2>
+      <p>Get the latest updates, price drops, new products, and exclusive offers directly on WhatsApp.</p>
+      <a href="https://whatsapp.com/channel/0029VbDZcne9cDDhpT8OXn1c" target="_blank" rel="noopener" class="btn-wa">
+        <span style="font-size:22px;">💬</span> Follow Channel
+      </a>
+    </div>
+  </div>
+</main>
+
+<script>
+  function openDrawer() {
+    document.getElementById('drawer').classList.add('open');
+    document.getElementById('overlay').classList.add('show');
+  }
+  function closeAll() {
+    document.getElementById('drawer').classList.remove('open');
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('show');
+  }
+  window.openDrawer = openDrawer;
+  window.closeAll = closeAll;
+</script>
+
+<script type="module">
+  import { auth, db, onAuthStateChanged, signOut, doc, getDoc } from './firebase-config.js';
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href = 'login.html'; return; }
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (!snap.exists()) return;
+    const data = snap.data();
+    const first = data.firstName || 'User';
+    const last = data.lastName || '';
+    const initials = (first[0] + (last[0] || '')).toUpperCase();
+
+    document.getElementById('avatar').textContent = initials;
+    document.getElementById('drawerAvatar').textContent = initials;
+    document.getElementById('userName').textContent = `${first} ${last}`.trim();
+    document.getElementById('drawerName').textContent = `${first} ${last}`.trim();
+    document.getElementById('userEmail').textContent = data.email || '';
+    document.getElementById('drawerEmail').textContent = data.email || '';
+
+    if (data.role === 'admin') {
+      document.getElementById('sidebarAdminLink').style.display = 'flex';
+      document.getElementById('drawerAdminLink').style.display = 'flex';
+    }
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await signOut(auth); window.location.href = 'login.html';
+  });
+  document.getElementById('drawerLogout').addEventListener('click', async () => {
+    await signOut(auth); window.location.href = 'login.html';
+  });
+</script>
+
+</body>
+</html>
