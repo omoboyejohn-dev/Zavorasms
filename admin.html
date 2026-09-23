@@ -126,6 +126,8 @@
   .btn-outline:hover { border-color: var(--black); }
   .btn-danger { background: var(--red); color: white; }
   .btn-danger:hover { background: #dc2626; }
+  .btn-green { background: var(--green); color: white; }
+  .btn-green:hover { background: #059669; }
   .btn-sm { padding: 7px 12px; font-size: 12.5px; }
   .btn-ghost { background: transparent; color: var(--gray); }
   .btn-ghost:hover { background: var(--gray-light); color: var(--black); }
@@ -254,6 +256,8 @@
   .act-btn.edit:hover  { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
   .act-btn.del:hover   { border-color: var(--red); color: var(--red); background: #fee2e2; }
   .act-btn.view:hover  { border-color: var(--green); color: var(--green); background: #dcfce7; }
+  .act-btn.approve { background: #dcfce7; border-color: #86efac; color: #15803d; }
+  .act-btn.approve:hover { background: #15803d; color: white; border-color: #15803d; }
 
   /* ===== MODAL ===== */
   .modal-overlay {
@@ -435,6 +439,7 @@
   <a class="side-link" data-tab="countries"><span class="ic">🌍</span> Countries <span class="count" id="countriesCount">0</span></a>
   <a class="side-link" data-tab="users"><span class="ic">👥</span> Users <span class="count" id="usersCount">0</span></a>
   <a class="side-link" data-tab="orders"><span class="ic">🧾</span> Orders <span class="count" id="ordersCount">0</span></a>
+  <a class="side-link" data-tab="deposits"><span class="ic">💰</span> Deposits <span class="count" id="depositsCount">0</span></a>
 
   <div class="sidebar-spacer"></div>
 
@@ -513,7 +518,7 @@
   import {
     auth, db, onAuthStateChanged, signOut,
     doc, getDoc, setDoc, updateDoc, deleteDoc,
-    collection, addDoc, query, where, getDocs, serverTimestamp
+    collection, addDoc, query, where, getDocs, serverTimestamp, increment
   } from './firebase-config.js';
 
   /* ============================================================
@@ -525,6 +530,7 @@
   let countries = [];
   let allUsers = [];
   let allOrders = [];
+  let allDeposits = [];
   let currentTab = 'overview';
 
   /* ============================================================
@@ -602,7 +608,8 @@
       loadProducts(),
       loadCountries(),
       loadUsers(),
-      loadOrders()
+      loadOrders(),
+      loadDeposits()
     ]);
     updateSidebarCounts();
   }
@@ -612,7 +619,6 @@
       const snap = await getDocs(collection(db, 'config_products'));
       products = [];
       snap.forEach(d => products.push({ id: d.id, ...d.data() }));
-      // Sort by "order" ascending (oldest first, newest at bottom)
       products.sort((a, b) => (a.order || 0) - (b.order || 0));
     } catch (err) {
       console.error('Products load error:', err);
@@ -656,11 +662,25 @@
     }
   }
 
+  async function loadDeposits() {
+    try {
+      const snap = await getDocs(collection(db, 'deposits'));
+      allDeposits = [];
+      snap.forEach(d => allDeposits.push({ id: d.id, ...d.data() }));
+      allDeposits.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+    } catch (err) {
+      console.error('Deposits load error:', err);
+      allDeposits = [];
+    }
+  }
+
   function updateSidebarCounts() {
     document.getElementById('productsCount').textContent  = products.length;
     document.getElementById('countriesCount').textContent = countries.length;
     document.getElementById('usersCount').textContent     = allUsers.length;
     document.getElementById('ordersCount').textContent    = allOrders.length;
+    const dEl = document.getElementById('depositsCount');
+    if (dEl) dEl.textContent = allDeposits.filter(d => d.status === 'pending').length;
   }
 
   /* ============================================================
@@ -693,7 +713,8 @@
       products:  ['Products', '/ Manage services — new ones go to the bottom'],
       countries: ['Countries', '/ Manage countries & prices'],
       users:     ['Users', '/ All registered accounts'],
-      orders:    ['Orders', '/ All customer orders']
+      orders:    ['Orders', '/ All customer orders'],
+      deposits:  ['Deposits', '/ Approve or reject pending deposits']
     };
     document.getElementById('pageTitle').innerHTML = `${titles[tab][0]} <span>${titles[tab][1]}</span>`;
 
@@ -702,7 +723,8 @@
       products:  renderProducts,
       countries: renderCountries,
       users:     renderUsers,
-      orders:    renderOrders
+      orders:    renderOrders,
+      deposits:  renderDeposits
     };
     render[tab]?.();
   }
@@ -718,6 +740,7 @@
 
     const pending = allOrders.filter(o => o.status === 'pending').length;
     const completed = allOrders.filter(o => o.status === 'completed').length;
+    const pendingDeposits = allDeposits.filter(d => d.status === 'pending').length;
 
     document.getElementById('contentArea').innerHTML = `
       <div class="stats-grid">
@@ -743,6 +766,17 @@
         </div>
       </div>
 
+      ${pendingDeposits > 0 ? `
+        <div style="margin-bottom:24px; padding:18px 22px; background:#fef3c7; border:1.5px solid #fde68a; border-radius:14px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+          <div style="font-size:24px;">💰</div>
+          <div style="flex:1; min-width:200px;">
+            <div style="font-weight:800; font-size:14.5px;">${pendingDeposits} pending deposit${pendingDeposits > 1 ? 's' : ''}</div>
+            <div style="color:#78350f; font-size:13px;">Approve to credit users' wallets</div>
+          </div>
+          <button class="btn btn-primary" onclick="switchTab('deposits')">Review Now →</button>
+        </div>
+      ` : ''}
+
       <div class="sec-head" style="margin-top:30px;">
         <div>
           <h2>Quick Actions</h2>
@@ -754,6 +788,7 @@
         <button class="btn btn-primary" onclick="switchTab('countries')" style="padding:18px;">🌍 Manage Countries</button>
         <button class="btn btn-primary" onclick="switchTab('orders')" style="padding:18px;">🧾 View Orders</button>
         <button class="btn btn-primary" onclick="switchTab('users')" style="padding:18px;">👥 View Users</button>
+        <button class="btn btn-primary" onclick="switchTab('deposits')" style="padding:18px;">💰 View Deposits</button>
       </div>
 
       ${(products.length === 0 || countries.length === 0) ? `
@@ -1072,6 +1107,136 @@
   }
 
   /* ============================================================
+     TAB: DEPOSITS
+  ============================================================ */
+  function renderDeposits() {
+    if (allDeposits.length === 0) {
+      document.getElementById('contentArea').innerHTML = `
+        <div class="sec-head">
+          <div><h2>Deposits</h2><div class="sub">Pending & completed deposits</div></div>
+        </div>
+        <div class="table-card"><div class="empty-state"><span class="emoji">💰</span>No deposits yet.</div></div>
+      `;
+      return;
+    }
+
+    const pendingCount = allDeposits.filter(d => d.status === 'pending').length;
+
+    document.getElementById('contentArea').innerHTML = `
+      <div class="sec-head">
+        <div><h2>Deposits <span style="color:var(--gray); font-weight:500; font-size:14px;">(${allDeposits.length})</span></h2>
+        <div class="sub">${pendingCount > 0 ? `<strong style="color:#b45309;">${pendingCount} pending</strong> — approve to credit wallets` : 'All deposits reviewed'}</div></div>
+        <div class="actions">
+          <div class="search-box">
+            <span class="ico">🔍</span>
+            <input type="text" id="depSearch" placeholder="Search email, ref, sender..." />
+          </div>
+        </div>
+      </div>
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>User</th>
+              <th>Amount</th>
+              <th>Sender</th>
+              <th>Reference</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="depBody">${allDeposits.map(rowDeposit).join('')}</tbody>
+        </table>
+      </div>
+    `;
+
+    document.getElementById('depSearch').addEventListener('input', (e) => {
+      const f = e.target.value.toLowerCase();
+      const filtered = allDeposits.filter(d =>
+        (d.email || '').toLowerCase().includes(f) ||
+        (d.reference || '').toLowerCase().includes(f) ||
+        (d.senderName || '').toLowerCase().includes(f)
+      );
+      document.getElementById('depBody').innerHTML = filtered.map(rowDeposit).join('');
+    });
+  }
+
+  function rowDeposit(d, idx) {
+    const statusPill =
+      d.status === 'completed' ? 'pill-green' :
+      d.status === 'pending'   ? 'pill-yellow' :
+      d.status === 'rejected'  ? 'pill-red' : 'pill-gray';
+
+    const actions = d.status === 'pending'
+      ? `<button class="act-btn approve" onclick="approveDeposit('${d.id}')" title="Approve">✓</button>
+         <button class="act-btn del" onclick="rejectDeposit('${d.id}')" title="Reject" style="margin-left:6px;">✕</button>`
+      : `<span style="color:var(--gray); font-size:12px;">—</span>`;
+
+    return `
+      <tr>
+        <td style="color:var(--gray); font-weight:600;">${idx + 1}</td>
+        <td>${d.email || '—'}</td>
+        <td><span class="price-cell">₦${Number(d.amount || 0).toLocaleString()}</span></td>
+        <td>${d.senderName || '—'}</td>
+        <td><code style="font-size:12px;">${d.reference || '—'}</code></td>
+        <td><span class="pill ${statusPill}">${d.status || 'pending'}</span></td>
+        <td><div class="row-actions">${actions}</div></td>
+      </tr>
+    `;
+  }
+
+  window.approveDeposit = async function (id) {
+    const d = allDeposits.find(x => x.id === id);
+    if (!d) return;
+    if (!confirm(`Approve deposit?\n\nUser: ${d.email}\nAmount: ₦${Number(d.amount).toLocaleString()}\n\nThis will credit the user's wallet immediately.`)) return;
+
+    try {
+      // Credit user's wallet
+      await updateDoc(doc(db, 'users', d.uid), {
+        walletBalance: increment(d.amount || 0)
+      });
+
+      // Mark deposit completed
+      await updateDoc(doc(db, 'deposits', id), {
+        status: 'completed',
+        approvedAt: serverTimestamp(),
+        approvedBy: currentUser.uid
+      });
+
+      showToast(`✅ Credited ₦${Number(d.amount).toLocaleString()}`, 'success');
+      await loadDeposits();
+      await loadUsers();
+      updateSidebarCounts();
+      renderDeposits();
+    } catch (err) {
+      console.error(err);
+      showToast('Could not approve deposit', 'error');
+    }
+  };
+
+  window.rejectDeposit = async function (id) {
+    const d = allDeposits.find(x => x.id === id);
+    if (!d) return;
+    if (!confirm(`Reject this deposit?\n\nUser: ${d.email}\nAmount: ₦${Number(d.amount).toLocaleString()}`)) return;
+
+    try {
+      await updateDoc(doc(db, 'deposits', id), {
+        status: 'rejected',
+        rejectedAt: serverTimestamp(),
+        rejectedBy: currentUser.uid
+      });
+      showToast('Deposit rejected', 'success');
+      await loadDeposits();
+      updateSidebarCounts();
+      renderDeposits();
+    } catch (err) {
+      console.error(err);
+      showToast('Could not reject deposit', 'error');
+    }
+  };
+
+  /* ============================================================
      PRODUCT CRUD
   ============================================================ */
   window.addProduct = function () {
@@ -1201,7 +1366,6 @@
     if (!name) { showToast('Name required', 'error'); return; }
 
     try {
-      // Note: "order" is NOT touched — position stays the same
       await updateDoc(doc(db, 'config_products', id), { name, icon, cls, stock });
       closeModal();
       showToast('Product updated!', 'success');
@@ -1348,7 +1512,6 @@
     if (!name) { showToast('Name required', 'error'); return; }
 
     try {
-      // "order" NOT touched
       await updateDoc(doc(db, 'config_countries', id), { name, flag, dial, price, stock });
       closeModal();
       showToast('Country updated!', 'success');
@@ -1442,7 +1605,6 @@
     showToast('Seeding data...', 'info');
 
     try {
-      // Only set "order" if the product/country doesn't already exist
       for (const p of DEFAULT_PRODUCTS) {
         const existing = products.find(x => x.id === p.id);
         const order = existing?.order || nextProductOrder();
