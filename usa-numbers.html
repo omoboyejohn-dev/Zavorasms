@@ -18,7 +18,6 @@
   a { text-decoration: none; color: inherit; }
   button { font-family: inherit; cursor: pointer; }
 
-  /* SIDEBAR */
   .sidebar { position: fixed; left: 0; top: 0; width: var(--sidebar-w); height: 100vh; background: var(--black); color: white; padding: 24px 18px; display: flex; flex-direction: column; z-index: 50; overflow-y: auto; }
   .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; padding: 6px 8px 26px; border-bottom: 1px solid #1e1e1e; margin-bottom: 20px; }
   .logo-mark { width: 34px; height: 34px; background: var(--blue); border-radius: 9px; display: grid; place-items: center; color: white; font-weight: 900; font-size: 16px; }
@@ -35,7 +34,6 @@
   .user-mini .name { font-size: 13.5px; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .user-mini .email { font-size: 11.5px; color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  /* MAIN */
   .main { margin-left: var(--sidebar-w); min-height: 100vh; }
   .topbar { background: white; border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
   .topbar h1 { font-size: 20px; font-weight: 700; }
@@ -221,9 +219,9 @@
 <script type="module">
   import { auth, db, onAuthStateChanged, signOut, doc, getDoc } from './firebase-config.js';
 
-  /* USA PRODUCTS — edit prices here anytime */
+  /* 🇺🇸 USA PROVIDER PRICES — EDIT HERE ANYTIME */
   const USA_PRODUCTS = [
-    { id: 'whatsapp',  name: 'WhatsApp',    icon: '✆',  cls: 'ic-whatsapp',  price: 5600 },
+    { id: 'whatsapp',  name: 'WhatsApp',    icon: '✆',  cls: 'ic-whatsapp',  price: 4500 },
     { id: 'telegram',  name: 'Telegram',    icon: '✈',  cls: 'ic-telegram',  price: 6500 },
     { id: 'facebook',  name: 'Facebook',    icon: 'f',  cls: 'ic-facebook',  price: 709  },
     { id: 'instagram', name: 'Instagram',   icon: '◉',  cls: 'ic-instagram', price: 578  },
@@ -267,9 +265,9 @@
     });
   }
 
+  // ⭐ REDIRECT WITH PROVIDER + PRICE OVERRIDE
   function buyProduct(p) {
-    // Redirect to dashboard with product + country preselected
-    window.location.href = `dashboard.html?product=${p.id}&country=us`;
+    window.location.href = `dashboard.html?product=${p.id}&country=us&price=${p.price}&provider=usa`;
   }
 
   document.getElementById('searchInput').addEventListener('input', (e) => {
