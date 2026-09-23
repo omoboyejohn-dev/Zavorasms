@@ -17,30 +17,34 @@ export default async function handler(req, res) {
 
   try {
     const { service, capability } = req.body;
-
     if (!service) {
       return res.status(400).json({ error: 'Service name is required' });
     }
 
-    // Step 1: Generate bearer token
-    const tokenRes = await fetch('https://www.textverified.com/api/v2/auth/token', {
+    // ⭐ Step 1: Get bearer token
+    const tokenRes = await fetch('https://www.textverified.com/api/pub/v2/auth', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username: API_USERNAME,
-        api_key: API_KEY
-      })
+      headers: {
+        'X-API-KEY': API_KEY,
+        'X-API-USERNAME': API_USERNAME,
+        'Accept': 'application/json'
+      }
     });
 
     if (!tokenRes.ok) {
-      return res.status(500).json({ error: 'Failed to authenticate' });
+      const errText = await tokenRes.text();
+      console.error('Token error:', tokenRes.status, errText);
+      return res.status(500).json({
+        error: 'Failed to authenticate',
+        details: errText.substring(0, 300)
+      });
     }
 
     const tokenData = await tokenRes.json();
-    const bearerToken = tokenData.token || tokenData.access_token;
+    const bearerToken = tokenData.token;
 
-    // Step 2: Create verification
-    const buyRes = await fetch('https://www.textverified.com/api/v2/verifications', {
+    // ⭐ Step 2: Create verification
+    const buyRes = await fetch('https://www.textverified.com/api/pub/v2/verifications', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${bearerToken}`,
@@ -54,9 +58,12 @@ export default async function handler(req, res) {
     });
 
     if (!buyRes.ok) {
-      const err = await buyRes.text();
-      console.error('Buy error:', err);
-      return res.status(500).json({ error: 'Failed to buy number', details: err });
+      const errText = await buyRes.text();
+      console.error('Buy error:', buyRes.status, errText);
+      return res.status(500).json({
+        error: 'Failed to buy number',
+        details: errText.substring(0, 300)
+      });
     }
 
     const buyData = await buyRes.json();
@@ -72,6 +79,6 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('tv-buy error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error', message: error.message });
   }
 }
