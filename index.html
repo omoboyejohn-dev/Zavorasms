@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Zavora SMS — Buy Virtual Numbers Worldwide</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --blue: #1E5EFF;
+    --blue-dark: #1547c4;
+    --blue-light: #e8efff;
+    --black: #0A0A0A;
+    --gray: #6b7280;
+    --gray-light: #f5f7fb;
+    --border: #e5e7eb;
+    --white: #ffffff;
+    --green: #10b981;
+    --yellow: #f59e0b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--white);
+    color: var(--black);
+    line-height: 1.6;
+  }
+
+  a { text-decoration: none; color: inherit; }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ===== NAVBAR ===== */
+  .navbar {
+    position: sticky;
+    top: 0;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 22px;
+    color: var(--black);
+  }
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: var(--blue);
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    color: white;
+    font-weight: 900;
+    font-size: 18px;
+  }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--gray);
+  }
+  .nav-links a:hover { color: var(--blue); }
+  .nav-actions { display: flex; gap: 12px; align-items: center; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 22px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+  }
+  .btn-primary {
+    background: var(--blue);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--blue-dark); transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--black);
+    border: 1.5px solid var(--border);
+  }
+  .btn-outline:hover { border-color: var(--black); }
+  .btn-dark {
+    background: var(--black);
+    color: white;
+  }
+  .btn-dark:hover { background: #222; }
+
+  /* ===== HERO ===== */
+  .hero {
+    padding: 90px 0 70px;
+    background: radial-gradient(circle at 80% 20%, var(--blue-light) 0%, transparent 45%);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--blue-light);
+    color: var(--blue);
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+  .badge .dot {
+    width: 8px; height: 8px;
+    background: var(--blue);
+    border-radius: 50%;
+    animation: pulse 1.8s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .hero h1 {
+    font-size: 56px;
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin-bottom: 22px;
+  }
+  .hero h1 .accent { color: var(--blue); }
+  .hero p.sub {
+    font-size: 18px;
+    color: var(--gray);
+    max-width: 520px;
+    margin-bottom: 34px;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 40px;
+  }
+  .stat-num {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--black);
+  }
+  .stat-label {
+    font-size: 13px;
+    color: var(--gray);
+    font-weight: 500;
+  }
+
+  /* Phone mockup */
+  .phone-wrap {
+    display: flex;
+    justify-content: center;
+    position: relative;
+  }
+  .phone {
+    width: 300px;
+    height: 600px;
+    background: var(--black);
+    border-radius: 44px;
+    padding: 12px;
+    box-shadow: 0 40px 80px rgba(30,94,255,0.25);
+    position: relative;
+  }
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    background: white;
+    border-radius: 34px;
+    padding: 26px 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  .notch {
+    position: absolute;
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 8px;
+    background: #1a1a1a;
+    border-radius: 999px;
+  }
+  .sms-header {
+    font-size: 12px;
+    color: var(--gray);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .sms-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 24px;
+  }
+  .sms-card {
+    background: var(--gray-light);
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .sms-card .label { font-size: 11px; color: var(--gray); font-weight: 600; }
+  .sms-card .value { font-size: 15px; font-weight: 700; margin-top: 3px; }
+  .sms-code {
+    background: var(--blue);
+    color: white;
+    border-radius: 16px;
+    padding: 18px;
+    text-align: center;
+  }
+  .sms-code .label { font-size: 11px; opacity: 0.85; font-weight: 600; }
+  .sms-code .code { font-size: 26px; font-weight: 800; letter-spacing: 4px; margin-top: 4px; }
+
+  /* ===== PRODUCTS ===== */
+  .section { padding: 80px 0; }
+  .section-head {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+  .section-head h2 {
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+  }
+  .section-head p { color: var(--gray); font-size: 17px; }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .product-card {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    padding: 28px 20px;
+    text-align: center;
+    transition: all 0.25s ease;
+    cursor: pointer;
+  }
+  .product-card:hover {
+    border-color: var(--blue);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(30,94,255,0.12);
+  }
+  .product-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 16px;
+    font-size: 28px;
+    font-weight: 800;
+    color: white;
+  }
+  .product-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+  .product-card .countries { font-size: 13px; color: var(--gray); }
+
+  /* brand-ish icon colors */
+  .ic-whatsapp { background: #25D366; }
+  .ic-facebook { background: #1877F2; }
+  .ic-telegram { background: #229ED9; }
+  .ic-instagram { background: linear-gradient(135deg,#F58529,#DD2A7B,#8134AF); }
+  .ic-google   { background: #EA4335; }
+  .ic-twitter  { background: #0A0A0A; }
+  .ic-tiktok   { background: #0A0A0A; }
+  .ic-discord  { background: #5865F2; }
+
+  /* ===== FEATURES ===== */
+  .features {
+    background: var(--gray-light);
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .feature-card {
+    background: white;
+    border-radius: 18px;
+    padding: 32px 26px;
+    border: 1.5px solid var(--border);
+  }
+  .feature-icon {
+    width: 50px; height: 50px;
+    background: var(--blue-light);
+    color: var(--blue);
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    margin-bottom: 18px;
+  }
+  .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .feature-card p { color: var(--gray); font-size: 15px; }
+
+  /* ===== CTA ===== */
+  .cta {
+    background: var(--black);
+    color: white;
+    border-radius: 24px;
+    padding: 60px 50px;
+    text-align: center;
+    margin: 80px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta::before {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    background: var(--blue);
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.4;
+    top: -200px; right: -100px;
+  }
+  .cta h2 {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .cta p { color: #b0b0b0; margin-bottom: 30px; position: relative; }
+  .cta .btn-primary { position: relative; padding: 14px 32px; font-size: 16px; }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--black);
+    color: #b0b0b0;
+    padding: 60px 0 30px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+  }
+  footer .logo { color: white; margin-bottom: 16px; }
+  footer p { font-size: 14px; max-width: 300px; }
+  .footer-col h4 { color: white; font-size: 14px; font-weight: 700; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .footer-col a { display: block; font-size: 14px; margin-bottom: 10px; color: #b0b0b0; }
+  .footer-col a:hover { color: var(--blue); }
+  .footer-bottom {
+    border-top: 1px solid #1f1f1f;
+    padding-top: 24px;
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 40px; }
+    .phone-wrap { display: none; }
+    .products-grid { grid-template-columns: repeat(2, 1fr); }
+    .features-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .nav-links { display: none; }
+  }
+  @media (max-width: 500px) {
+    .products-grid { grid-template-columns: 1fr; }
+    .hero-actions { flex-direction: column; }
+    .hero-stats { gap: 24px; }
+    .cta { padding: 40px 24px; }
+    .cta h2 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <div class="container nav-inner">
+    <div class="logo">
+      <div class="logo-mark">Z</div>
+      Zavora <span style="color:var(--blue)">SMS</span>
+    </div>
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#products">Products</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#">Support</a>
+    </div>
+    <div class="nav-actions">
+      <a href="login.html" class="btn btn-outline">Login</a>
+      <a href="register.html" class="btn btn-primary">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <div class="badge"><span class="dot"></span> 150+ Countries Available</div>
+      <h1>Buy Virtual Numbers <span class="accent">Worldwide</span> Instantly</h1>
+      <p class="sub">Get SMS verification numbers for WhatsApp, Facebook, Telegram, Google and 500+ apps. Fast delivery, cheap prices, 24/7 support.</p>
+      <div class="hero-actions">
+        <a href="register.html" class="btn btn-primary">Create Free Account</a>
+        <a href="#products" class="btn btn-outline">View Products</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">150+</div>
+          <div class="stat-label">Countries</div>
+        </div>
+        <div>
+          <div class="stat-num">500+</div>
+          <div class="stat-label">Apps Supported</div>
+        </div>
+        <div>
+          <div class="stat-num">24/7</div>
+          <div class="stat-label">Live Support</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="phone-screen">
+          <div class="sms-header">ZAVORA SMS</div>
+          <div class="sms-title">Your Order</div>
+
+          <div class="sms-card">
+            <div class="label">PRODUCT</div>
+            <div class="value">WhatsApp</div>
+          </div>
+          <div class="sms-card">
+            <div class="label">COUNTRY</div>
+            <div class="value">🇺🇸 United States</div>
+          </div>
+          <div class="sms-card">
+            <div class="label">NUMBER</div>
+            <div class="value">+1 415 *** 8821</div>
+          </div>
+
+          <div class="sms-code" style="margin-top:auto;">
+            <div class="label">SMS CODE</div>
+            <div class="code">482 913</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRODUCTS ===== -->
+<section class="section" id="products">
+  <div class="container">
+    <div class="section-head">
+      <h2>Choose Your Product</h2>
+      <p>Click any app to see available countries and prices</p>
+    </div>
+
+    <div class="products-grid">
+      <div class="product-card">
+        <div class="product-icon ic-whatsapp">✆</div>
+        <h3>WhatsApp</h3>
+        <div class="countries">150+ countries</div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon ic-facebook">f</div>
+        <h3>Facebook</h3>
+        <div class="countries">120+ countries</div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon ic-telegram">✈</div>
+        <h3>Telegram</h3>
+        <div class="countries">90+ countries</div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon ic-instagram">◉</div>
+        <h3>Instagram</h3>
+        <div class="countries">100+ countries</div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon ic-google">G</div>
+        <h3>Google</h3>
+        <div class="countries">130+ countries</div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon ic-twitter">𝕏</div>
+        <h3>Twitter / X</h3>
+        <div class="countries">80+ countries</div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon ic-tiktok">♪</div>
+        <h3>TikTok</h3>
+        <div class="countries">70+ countries</div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon ic-discord">◈</div>
+        <h3>Discord</h3>
+        <div class="countries">60+ countries</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="section features">
+  <div class="container">
+    <div class="section-head">
+      <h2>Why Choose Zavora SMS</h2>
+      <p>Built for speed, reliability and resellers</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Instant Delivery</h3>
+        <p>Numbers delivered in seconds. SMS codes arrive fast so you never wait.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌍</div>
+        <h3>150+ Countries</h3>
+        <p>USA, UK, India, Nigeria, Germany, Brazil and many more — all in one place.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Secure Payments</h3>
+        <p>Deposit via card, bank transfer, or crypto. Your wallet is always protected.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<div class="container">
+  <div class="cta">
+    <h2>Start Buying Numbers in Minutes</h2>
+    <p>Create a free account, fund your wallet, and get your first number today.</p>
+    <a href="register.html" class="btn btn-primary">Create Free Account</a>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo">
+          <div class="logo-mark">Z</div>
+          Zavora <span style="color:var(--blue)">SMS</span>
+        </div>
+        <p>The fastest way to buy virtual numbers for SMS verification worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#products">WhatsApp</a>
+        <a href="#products">Facebook</a>
+        <a href="#products">Telegram</a>
+        <a href="#products">Google</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#">About</a>
+        <a href="#">Pricing</a>
+        <a href="#">Blog</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <a href="#">Help Center</a>
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+        <a href="#">API Docs</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2025 Zavora SMS. All rights reserved.
+    </div>
+  </div>
+</footer>
+
+</body>
+  </html>
