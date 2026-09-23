@@ -55,6 +55,7 @@
   .msg { padding: 12px 16px; border-radius: 10px; font-size: 14px; font-weight: 500; margin-bottom: 18px; display: none; }
   .msg.error { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; display: block; }
   .msg.success { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; display: block; }
+  .msg.info { background: var(--blue-light); color: var(--blue); border: 1px solid #bfdbfe; display: block; }
   @media (max-width: 900px) {
     body { grid-template-columns: 1fr; }
     .brand-panel { display: none; }
@@ -114,7 +115,7 @@
 
 <script type="module">
   import {
-    auth, signInWithEmailAndPassword, onAuthStateChanged
+    auth, db, signInWithEmailAndPassword, onAuthStateChanged, doc, getDoc
   } from './firebase-config.js';
 
   const form = document.getElementById('loginForm');
@@ -126,11 +127,34 @@
     msg.className = 'msg ' + type;
   }
 
-  // If already logged in → go straight to dashboard
-  onAuthStateChanged(auth, (user) => {
-    if (user) window.location.href = 'dashboard.html';
+  // ============================================================
+  // If already logged in → check role → redirect appropriately
+  // ============================================================
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) return;
+
+    try {
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      if (!snap.exists()) return;
+
+      const role = snap.data().role || 'user';
+      redirectByRole(role);
+    } catch (err) {
+      console.error('Auth check error:', err);
+    }
   });
 
+  function redirectByRole(role) {
+    if (role === 'admin') {
+      window.location.href = 'admin.html';
+    } else {
+      window.location.href = 'dashboard.html';
+    }
+  }
+
+  // ============================================================
+  // Login form submit
+  // ============================================================
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('email').value.trim();
@@ -140,16 +164,40 @@
     btn.textContent = 'Signing in...';
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      showMsg('Login successful! Redirecting...', 'success');
-      setTimeout(() => window.location.href = 'dashboard.html', 800);
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      const user = cred.user;
+
+      showMsg('Login successful! Checking your account...', 'info');
+
+      // Fetch user role
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      if (!snap.exists()) {
+        showMsg('Account data missing. Please contact support.', 'error');
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+        return;
+      }
+
+      const role = snap.data().role || 'user';
+
+      if (role === 'admin') {
+        showMsg('Welcome back, Admin! Redirecting to admin panel...', 'success');
+        setTimeout(() => window.location.href = 'admin.html', 900);
+      } else {
+        showMsg('Login successful! Redirecting...', 'success');
+        setTimeout(() => window.location.href = 'dashboard.html', 900);
+      }
+
     } catch (err) {
       console.error(err);
       let m = 'Login failed.';
-      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+      if (err.code === 'auth/invalid-credential' ||
+          err.code === 'auth/wrong-password' ||
+          err.code === 'auth/user-not-found') {
         m = 'Wrong email or password.';
       }
-      if (err.code === 'auth/invalid-email') m = 'Invalid email address.';
+      if (err.code === 'auth/invalid-email')  m = 'Invalid email address.';
+      if (err.code === 'auth/too-many-requests') m = 'Too many attempts. Try again later.';
       showMsg(m, 'error');
       btn.disabled = false;
       btn.textContent = 'Sign In';
