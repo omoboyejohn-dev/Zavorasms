@@ -4,7 +4,6 @@
 // ============================================
 
 export default async function handler(req, res) {
-  // Only allow GET
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -17,28 +16,33 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Step 1: Generate bearer token
-    const tokenRes = await fetch('https://www.textverified.com/api/v2/auth/token', {
+    // ⭐ Step 1: Generate bearer token (CORRECT endpoint + headers)
+    const tokenRes = await fetch('https://www.textverified.com/api/pub/v2/auth', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username: API_USERNAME,
-        api_key: API_KEY
-      })
+      headers: {
+        'X-API-KEY': API_KEY,
+        'X-API-USERNAME': API_USERNAME,
+        'Accept': 'application/json'
+      }
     });
 
     if (!tokenRes.ok) {
-      const err = await tokenRes.text();
-      console.error('Token error:', err);
-      return res.status(500).json({ error: 'Failed to authenticate with TextVerified' });
+      const errText = await tokenRes.text();
+      console.error('Token error:', tokenRes.status, errText);
+      return res.status(500).json({
+        error: 'Failed to authenticate with TextVerified',
+        status: tokenRes.status,
+        details: errText.substring(0, 300)
+      });
     }
 
     const tokenData = await tokenRes.json();
-    const bearerToken = tokenData.token || tokenData.access_token;
+    const bearerToken = tokenData.token;
+    console.log('Got bearer token, expires in:', tokenData.expiresIn);
 
-    // Step 2: Fetch available services
+    // ⭐ Step 2: Fetch services with bearer token
     const servicesRes = await fetch(
-      'https://www.textverified.com/api/v2/services?number_type=mobile&reservation_type=verification',
+      'https://www.textverified.com/api/pub/v2/services?number_type=mobile&reservation_type=verification',
       {
         headers: {
           'Authorization': `Bearer ${bearerToken}`,
@@ -48,17 +52,21 @@ export default async function handler(req, res) {
     );
 
     if (!servicesRes.ok) {
-      const err = await servicesRes.text();
-      console.error('Services error:', err);
-      return res.status(500).json({ error: 'Failed to fetch services' });
+      const errText = await servicesRes.text();
+      console.error('Services error:', servicesRes.status, errText);
+      return res.status(500).json({
+        error: 'Failed to fetch services',
+        status: servicesRes.status,
+        details: errText.substring(0, 300)
+      });
     }
 
     const servicesData = await servicesRes.json();
+    const rawServices = servicesData.services || servicesData.targets || servicesData || [];
 
-    // Format response for our frontend
-    const services = (servicesData.services || servicesData || []).map(svc => ({
-      id: svc.service_name || svc.id,
-      name: svc.service_name || svc.name,
+    const services = rawServices.map(svc => ({
+      id: svc.service_name || svc.name || svc.id,
+      name: svc.service_name || svc.name || svc.id,
       price: svc.price || svc.cost || 0.25,
       available: svc.available !== false
     }));
@@ -70,6 +78,6 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('tv-services error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error', message: error.message });
   }
 }
