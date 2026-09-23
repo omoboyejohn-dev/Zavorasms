@@ -7,369 +7,131 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 <style>
   :root {
-    --blue: #1E5EFF;
-    --blue-dark: #1547c4;
-    --blue-light: #e8efff;
-    --black: #0A0A0A;
-    --gray: #6b7280;
-    --gray-light: #f5f7fb;
-    --border: #e5e7eb;
-    --white: #ffffff;
-    --green: #10b981;
-    --yellow: #f59e0b;
-    --red: #ef4444;
-    --purple: #8b5cf6;
+    --blue: #1E5EFF; --blue-dark: #1547c4; --blue-light: #e8efff;
+    --black: #0A0A0A; --gray: #6b7280; --gray-light: #f5f7fb;
+    --border: #e5e7eb; --white: #ffffff; --green: #10b981;
+    --yellow: #f59e0b; --red: #ef4444; --purple: #8b5cf6;
     --sidebar-w: 240px;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background: var(--gray-light);
-    color: var(--black);
-    line-height: 1.5;
-  }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--gray-light); color: var(--black); line-height: 1.5; }
   a { text-decoration: none; color: inherit; }
   button { font-family: inherit; cursor: pointer; }
 
-  /* ===== SIDEBAR ===== */
-  .sidebar {
-    position: fixed; left: 0; top: 0;
-    width: var(--sidebar-w); height: 100vh;
-    background: var(--black); color: white;
-    padding: 24px 16px; display: flex; flex-direction: column;
-    z-index: 50; overflow-y: auto;
-  }
-  .logo {
-    display: flex; align-items: center; gap: 10px;
-    font-weight: 800; font-size: 18px;
-    padding: 6px 8px 22px; border-bottom: 1px solid #1e1e1e; margin-bottom: 18px;
-  }
-  .logo-mark {
-    width: 34px; height: 34px;
-    background: linear-gradient(135deg, var(--blue), var(--purple));
-    border-radius: 9px; display: grid; place-items: center;
-    color: white; font-weight: 900; font-size: 16px;
-  }
-  .nav-section-label {
-    font-size: 10.5px; color: #555; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.8px;
-    padding: 0 10px 8px;
-  }
-  .side-link {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 12px; border-radius: 10px;
-    font-size: 14px; font-weight: 500; color: #b0b0b0;
-    margin-bottom: 3px; transition: all 0.15s; cursor: pointer;
-  }
+  .sidebar { position: fixed; left: 0; top: 0; width: var(--sidebar-w); height: 100vh; background: var(--black); color: white; padding: 24px 16px; display: flex; flex-direction: column; z-index: 50; overflow-y: auto; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; padding: 6px 8px 22px; border-bottom: 1px solid #1e1e1e; margin-bottom: 18px; }
+  .logo-mark { width: 34px; height: 34px; background: linear-gradient(135deg, var(--blue), var(--purple)); border-radius: 9px; display: grid; place-items: center; color: white; font-weight: 900; font-size: 16px; }
+  .nav-section-label { font-size: 10.5px; color: #555; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 0 10px 8px; }
+  .side-link { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; font-size: 14px; font-weight: 500; color: #b0b0b0; margin-bottom: 3px; transition: all 0.15s; cursor: pointer; }
   .side-link:hover { background: #161616; color: white; }
   .side-link.active { background: var(--blue); color: white; font-weight: 600; }
   .side-link .ic { width: 20px; text-align: center; font-size: 15px; }
-  .side-link .count {
-    margin-left: auto; font-size: 11px;
-    background: #2a2a2a; padding: 2px 8px;
-    border-radius: 999px; font-weight: 700;
-  }
+  .side-link .count { margin-left: auto; font-size: 11px; background: #2a2a2a; padding: 2px 8px; border-radius: 999px; font-weight: 700; }
   .side-link.active .count { background: rgba(255,255,255,0.2); }
   .sidebar-spacer { flex: 1; }
-  .user-mini {
-    display: flex; align-items: center; gap: 10px;
-    padding: 12px; background: #141414; border-radius: 12px; margin-top: 10px;
-  }
-  .avatar {
-    width: 34px; height: 34px; border-radius: 50%;
-    background: var(--purple); display: grid; place-items: center;
-    font-weight: 700; font-size: 13px; color: white; flex-shrink: 0;
-  }
+  .user-mini { display: flex; align-items: center; gap: 10px; padding: 12px; background: #141414; border-radius: 12px; margin-top: 10px; }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--purple); display: grid; place-items: center; font-weight: 700; font-size: 13px; color: white; flex-shrink: 0; }
   .user-mini .info { overflow: hidden; }
-  .user-mini .name {
-    font-size: 13px; font-weight: 600; color: white;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .user-mini .email {
-    font-size: 11px; color: #777;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
+  .user-mini .name { font-size: 13px; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-mini .email { font-size: 11px; color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-  /* ===== MAIN ===== */
   .main { margin-left: var(--sidebar-w); min-height: 100vh; }
-
-  .topbar {
-    background: white; border-bottom: 1px solid var(--border);
-    padding: 16px 32px; display: flex; align-items: center;
-    justify-content: space-between; position: sticky; top: 0; z-index: 40;
-  }
+  .topbar { background: white; border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
   .topbar h1 { font-size: 20px; font-weight: 800; letter-spacing: -0.4px; }
   .topbar h1 span { color: var(--gray); font-weight: 500; font-size: 14px; margin-left: 6px; }
   .top-actions { display: flex; gap: 10px; align-items: center; }
 
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center;
-    gap: 8px; padding: 10px 18px; border-radius: 10px;
-    font-weight: 600; font-size: 13.5px; cursor: pointer;
-    border: none; transition: all 0.2s ease; white-space: nowrap;
-    font-family: inherit;
-  }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 13.5px; cursor: pointer; border: none; transition: all 0.2s ease; white-space: nowrap; font-family: inherit; }
   .btn-primary { background: var(--blue); color: white; }
   .btn-primary:hover { background: var(--blue-dark); }
-  .btn-outline {
-    background: white; color: var(--black);
-    border: 1.5px solid var(--border);
-  }
+  .btn-outline { background: white; color: var(--black); border: 1.5px solid var(--border); }
   .btn-outline:hover { border-color: var(--black); }
-  .btn-danger { background: var(--red); color: white; }
-  .btn-danger:hover { background: #dc2626; }
-  .btn-sm { padding: 7px 12px; font-size: 12.5px; }
 
   .content { padding: 26px 32px 60px; max-width: 1400px; }
 
-  /* ===== STATS GRID ===== */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 28px;
-  }
-  .stat-box {
-    background: white; border: 1.5px solid var(--border);
-    border-radius: 16px; padding: 22px;
-    transition: all 0.15s;
-  }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .stat-box { background: white; border: 1.5px solid var(--border); border-radius: 16px; padding: 22px; transition: all 0.15s; }
   .stat-box:hover { border-color: var(--blue); }
-  .stat-box .ic {
-    width: 42px; height: 42px; border-radius: 11px;
-    display: grid; place-items: center;
-    font-size: 19px; margin-bottom: 14px;
-  }
-  .stat-box .ic.blue   { background: var(--blue-light); color: var(--blue); }
-  .stat-box .ic.green  { background: #dcfce7; color: #15803d; }
+  .stat-box .ic { width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; font-size: 19px; margin-bottom: 14px; }
+  .stat-box .ic.blue { background: var(--blue-light); color: var(--blue); }
+  .stat-box .ic.green { background: #dcfce7; color: #15803d; }
   .stat-box .ic.yellow { background: #fef3c7; color: #b45309; }
   .stat-box .ic.purple { background: #ede9fe; color: #6d28d9; }
-  .stat-box .num {
-    font-size: 26px; font-weight: 800;
-    letter-spacing: -0.8px; line-height: 1;
-  }
-  .stat-box .lbl {
-    font-size: 13px; color: var(--gray);
-    font-weight: 500; margin-top: 6px;
-  }
+  .stat-box .num { font-size: 26px; font-weight: 800; letter-spacing: -0.8px; line-height: 1; }
+  .stat-box .lbl { font-size: 13px; color: var(--gray); font-weight: 500; margin-top: 6px; }
 
-  /* ===== SECTION HEAD ===== */
-  .sec-head {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 16px; margin-bottom: 16px; flex-wrap: wrap;
-  }
-  .sec-head h2 {
-    font-size: 18px; font-weight: 800; letter-spacing: -0.3px;
-  }
+  .sec-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .sec-head h2 { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; }
   .sec-head .sub { color: var(--gray); font-size: 13px; margin-top: 2px; }
   .sec-head .actions { display: flex; gap: 8px; }
 
-  /* ===== TABLE ===== */
-  .table-card {
-    background: white; border: 1.5px solid var(--border);
-    border-radius: 16px; overflow: hidden;
-  }
+  .table-card { background: white; border: 1.5px solid var(--border); border-radius: 16px; overflow: hidden; }
   table { width: 100%; border-collapse: collapse; }
-  thead th {
-    text-align: left; padding: 13px 18px;
-    font-size: 11.5px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.5px;
-    color: var(--gray); background: var(--gray-light);
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-  }
-  tbody td {
-    padding: 14px 18px; font-size: 13.5px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: middle;
-  }
+  thead th { text-align: left; padding: 13px 18px; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray); background: var(--gray-light); border-bottom: 1px solid var(--border); white-space: nowrap; }
+  tbody td { padding: 14px 18px; font-size: 13.5px; border-bottom: 1px solid var(--border); vertical-align: middle; }
   tbody tr:last-child td { border-bottom: none; }
   tbody tr:hover { background: #fafbff; }
 
-  .cell-icon {
-    display: inline-flex; align-items: center; gap: 10px;
-    font-weight: 600;
-  }
-  .mini-icon {
-    width: 32px; height: 32px; border-radius: 8px;
-    display: grid; place-items: center; color: white;
-    font-size: 14px; font-weight: 800; flex-shrink: 0;
-  }
+  .cell-icon { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; }
+  .mini-icon { width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; color: white; font-size: 14px; font-weight: 800; flex-shrink: 0; }
 
-  .pill {
-    display: inline-block; padding: 4px 10px;
-    border-radius: 999px; font-size: 11.5px;
-    font-weight: 700; letter-spacing: 0.2px;
-  }
-  .pill-green  { background: #dcfce7; color: #15803d; }
+  .pill { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.2px; }
+  .pill-green { background: #dcfce7; color: #15803d; }
   .pill-yellow { background: #fef3c7; color: #b45309; }
-  .pill-red    { background: #fee2e2; color: #b91c1c; }
-  .pill-blue   { background: var(--blue-light); color: var(--blue); }
-  .pill-gray   { background: #f3f4f6; color: #4b5563; }
+  .pill-red { background: #fee2e2; color: #b91c1c; }
+  .pill-blue { background: var(--blue-light); color: var(--blue); }
+  .pill-gray { background: #f3f4f6; color: #4b5563; }
   .pill-purple { background: #ede9fe; color: #6d28d9; }
 
-  .order-badge {
-    display: inline-block;
-    padding: 3px 9px;
-    background: var(--gray-light); color: var(--gray);
-    border-radius: 6px; font-weight: 700;
-    font-size: 12px; min-width: 32px; text-align: center;
-    font-family: 'Courier New', monospace;
-  }
+  .order-badge { display: inline-block; padding: 3px 9px; background: var(--gray-light); color: var(--gray); border-radius: 6px; font-weight: 700; font-size: 12px; min-width: 32px; text-align: center; font-family: 'Courier New', monospace; }
+  .price-cell { font-weight: 800; color: var(--black); font-size: 14px; letter-spacing: -0.2px; }
 
-  .price-cell {
-    font-weight: 800; color: var(--black);
-    font-size: 14px; letter-spacing: -0.2px;
-  }
-
-  .row-actions {
-    display: flex; gap: 6px;
-  }
-  .act-btn {
-    width: 32px; height: 32px; border-radius: 8px;
-    border: 1.5px solid var(--border); background: white;
-    display: grid; place-items: center;
-    font-size: 13px; cursor: pointer;
-    transition: all 0.15s;
-  }
+  .row-actions { display: flex; gap: 6px; }
+  .act-btn { width: 32px; height: 32px; border-radius: 8px; border: 1.5px solid var(--border); background: white; display: grid; place-items: center; font-size: 13px; cursor: pointer; transition: all 0.15s; }
   .act-btn:hover { border-color: var(--black); }
-  .act-btn.edit:hover  { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
-  .act-btn.del:hover   { border-color: var(--red); color: var(--red); background: #fee2e2; }
+  .act-btn.edit:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+  .act-btn.del:hover { border-color: var(--red); color: var(--red); background: #fee2e2; }
   .act-btn.approve { background: #dcfce7; border-color: #86efac; color: #15803d; }
   .act-btn.approve:hover { background: #15803d; color: white; border-color: #15803d; }
-  .act-btn.approve:disabled,
-  .act-btn.del:disabled {
-    opacity: 0.5; cursor: not-allowed;
-  }
+  .act-btn.approve:disabled, .act-btn.del:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  /* ===== MODAL ===== */
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(10,10,10,0.6);
-    backdrop-filter: blur(4px);
-    display: none; z-index: 100;
-    align-items: center; justify-content: center;
-    padding: 20px;
-  }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(10,10,10,0.6); backdrop-filter: blur(4px); display: none; z-index: 100; align-items: center; justify-content: center; padding: 20px; }
   .modal-overlay.show { display: flex; }
-  .modal {
-    background: white; border-radius: 20px;
-    width: 100%; max-width: 520px;
-    max-height: 90vh; overflow-y: auto;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.3);
-  }
-  .modal-head {
-    padding: 22px 26px 16px;
-    border-bottom: 1.5px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .modal-head h3 {
-    font-size: 18px; font-weight: 800; letter-spacing: -0.3px;
-  }
-  .modal-close {
-    width: 34px; height: 34px; border-radius: 9px;
-    border: 1.5px solid var(--border); background: white;
-    display: grid; place-items: center; font-size: 16px;
-    color: var(--gray);
-  }
+  .modal { background: white; border-radius: 20px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 80px rgba(0,0,0,0.3); }
+  .modal-head { padding: 22px 26px 16px; border-bottom: 1.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .modal-head h3 { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; }
+  .modal-close { width: 34px; height: 34px; border-radius: 9px; border: 1.5px solid var(--border); background: white; display: grid; place-items: center; font-size: 16px; color: var(--gray); }
   .modal-close:hover { border-color: var(--red); color: var(--red); }
-
   .modal-body { padding: 22px 26px; }
-  .modal-foot {
-    padding: 16px 26px 22px;
-    display: flex; gap: 10px; justify-content: flex-end;
-    border-top: 1.5px solid var(--border);
-  }
+  .modal-foot { padding: 16px 26px 22px; display: flex; gap: 10px; justify-content: flex-end; border-top: 1.5px solid var(--border); }
 
   .field { margin-bottom: 16px; }
-  .field label {
-    display: block; font-size: 12.5px;
-    font-weight: 700; margin-bottom: 7px;
-    color: var(--black); letter-spacing: 0.1px;
-  }
-  .field input, .field select, .field textarea {
-    width: 100%; padding: 12px 14px;
-    border: 1.5px solid var(--border);
-    border-radius: 10px; font-size: 14px;
-    font-family: inherit; background: white;
-    transition: all 0.15s;
-  }
-  .field input:focus, .field select:focus {
-    outline: none; border-color: var(--blue);
-    box-shadow: 0 0 0 4px rgba(30,94,255,0.1);
-  }
-  .field .hint {
-    font-size: 11.5px; color: var(--gray);
-    margin-top: 5px; font-weight: 500;
-  }
-  .field-row {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
+  .field label { display: block; font-size: 12.5px; font-weight: 700; margin-bottom: 7px; color: var(--black); letter-spacing: 0.1px; }
+  .field input, .field select, .field textarea { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 14px; font-family: inherit; background: white; transition: all 0.15s; }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(30,94,255,0.1); }
+  .field .hint { font-size: 11.5px; color: var(--gray); margin-top: 5px; font-weight: 500; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-  .empty-state {
-    padding: 48px 20px; text-align: center;
-    color: var(--gray); font-size: 14px;
-  }
+  .empty-state { padding: 48px 20px; text-align: center; color: var(--gray); font-size: 14px; }
   .empty-state .emoji { font-size: 34px; display: block; margin-bottom: 10px; opacity: 0.6; }
 
-  /* ===== TOAST ===== */
-  .toast {
-    position: fixed; top: 22px; left: 50%;
-    transform: translateX(-50%) translateY(-20px);
-    background: var(--black); color: white;
-    padding: 12px 22px; border-radius: 12px;
-    font-size: 14px; font-weight: 600;
-    opacity: 0; pointer-events: none;
-    transition: all 0.25s; z-index: 200;
-    box-shadow: 0 12px 32px rgba(0,0,0,0.25);
-    display: flex; align-items: center; gap: 10px;
-  }
+  .toast { position: fixed; top: 22px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--black); color: white; padding: 12px 22px; border-radius: 12px; font-size: 14px; font-weight: 600; opacity: 0; pointer-events: none; transition: all 0.25s; z-index: 200; box-shadow: 0 12px 32px rgba(0,0,0,0.25); display: flex; align-items: center; gap: 10px; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .toast.success { background: var(--green); }
-  .toast.error   { background: var(--red); }
-  .toast.info    { background: var(--blue); }
+  .toast.error { background: var(--red); }
+  .toast.info { background: var(--blue); }
 
-  /* ===== SEARCH BOX ===== */
-  .search-box {
-    position: relative; max-width: 280px; flex: 1;
-  }
-  .search-box input {
-    width: 100%; padding: 9px 14px 9px 36px;
-    border: 1.5px solid var(--border); border-radius: 10px;
-    font-size: 13.5px; font-family: inherit; background: white;
-  }
-  .search-box input:focus {
-    outline: none; border-color: var(--blue);
-    box-shadow: 0 0 0 4px rgba(30,94,255,0.1);
-  }
-  .search-box .ico {
-    position: absolute; left: 12px; top: 50%;
-    transform: translateY(-50%); color: var(--gray);
-    font-size: 14px; pointer-events: none;
-  }
+  .search-box { position: relative; max-width: 280px; flex: 1; }
+  .search-box input { width: 100%; padding: 9px 14px 9px 36px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; font-family: inherit; background: white; }
+  .search-box input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(30,94,255,0.1); }
+  .search-box .ico { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray); font-size: 14px; pointer-events: none; }
 
-  /* ===== LOADING ===== */
-  .loading {
-    padding: 60px 20px; text-align: center;
-  }
-  .loading .spinner {
-    width: 40px; height: 40px; margin: 0 auto 14px;
-    border: 3px solid var(--border);
-    border-top-color: var(--blue);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
+  .loading { padding: 60px 20px; text-align: center; }
+  .loading .spinner { width: 40px; height: 40px; margin: 0 auto 14px; border: 3px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.8s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .loading p { color: var(--gray); font-size: 14px; }
 
-  /* ===== MOBILE ===== */
-  .mobile-top {
-    display: none; background: white; padding: 14px 20px;
-    border-bottom: 1px solid var(--border);
-    align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 40;
-  }
+  .mobile-top { display: none; background: white; padding: 14px 20px; border-bottom: 1px solid var(--border); align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
   @media (max-width: 800px) {
     :root { --sidebar-w: 0px; }
     .sidebar { transform: translateX(-100%); transition: transform 0.25s; width: 250px; }
@@ -382,10 +144,7 @@
     table { min-width: 700px; }
     .field-row { grid-template-columns: 1fr; }
   }
-  .overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.5); z-index: 45;
-  }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 45; }
   .overlay.show { display: block; }
 </style>
 </head>
@@ -412,6 +171,7 @@
 
   <div class="nav-section-label" style="margin-top:16px;">Manage</div>
   <a class="side-link" data-tab="products"><span class="ic">📦</span> Products <span class="count" id="productsCount">0</span></a>
+  <a class="side-link" data-tab="usa-products"><span class="ic">🇺🇸</span> USA Products <span class="count" id="usaProductsCount">0</span></a>
   <a class="side-link" data-tab="countries"><span class="ic">🌍</span> Countries <span class="count" id="countriesCount">0</span></a>
   <a class="side-link" data-tab="users"><span class="ic">👥</span> Users <span class="count" id="usersCount">0</span></a>
   <a class="side-link" data-tab="orders"><span class="ic">🧾</span> Orders <span class="count" id="ordersCount">0</span></a>
@@ -497,6 +257,7 @@
   let currentUser = null;
   let currentAdmin = null;
   let products = [];
+  let usaProducts = [];   // ⭐ NEW
   let countries = [];
   let allUsers = [];
   let allOrders = [];
@@ -520,6 +281,18 @@
     { id: 'match',     name: 'Match',       icon: 'M', cls: 'ic-match',     stock: 56  },
     { id: 'tagged',    name: 'Tagged',      icon: 'T', cls: 'ic-tagged',    stock: 33  },
     { id: 'uber',      name: 'Uber',        icon: 'U', cls: 'ic-uber',      stock: 74  }
+  ];
+
+  const DEFAULT_USA_PRODUCTS = [
+    { id: 'whatsapp',  name: 'WhatsApp',    icon: '✆', cls: 'ic-whatsapp',  price: 5600, stock: 200 },
+    { id: 'telegram',  name: 'Telegram',    icon: '✈', cls: 'ic-telegram',  price: 6500, stock: 150 },
+    { id: 'facebook',  name: 'Facebook',    icon: 'f', cls: 'ic-facebook',  price: 709,  stock: 500 },
+    { id: 'instagram', name: 'Instagram',   icon: '◉', cls: 'ic-instagram', price: 578,  stock: 400 },
+    { id: 'google',    name: 'Google',      icon: 'G', cls: 'ic-google',    price: 850,  stock: 300 },
+    { id: 'tiktok',    name: 'TikTok',      icon: '♪', cls: 'ic-tiktok',    price: 950,  stock: 250 },
+    { id: 'twitter',   name: 'Twitter / X', icon: '𝕏', cls: 'ic-twitter',   price: 780,  stock: 200 },
+    { id: 'apple',     name: 'Apple',       icon: '',  cls: 'ic-apple',     price: 1200, stock: 150 },
+    { id: 'snapchat',  name: 'Snapchat',    icon: '👻', cls: 'ic-snapchat', price: 700,  stock: 180 }
   ];
 
   const DEFAULT_COUNTRIES = [
@@ -567,6 +340,7 @@
   async function loadAllData() {
     await Promise.all([
       loadProducts(),
+      loadUsaProducts(),
       loadCountries(),
       loadUsers(),
       loadOrders(),
@@ -581,10 +355,16 @@
       products = [];
       snap.forEach(d => products.push({ id: d.id, ...d.data() }));
       products.sort((a, b) => (a.order || 0) - (b.order || 0));
-    } catch (err) {
-      console.error('Products load error:', err);
-      products = [];
-    }
+    } catch (err) { console.error(err); products = []; }
+  }
+
+  async function loadUsaProducts() {
+    try {
+      const snap = await getDocs(collection(db, 'config_usa_products'));
+      usaProducts = [];
+      snap.forEach(d => usaProducts.push({ id: d.id, ...d.data() }));
+      usaProducts.sort((a, b) => (a.order || 0) - (b.order || 0));
+    } catch (err) { console.error(err); usaProducts = []; }
   }
 
   async function loadCountries() {
@@ -593,10 +373,7 @@
       countries = [];
       snap.forEach(d => countries.push({ id: d.id, ...d.data() }));
       countries.sort((a, b) => (a.order || 0) - (b.order || 0));
-    } catch (err) {
-      console.error('Countries load error:', err);
-      countries = [];
-    }
+    } catch (err) { console.error(err); countries = []; }
   }
 
   async function loadUsers() {
@@ -605,10 +382,7 @@
       allUsers = [];
       snap.forEach(d => allUsers.push({ uid: d.id, ...d.data() }));
       allUsers.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-    } catch (err) {
-      console.error('Users load error:', err);
-      allUsers = [];
-    }
+    } catch (err) { console.error(err); allUsers = []; }
   }
 
   async function loadOrders() {
@@ -617,10 +391,7 @@
       allOrders = [];
       snap.forEach(d => allOrders.push({ id: d.id, ...d.data() }));
       allOrders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-    } catch (err) {
-      console.error('Orders load error:', err);
-      allOrders = [];
-    }
+    } catch (err) { console.error(err); allOrders = []; }
   }
 
   async function loadDeposits() {
@@ -629,17 +400,15 @@
       allDeposits = [];
       snap.forEach(d => allDeposits.push({ id: d.id, ...d.data() }));
       allDeposits.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-    } catch (err) {
-      console.error('Deposits load error:', err);
-      allDeposits = [];
-    }
+    } catch (err) { console.error(err); allDeposits = []; }
   }
 
   function updateSidebarCounts() {
-    document.getElementById('productsCount').textContent  = products.length;
-    document.getElementById('countriesCount').textContent = countries.length;
-    document.getElementById('usersCount').textContent     = allUsers.length;
-    document.getElementById('ordersCount').textContent    = allOrders.length;
+    document.getElementById('productsCount').textContent    = products.length;
+    document.getElementById('usaProductsCount').textContent = usaProducts.length;
+    document.getElementById('countriesCount').textContent   = countries.length;
+    document.getElementById('usersCount').textContent       = allUsers.length;
+    document.getElementById('ordersCount').textContent      = allOrders.length;
     const dEl = document.getElementById('depositsCount');
     if (dEl) dEl.textContent = allDeposits.filter(d => d.status === 'pending').length;
   }
@@ -647,6 +416,10 @@
   function nextProductOrder() {
     if (products.length === 0) return 1;
     return Math.max(...products.map(p => p.order || 0)) + 1;
+  }
+  function nextUsaProductOrder() {
+    if (usaProducts.length === 0) return 1;
+    return Math.max(...usaProducts.map(p => p.order || 0)) + 1;
   }
   function nextCountryOrder() {
     if (countries.length === 0) return 1;
@@ -664,37 +437,34 @@
     document.querySelector(`.side-link[data-tab="${tab}"]`)?.classList.add('active');
 
     const titles = {
-      overview:  ['Overview', '/ Welcome back, Admin'],
-      products:  ['Products', '/ Manage services — new ones go to the bottom'],
-      countries: ['Countries', '/ Manage countries & prices'],
-      users:     ['Users', '/ All registered accounts'],
-      orders:    ['Orders', '/ All customer orders'],
-      deposits:  ['Deposits', '/ Approve or reject pending deposits']
+      overview:      ['Overview', '/ Welcome back, Admin'],
+      products:      ['Products', '/ Manage main services'],
+      'usa-products':['USA Products', '/ Manage USA-only products'],
+      countries:     ['Countries', '/ Manage countries & prices'],
+      users:         ['Users', '/ All registered accounts'],
+      orders:        ['Orders', '/ All customer orders'],
+      deposits:      ['Deposits', '/ Approve or reject pending deposits']
     };
     document.getElementById('pageTitle').innerHTML = `${titles[tab][0]} <span>${titles[tab][1]}</span>`;
 
     const render = {
-      overview:  renderOverview,
-      products:  renderProducts,
-      countries: renderCountries,
-      users:     renderUsers,
-      orders:    renderOrders,
-      deposits:  renderDeposits
+      overview:        renderOverview,
+      products:        renderProducts,
+      'usa-products':  renderUsaProducts,
+      countries:       renderCountries,
+      users:           renderUsers,
+      orders:          renderOrders,
+      deposits:        renderDeposits
     };
     render[tab]?.();
   }
   window.switchTab = switchTab;
 
   function renderOverview() {
-    const totalRevenue = allOrders
-      .filter(o => o.status === 'completed')
-      .reduce((s, o) => s + (o.price || 0), 0);
-
+    const totalRevenue = allOrders.filter(o => o.status === 'completed').reduce((s, o) => s + (o.price || 0), 0);
     const pending = allOrders.filter(o => o.status === 'pending').length;
     const completed = allOrders.filter(o => o.status === 'completed').length;
     const pendingDeposits = allDeposits.filter(d => d.status === 'pending').length;
-
-    // Provider breakdown
     const mainOrders = allOrders.filter(o => (o.provider || 'main') === 'main').length;
     const usaOrders = allOrders.filter(o => o.provider === 'usa').length;
 
@@ -753,11 +523,12 @@
         </div>
       </div>
       <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px;">
-        <button class="btn btn-primary" onclick="switchTab('products')" style="padding:18px;">📦 Manage Products</button>
-        <button class="btn btn-primary" onclick="switchTab('countries')" style="padding:18px;">🌍 Manage Countries</button>
-        <button class="btn btn-primary" onclick="switchTab('orders')" style="padding:18px;">🧾 View Orders</button>
-        <button class="btn btn-primary" onclick="switchTab('users')" style="padding:18px;">👥 View Users</button>
-        <button class="btn btn-primary" onclick="switchTab('deposits')" style="padding:18px;">💰 View Deposits</button>
+        <button class="btn btn-primary" onclick="switchTab('products')" style="padding:18px;">📦 Main Products</button>
+        <button class="btn btn-primary" onclick="switchTab('usa-products')" style="padding:18px;">🇺🇸 USA Products</button>
+        <button class="btn btn-primary" onclick="switchTab('countries')" style="padding:18px;">🌍 Countries</button>
+        <button class="btn btn-primary" onclick="switchTab('orders')" style="padding:18px;">🧾 Orders</button>
+        <button class="btn btn-primary" onclick="switchTab('users')" style="padding:18px;">👥 Users</button>
+        <button class="btn btn-primary" onclick="switchTab('deposits')" style="padding:18px;">💰 Deposits</button>
       </div>
 
       ${(products.length === 0 || countries.length === 0) ? `
@@ -772,11 +543,12 @@
     `;
   }
 
+  /* ===== PRODUCTS (MAIN) ===== */
   function renderProducts() {
     if (products.length === 0) {
       document.getElementById('contentArea').innerHTML = `
         <div class="sec-head">
-          <div><h2>Products</h2><div class="sub">Services you sell</div></div>
+          <div><h2>Products</h2><div class="sub">Main services you sell</div></div>
           <button class="btn btn-primary" onclick="addProduct()">＋ Add Product</button>
         </div>
         <div class="table-card">
@@ -847,6 +619,85 @@
     `;
   }
 
+  /* ===== USA PRODUCTS ===== */
+  function renderUsaProducts() {
+    if (usaProducts.length === 0) {
+      document.getElementById('contentArea').innerHTML = `
+        <div class="sec-head">
+          <div><h2>🇺🇸 USA Products</h2><div class="sub">USA-only products (separate provider)</div></div>
+          <button class="btn btn-primary" onclick="addUsaProduct()">＋ Add USA Product</button>
+        </div>
+        <div class="table-card">
+          <div class="empty-state">
+            <span class="emoji">🇺🇸</span>
+            No USA products yet. Click <strong>Add USA Product</strong> or <strong>Seed Default Data</strong>.
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    document.getElementById('contentArea').innerHTML = `
+      <div class="sec-head">
+        <div><h2>🇺🇸 USA Products <span style="color:var(--gray); font-weight:500; font-size:14px;">(${usaProducts.length})</span></h2>
+        <div class="sub">These appear on the <strong>Buy USA Number</strong> page with their own prices</div></div>
+        <div class="actions">
+          <div class="search-box">
+            <span class="ico">🔍</span>
+            <input type="text" id="usaSearch" placeholder="Search USA products..." />
+          </div>
+          <button class="btn btn-primary" onclick="addUsaProduct()">＋ Add USA Product</button>
+        </div>
+      </div>
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Product</th>
+              <th>ID</th>
+              <th>USA Price</th>
+              <th>Stock (pcs)</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usaBody">${usaProducts.map(rowUsaProduct).join('')}</tbody>
+        </table>
+      </div>
+    `;
+
+    document.getElementById('usaSearch').addEventListener('input', (e) => {
+      const f = e.target.value.toLowerCase();
+      const filtered = usaProducts.filter(p => p.name.toLowerCase().includes(f));
+      document.getElementById('usaBody').innerHTML = filtered.map(rowUsaProduct).join('');
+    });
+  }
+
+  function rowUsaProduct(p) {
+    const orderNum = (p.order || 0).toLocaleString();
+    return `
+      <tr>
+        <td><span class="order-badge">#${orderNum}</span></td>
+        <td>
+          <div class="cell-icon">
+            <div class="mini-icon ${p.cls || 'ic-more'}">${p.icon || '?'}</div>
+            ${p.name}
+          </div>
+        </td>
+        <td><code style="font-size:12px; color:var(--gray);">${p.id}</code></td>
+        <td><span class="price-cell">₦${(p.price || 0).toLocaleString()}</span></td>
+        <td><span class="pill pill-blue">${(p.stock || 0).toLocaleString()} pcs</span></td>
+        <td>
+          <div class="row-actions">
+            <button class="act-btn edit" onclick="editUsaProduct('${p.id}')" title="Edit">✎</button>
+            <button class="act-btn del" onclick="deleteUsaProduct('${p.id}')" title="Delete">🗑</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }
+
+  /* COUNTRY CRUD */
   function renderCountries() {
     if (countries.length === 0) {
       document.getElementById('contentArea').innerHTML = `
@@ -990,7 +841,6 @@
     `;
   }
 
-  /* ⭐ ORDERS — Now with Provider column */
   function renderOrders() {
     if (allOrders.length === 0) {
       document.getElementById('contentArea').innerHTML = `
@@ -1054,7 +904,6 @@
       o.status === 'pending'   ? 'pill-yellow' :
       o.status === 'cancelled' ? 'pill-gray' : 'pill-red';
 
-    // ⭐ Provider badge
     const provider = o.provider || 'main';
     const providerPill = provider === 'usa'
       ? '<span class="pill pill-purple">🇺🇸 USA</span>'
@@ -1156,7 +1005,7 @@
     `;
   }
 
-  /* APPROVE / REJECT DEPOSIT — with double-click protection */
+  /* APPROVE / REJECT DEPOSIT */
   window.approveDeposit = async function (id) {
     if (window.__approvingDeposit) return;
     window.__approvingDeposit = true;
@@ -1169,48 +1018,26 @@
     try {
       const depRef = doc(db, 'deposits', id);
       const freshSnap = await getDoc(depRef);
-
-      if (!freshSnap.exists()) {
-        showToast('Deposit no longer exists', 'error');
-        return;
-      }
-
+      if (!freshSnap.exists()) { showToast('Deposit no longer exists', 'error'); return; }
       const d = freshSnap.data();
 
       if (d.status !== 'pending') {
         showToast(`This deposit was already ${d.status}.`, 'error');
-        await loadDeposits();
-        await loadUsers();
-        updateSidebarCounts();
-        renderDeposits();
+        await loadDeposits(); await loadUsers(); updateSidebarCounts(); renderDeposits();
         return;
       }
 
-      if (!confirm(`Approve deposit?\n\nUser: ${d.email}\nAmount: ₦${Number(d.amount).toLocaleString()}\n\nThis will credit the user's wallet immediately.`)) {
-        return;
-      }
+      if (!confirm(`Approve deposit?\n\nUser: ${d.email}\nAmount: ₦${Number(d.amount).toLocaleString()}\n\nThis will credit the user's wallet immediately.`)) return;
 
-      await updateDoc(depRef, {
-        status: 'completed',
-        approvedAt: serverTimestamp(),
-        approvedBy: currentUser.uid
-      });
-
-      await updateDoc(doc(db, 'users', d.uid), {
-        walletBalance: increment(d.amount || 0)
-      });
+      await updateDoc(depRef, { status: 'completed', approvedAt: serverTimestamp(), approvedBy: currentUser.uid });
+      await updateDoc(doc(db, 'users', d.uid), { walletBalance: increment(d.amount || 0) });
 
       showToast(`✅ Credited ₦${Number(d.amount).toLocaleString()}`, 'success');
-      await loadDeposits();
-      await loadUsers();
-      updateSidebarCounts();
-      renderDeposits();
-
+      await loadDeposits(); await loadUsers(); updateSidebarCounts(); renderDeposits();
     } catch (err) {
       console.error(err);
       showToast('Could not approve deposit', 'error');
-      await loadDeposits();
-      renderDeposits();
+      await loadDeposits(); renderDeposits();
     } finally {
       window.__approvingDeposit = false;
     }
@@ -1228,37 +1055,20 @@
     try {
       const depRef = doc(db, 'deposits', id);
       const freshSnap = await getDoc(depRef);
-
-      if (!freshSnap.exists()) {
-        showToast('Deposit no longer exists', 'error');
-        return;
-      }
-
+      if (!freshSnap.exists()) { showToast('Deposit no longer exists', 'error'); return; }
       const d = freshSnap.data();
 
       if (d.status !== 'pending') {
         showToast(`This deposit was already ${d.status}.`, 'error');
-        await loadDeposits();
-        updateSidebarCounts();
-        renderDeposits();
+        await loadDeposits(); updateSidebarCounts(); renderDeposits();
         return;
       }
 
-      if (!confirm(`Reject this deposit?\n\nUser: ${d.email}\nAmount: ₦${Number(d.amount).toLocaleString()}`)) {
-        return;
-      }
+      if (!confirm(`Reject this deposit?\n\nUser: ${d.email}\nAmount: ₦${Number(d.amount).toLocaleString()}`)) return;
 
-      await updateDoc(depRef, {
-        status: 'rejected',
-        rejectedAt: serverTimestamp(),
-        rejectedBy: currentUser.uid
-      });
-
+      await updateDoc(depRef, { status: 'rejected', rejectedAt: serverTimestamp(), rejectedBy: currentUser.uid });
       showToast('Deposit rejected', 'success');
-      await loadDeposits();
-      updateSidebarCounts();
-      renderDeposits();
-
+      await loadDeposits(); updateSidebarCounts(); renderDeposits();
     } catch (err) {
       console.error(err);
       showToast('Could not reject deposit', 'error');
@@ -1267,7 +1077,7 @@
     }
   };
 
-  /* PRODUCT CRUD */
+  /* PRODUCT CRUD (MAIN) */
   window.addProduct = function () {
     const nextOrder = nextProductOrder();
     window.openModal(
@@ -1284,7 +1094,6 @@
         <div class="field">
           <label>Product ID (lowercase, no spaces)</label>
           <input type="text" id="pId" placeholder="whatsapp" />
-          <div class="hint">Unique ID used internally</div>
         </div>
       </div>
       <div class="field">
@@ -1302,10 +1111,6 @@
           <option value="ic-snapchat">Snapchat Yellow</option>
           <option value="ic-discord">Discord Purple</option>
           <option value="ic-signal">Signal Blue</option>
-          <option value="ic-pof">POF Orange</option>
-          <option value="ic-match">Match Blue</option>
-          <option value="ic-tagged">Tagged Blue</option>
-          <option value="ic-uber">Uber Black</option>
           <option value="ic-more">Default Black</option>
         </select>
       </div>
@@ -1314,7 +1119,7 @@
         <input type="number" id="pStock" value="100" min="0" />
       </div>
       <div style="padding:12px 14px; background:var(--blue-light); border-radius:10px; font-size:13px; color:var(--blue-dark); font-weight:600;">
-        ℹ️ This product will be added as <strong>#${nextOrder}</strong> (at the bottom)
+        ℹ️ This product will be added as <strong>#${nextOrder}</strong>
       </div>`,
       `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
        <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>`
@@ -1327,25 +1132,15 @@
     const id = document.getElementById('pId').value.trim().toLowerCase().replace(/\s+/g, '');
     const cls = document.getElementById('pCls').value;
     const stock = parseInt(document.getElementById('pStock').value) || 0;
-
-    if (!name || !id) { showToast('Name and ID are required', 'error'); return; }
-    if (products.some(p => p.id === id)) { showToast('Product ID already exists', 'error'); return; }
+    if (!name || !id) { showToast('Name and ID required', 'error'); return; }
+    if (products.some(p => p.id === id)) { showToast('ID already exists', 'error'); return; }
 
     try {
       const order = nextProductOrder();
-      await setDoc(doc(db, 'config_products', id), {
-        name, icon, cls, stock, order,
-        createdAt: serverTimestamp()
-      });
-      closeModal();
-      showToast(`Product added as #${order}!`, 'success');
-      await loadProducts();
-      updateSidebarCounts();
-      renderProducts();
-    } catch (err) {
-      console.error(err);
-      showToast('Could not save product', 'error');
-    }
+      await setDoc(doc(db, 'config_products', id), { name, icon, cls, stock, order, createdAt: serverTimestamp() });
+      closeModal(); showToast(`Product added as #${order}!`, 'success');
+      await loadProducts(); updateSidebarCounts(); renderProducts();
+    } catch (err) { console.error(err); showToast('Could not save', 'error'); }
   };
 
   window.editProduct = function (id) {
@@ -1353,34 +1148,18 @@
     if (!p) return;
     window.openModal(
       'Edit Product',
-      `<div class="field">
-        <label>Product Name</label>
-        <input type="text" id="pName" value="${p.name}" />
-      </div>
+      `<div class="field"><label>Product Name</label><input type="text" id="pName" value="${p.name}" /></div>
       <div class="field-row">
-        <div class="field">
-          <label>Icon</label>
-          <input type="text" id="pIcon" value="${p.icon || ''}" maxlength="4" />
-        </div>
-        <div class="field">
-          <label>Product ID (read-only)</label>
-          <input type="text" id="pId" value="${p.id}" disabled style="opacity:0.6;" />
-        </div>
+        <div class="field"><label>Icon</label><input type="text" id="pIcon" value="${p.icon || ''}" maxlength="4" /></div>
+        <div class="field"><label>ID (read-only)</label><input type="text" value="${p.id}" disabled style="opacity:0.6;" /></div>
       </div>
       <div class="field">
         <label>Icon Color Class</label>
         <select id="pCls">
-          ${['ic-whatsapp','ic-telegram','ic-facebook','ic-instagram','ic-google','ic-tiktok','ic-twitter','ic-amazon','ic-apple','ic-snapchat','ic-discord','ic-signal','ic-pof','ic-match','ic-tagged','ic-uber','ic-more']
-            .map(c => `<option value="${c}" ${p.cls === c ? 'selected' : ''}>${c}</option>`).join('')}
+          ${['ic-whatsapp','ic-telegram','ic-facebook','ic-instagram','ic-google','ic-tiktok','ic-twitter','ic-amazon','ic-apple','ic-snapchat','ic-discord','ic-signal','ic-pof','ic-match','ic-tagged','ic-uber','ic-more'].map(c => `<option value="${c}" ${p.cls === c ? 'selected' : ''}>${c}</option>`).join('')}
         </select>
       </div>
-      <div class="field">
-        <label>Stock (pcs)</label>
-        <input type="number" id="pStock" value="${p.stock || 0}" min="0" />
-      </div>
-      <div style="padding:12px 14px; background:var(--gray-light); border-radius:10px; font-size:13px; color:var(--gray); font-weight:600;">
-        Position: <strong>#${p.order || 0}</strong> (unchanged)
-      </div>`,
+      <div class="field"><label>Stock (pcs)</label><input type="number" id="pStock" value="${p.stock || 0}" min="0" /></div>`,
       `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
        <button class="btn btn-primary" onclick="updateProduct('${p.id}')">Save Changes</button>`
     );
@@ -1391,35 +1170,149 @@
     const icon = document.getElementById('pIcon').value.trim() || '?';
     const cls = document.getElementById('pCls').value;
     const stock = parseInt(document.getElementById('pStock').value) || 0;
-
     if (!name) { showToast('Name required', 'error'); return; }
-
     try {
       await updateDoc(doc(db, 'config_products', id), { name, icon, cls, stock });
-      closeModal();
-      showToast('Product updated!', 'success');
-      await loadProducts();
-      renderProducts();
-    } catch (err) {
-      console.error(err);
-      showToast('Could not update', 'error');
-    }
+      closeModal(); showToast('Product updated!', 'success');
+      await loadProducts(); renderProducts();
+    } catch (err) { console.error(err); showToast('Could not update', 'error'); }
   };
 
   window.deleteProduct = async function (id) {
     const p = products.find(x => x.id === id);
     if (!p) return;
-    if (!confirm(`Delete "${p.name}"?\n\nThis cannot be undone.`)) return;
+    if (!confirm(`Delete "${p.name}"?`)) return;
     try {
       await deleteDoc(doc(db, 'config_products', id));
       showToast('Product deleted', 'success');
-      await loadProducts();
-      updateSidebarCounts();
-      renderProducts();
-    } catch (err) {
-      console.error(err);
-      showToast('Could not delete', 'error');
-    }
+      await loadProducts(); updateSidebarCounts(); renderProducts();
+    } catch (err) { console.error(err); showToast('Could not delete', 'error'); }
+  };
+
+  /* USA PRODUCT CRUD */
+  window.addUsaProduct = function () {
+    const nextOrder = nextUsaProductOrder();
+    window.openModal(
+      '🇺🇸 Add USA Product',
+      `<div class="field">
+        <label>Product Name</label>
+        <input type="text" id="uName" placeholder="e.g. WhatsApp" />
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Icon (emoji or letter)</label>
+          <input type="text" id="uIcon" placeholder="✆" maxlength="4" />
+        </div>
+        <div class="field">
+          <label>Product ID (lowercase, no spaces)</label>
+          <input type="text" id="uId" placeholder="whatsapp" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Icon Color Class</label>
+        <select id="uCls">
+          <option value="ic-whatsapp">WhatsApp Green</option>
+          <option value="ic-telegram">Telegram Blue</option>
+          <option value="ic-facebook">Facebook Blue</option>
+          <option value="ic-instagram">Instagram Gradient</option>
+          <option value="ic-google">Google Red</option>
+          <option value="ic-tiktok">Black</option>
+          <option value="ic-twitter">Twitter Black</option>
+          <option value="ic-amazon">Amazon Orange</option>
+          <option value="ic-apple">Apple Black</option>
+          <option value="ic-snapchat">Snapchat Yellow</option>
+          <option value="ic-discord">Discord Purple</option>
+          <option value="ic-signal">Signal Blue</option>
+          <option value="ic-more">Default Black</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>USA Price (₦)</label>
+          <input type="number" id="uPrice" value="1000" min="0" />
+        </div>
+        <div class="field">
+          <label>Stock (pcs)</label>
+          <input type="number" id="uStock" value="100" min="0" />
+        </div>
+      </div>
+      <div style="padding:12px 14px; background:#ede9fe; border-radius:10px; font-size:13px; color:#6d28d9; font-weight:600;">
+        🇺🇸 This USA product will be added as <strong>#${nextOrder}</strong>
+      </div>`,
+      `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+       <button class="btn btn-primary" onclick="saveUsaProduct()">Save USA Product</button>`
+    );
+  };
+
+  window.saveUsaProduct = async function () {
+    const name = document.getElementById('uName').value.trim();
+    const icon = document.getElementById('uIcon').value.trim() || '?';
+    const id = document.getElementById('uId').value.trim().toLowerCase().replace(/\s+/g, '');
+    const cls = document.getElementById('uCls').value;
+    const price = parseInt(document.getElementById('uPrice').value) || 0;
+    const stock = parseInt(document.getElementById('uStock').value) || 0;
+    if (!name || !id) { showToast('Name and ID required', 'error'); return; }
+    if (usaProducts.some(p => p.id === id)) { showToast('USA Product ID already exists', 'error'); return; }
+
+    try {
+      const order = nextUsaProductOrder();
+      await setDoc(doc(db, 'config_usa_products', id), { name, icon, cls, price, stock, order, createdAt: serverTimestamp() });
+      closeModal(); showToast(`🇺🇸 USA Product added as #${order}!`, 'success');
+      await loadUsaProducts(); updateSidebarCounts(); renderUsaProducts();
+    } catch (err) { console.error(err); showToast('Could not save USA product', 'error'); }
+  };
+
+  window.editUsaProduct = function (id) {
+    const p = usaProducts.find(x => x.id === id);
+    if (!p) return;
+    window.openModal(
+      '🇺🇸 Edit USA Product',
+      `<div class="field"><label>Product Name</label><input type="text" id="uName" value="${p.name}" /></div>
+      <div class="field-row">
+        <div class="field"><label>Icon</label><input type="text" id="uIcon" value="${p.icon || ''}" maxlength="4" /></div>
+        <div class="field"><label>ID (read-only)</label><input type="text" value="${p.id}" disabled style="opacity:0.6;" /></div>
+      </div>
+      <div class="field">
+        <label>Icon Color Class</label>
+        <select id="uCls">
+          ${['ic-whatsapp','ic-telegram','ic-facebook','ic-instagram','ic-google','ic-tiktok','ic-twitter','ic-amazon','ic-apple','ic-snapchat','ic-discord','ic-signal','ic-pof','ic-match','ic-tagged','ic-uber','ic-more'].map(c => `<option value="${c}" ${p.cls === c ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>USA Price (₦)</label><input type="number" id="uPrice" value="${p.price || 0}" min="0" /></div>
+        <div class="field"><label>Stock (pcs)</label><input type="number" id="uStock" value="${p.stock || 0}" min="0" /></div>
+      </div>
+      <div style="padding:12px 14px; background:var(--gray-light); border-radius:10px; font-size:13px; color:var(--gray); font-weight:600;">
+        Position: <strong>#${p.order || 0}</strong> (unchanged)
+      </div>`,
+      `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+       <button class="btn btn-primary" onclick="updateUsaProduct('${p.id}')">Save Changes</button>`
+    );
+  };
+
+  window.updateUsaProduct = async function (id) {
+    const name = document.getElementById('uName').value.trim();
+    const icon = document.getElementById('uIcon').value.trim() || '?';
+    const cls = document.getElementById('uCls').value;
+    const price = parseInt(document.getElementById('uPrice').value) || 0;
+    const stock = parseInt(document.getElementById('uStock').value) || 0;
+    if (!name) { showToast('Name required', 'error'); return; }
+    try {
+      await updateDoc(doc(db, 'config_usa_products', id), { name, icon, cls, price, stock });
+      closeModal(); showToast('USA Product updated!', 'success');
+      await loadUsaProducts(); renderUsaProducts();
+    } catch (err) { console.error(err); showToast('Could not update', 'error'); }
+  };
+
+  window.deleteUsaProduct = async function (id) {
+    const p = usaProducts.find(x => x.id === id);
+    if (!p) return;
+    if (!confirm(`Delete USA product "${p.name}"?`)) return;
+    try {
+      await deleteDoc(doc(db, 'config_usa_products', id));
+      showToast('USA Product deleted', 'success');
+      await loadUsaProducts(); updateSidebarCounts(); renderUsaProducts();
+    } catch (err) { console.error(err); showToast('Could not delete', 'error'); }
   };
 
   /* COUNTRY CRUD */
@@ -1427,38 +1320,16 @@
     const nextOrder = nextCountryOrder();
     window.openModal(
       'Add Country',
-      `<div class="field">
-        <label>Country Name</label>
-        <input type="text" id="cName" placeholder="e.g. United States" />
+      `<div class="field"><label>Country Name</label><input type="text" id="cName" placeholder="e.g. United States" /></div>
+      <div class="field-row">
+        <div class="field"><label>Flag</label><input type="text" id="cFlag" placeholder="🇺🇸" maxlength="6" /></div>
+        <div class="field"><label>Dial Code</label><input type="text" id="cDial" placeholder="+1" /></div>
       </div>
       <div class="field-row">
-        <div class="field">
-          <label>Flag (emoji)</label>
-          <input type="text" id="cFlag" placeholder="🇺🇸" maxlength="6" />
-        </div>
-        <div class="field">
-          <label>Dial Code</label>
-          <input type="text" id="cDial" placeholder="+1" />
-        </div>
+        <div class="field"><label>Price (₦)</label><input type="number" id="cPrice" value="1000" min="0" /></div>
+        <div class="field"><label>Stock (pcs)</label><input type="number" id="cStock" value="1000" min="0" /></div>
       </div>
-      <div class="field-row">
-        <div class="field">
-          <label>Price (₦ NGN)</label>
-          <input type="number" id="cPrice" value="1000" min="0" />
-        </div>
-        <div class="field">
-          <label>Stock (pcs)</label>
-          <input type="number" id="cStock" value="1000" min="0" />
-        </div>
-      </div>
-      <div class="field">
-        <label>Country ID (lowercase, no spaces)</label>
-        <input type="text" id="cId" placeholder="us" />
-        <div class="hint">Unique ID used internally</div>
-      </div>
-      <div style="padding:12px 14px; background:var(--blue-light); border-radius:10px; font-size:13px; color:var(--blue-dark); font-weight:600;">
-        ℹ️ This country will be added as <strong>#${nextOrder}</strong> (at the bottom)
-      </div>`,
+      <div class="field"><label>Country ID (lowercase)</label><input type="text" id="cId" placeholder="us" /></div>`,
       `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
        <button class="btn btn-primary" onclick="saveCountry()">Save Country</button>`
     );
@@ -1471,25 +1342,14 @@
     const price = parseInt(document.getElementById('cPrice').value) || 0;
     const stock = parseInt(document.getElementById('cStock').value) || 0;
     const id = document.getElementById('cId').value.trim().toLowerCase().replace(/\s+/g, '');
-
     if (!name || !id) { showToast('Name and ID required', 'error'); return; }
-    if (countries.some(c => c.id === id)) { showToast('Country ID already exists', 'error'); return; }
-
+    if (countries.some(c => c.id === id)) { showToast('Country ID exists', 'error'); return; }
     try {
       const order = nextCountryOrder();
-      await setDoc(doc(db, 'config_countries', id), {
-        name, flag, dial, price, stock, order,
-        createdAt: serverTimestamp()
-      });
-      closeModal();
-      showToast(`Country added as #${order}!`, 'success');
-      await loadCountries();
-      updateSidebarCounts();
-      renderCountries();
-    } catch (err) {
-      console.error(err);
-      showToast('Could not save country', 'error');
-    }
+      await setDoc(doc(db, 'config_countries', id), { name, flag, dial, price, stock, order, createdAt: serverTimestamp() });
+      closeModal(); showToast(`Country added as #${order}!`, 'success');
+      await loadCountries(); updateSidebarCounts(); renderCountries();
+    } catch (err) { console.error(err); showToast('Could not save', 'error'); }
   };
 
   window.editCountry = function (id) {
@@ -1497,32 +1357,14 @@
     if (!c) return;
     window.openModal(
       'Edit Country',
-      `<div class="field">
-        <label>Country Name</label>
-        <input type="text" id="cName" value="${c.name}" />
+      `<div class="field"><label>Country Name</label><input type="text" id="cName" value="${c.name}" /></div>
+      <div class="field-row">
+        <div class="field"><label>Flag</label><input type="text" id="cFlag" value="${c.flag || ''}" maxlength="6" /></div>
+        <div class="field"><label>Dial</label><input type="text" id="cDial" value="${c.dial || ''}" /></div>
       </div>
       <div class="field-row">
-        <div class="field">
-          <label>Flag</label>
-          <input type="text" id="cFlag" value="${c.flag || ''}" maxlength="6" />
-        </div>
-        <div class="field">
-          <label>Dial Code</label>
-          <input type="text" id="cDial" value="${c.dial || ''}" />
-        </div>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label>Price (₦ NGN)</label>
-          <input type="number" id="cPrice" value="${c.price || 0}" min="0" />
-        </div>
-        <div class="field">
-          <label>Stock (pcs)</label>
-          <input type="number" id="cStock" value="${c.stock || 0}" min="0" />
-        </div>
-      </div>
-      <div style="padding:12px 14px; background:var(--gray-light); border-radius:10px; font-size:13px; color:var(--gray); font-weight:600;">
-        Position: <strong>#${c.order || 0}</strong> (unchanged)
+        <div class="field"><label>Price (₦)</label><input type="number" id="cPrice" value="${c.price || 0}" min="0" /></div>
+        <div class="field"><label>Stock (pcs)</label><input type="number" id="cStock" value="${c.stock || 0}" min="0" /></div>
       </div>`,
       `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
        <button class="btn btn-primary" onclick="updateCountry('${c.id}')">Save Changes</button>`
@@ -1535,35 +1377,23 @@
     const dial = document.getElementById('cDial').value.trim();
     const price = parseInt(document.getElementById('cPrice').value) || 0;
     const stock = parseInt(document.getElementById('cStock').value) || 0;
-
     if (!name) { showToast('Name required', 'error'); return; }
-
     try {
       await updateDoc(doc(db, 'config_countries', id), { name, flag, dial, price, stock });
-      closeModal();
-      showToast('Country updated!', 'success');
-      await loadCountries();
-      renderCountries();
-    } catch (err) {
-      console.error(err);
-      showToast('Could not update', 'error');
-    }
+      closeModal(); showToast('Country updated!', 'success');
+      await loadCountries(); renderCountries();
+    } catch (err) { console.error(err); showToast('Could not update', 'error'); }
   };
 
   window.deleteCountry = async function (id) {
     const c = countries.find(x => x.id === id);
     if (!c) return;
-    if (!confirm(`Delete "${c.name}"?\n\nThis cannot be undone.`)) return;
+    if (!confirm(`Delete "${c.name}"?`)) return;
     try {
       await deleteDoc(doc(db, 'config_countries', id));
       showToast('Country deleted', 'success');
-      await loadCountries();
-      updateSidebarCounts();
-      renderCountries();
-    } catch (err) {
-      console.error(err);
-      showToast('Could not delete', 'error');
-    }
+      await loadCountries(); updateSidebarCounts(); renderCountries();
+    } catch (err) { console.error(err); showToast('Could not delete', 'error'); }
   };
 
   /* USER WALLET */
@@ -1572,15 +1402,8 @@
     if (!u) return;
     window.openModal(
       `Adjust Wallet — ${u.firstName || 'User'}`,
-      `<div class="field">
-        <label>Current Balance</label>
-        <input type="text" value="₦${Number(u.walletBalance || 0).toLocaleString()}" disabled style="opacity:0.6;" />
-      </div>
-      <div class="field">
-        <label>New Balance (₦ NGN)</label>
-        <input type="number" id="uBalance" value="${u.walletBalance || 0}" min="0" />
-        <div class="hint">Set the exact new wallet balance</div>
-      </div>`,
+      `<div class="field"><label>Current</label><input type="text" value="₦${Number(u.walletBalance || 0).toLocaleString()}" disabled style="opacity:0.6;" /></div>
+      <div class="field"><label>New Balance (₦)</label><input type="number" id="uBalance" value="${u.walletBalance || 0}" min="0" /></div>`,
       `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
        <button class="btn btn-primary" onclick="saveUserWallet('${uid}')">Save</button>`
     );
@@ -1590,14 +1413,9 @@
     const val = parseFloat(document.getElementById('uBalance').value) || 0;
     try {
       await updateDoc(doc(db, 'users', uid), { walletBalance: val });
-      closeModal();
-      showToast('Wallet updated!', 'success');
-      await loadUsers();
-      renderUsers();
-    } catch (err) {
-      console.error(err);
-      showToast('Could not update wallet', 'error');
-    }
+      closeModal(); showToast('Wallet updated!', 'success');
+      await loadUsers(); renderUsers();
+    } catch (err) { console.error(err); showToast('Could not update', 'error'); }
   };
 
   /* ORDER CANCEL */
@@ -1606,49 +1424,38 @@
     if (!o) return;
     if (!confirm(`Cancel this order?\n\n${o.product} — ${o.country}\n₦${(o.price || 0).toLocaleString()}`)) return;
     try {
-      await updateDoc(doc(db, 'orders', id), {
-        status: 'cancelled',
-        cancelledAt: serverTimestamp()
-      });
+      await updateDoc(doc(db, 'orders', id), { status: 'cancelled', cancelledAt: serverTimestamp() });
       showToast('Order cancelled', 'success');
-      await loadOrders();
-      renderOrders();
-    } catch (err) {
-      console.error(err);
-      showToast('Could not cancel', 'error');
-    }
+      await loadOrders(); renderOrders();
+    } catch (err) { console.error(err); showToast('Could not cancel', 'error'); }
   };
 
   /* SEED */
   document.getElementById('seedBtn').addEventListener('click', async () => {
-    if (!confirm('Seed default products + countries?\n\nThis adds 16 products and 15 countries.\n\nExisting entries with same IDs will be overwritten but keep their order.')) return;
+    if (!confirm('Seed default data?\n\nThis will add:\n- 16 Main Products\n- 9 USA Products\n- 15 Countries\n\nExisting items with same IDs keep their order.')) return;
 
     showToast('Seeding data...', 'info');
 
     try {
       for (const p of DEFAULT_PRODUCTS) {
-        const existing = products.find(x => x.id === p.id);
-        const order = existing?.order || nextProductOrder();
-        await setDoc(doc(db, 'config_products', p.id), {
-          ...p, order,
-          createdAt: serverTimestamp()
-        });
+        const ex = products.find(x => x.id === p.id);
+        const order = ex?.order || nextProductOrder();
+        await setDoc(doc(db, 'config_products', p.id), { ...p, order, createdAt: serverTimestamp() });
+      }
+      for (const p of DEFAULT_USA_PRODUCTS) {
+        const ex = usaProducts.find(x => x.id === p.id);
+        const order = ex?.order || nextUsaProductOrder();
+        await setDoc(doc(db, 'config_usa_products', p.id), { ...p, order, createdAt: serverTimestamp() });
       }
       for (const c of DEFAULT_COUNTRIES) {
-        const existing = countries.find(x => x.id === c.id);
-        const order = existing?.order || nextCountryOrder();
-        await setDoc(doc(db, 'config_countries', c.id), {
-          ...c, order,
-          createdAt: serverTimestamp()
-        });
+        const ex = countries.find(x => x.id === c.id);
+        const order = ex?.order || nextCountryOrder();
+        await setDoc(doc(db, 'config_countries', c.id), { ...c, order, createdAt: serverTimestamp() });
       }
-      showToast('✅ Seeded! Products + countries added', 'success');
+      showToast('✅ Seeded! Main + USA products + countries', 'success');
       await loadAllData();
       switchTab(currentTab);
-    } catch (err) {
-      console.error(err);
-      showToast('Seed failed', 'error');
-    }
+    } catch (err) { console.error(err); showToast('Seed failed', 'error'); }
   });
 
   /* LOGOUT */
