@@ -303,7 +303,7 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* MODAL — ALL ITEMS */
+  /* MODALS */
   .modal-overlay {
     position: fixed; inset: 0;
     background: rgba(10,10,10,0.6);
@@ -398,7 +398,7 @@
     color: var(--gray); font-size: 14px;
   }
 
-  /* RECENT ORDERS */
+  /* ORDERS */
   .orders-card {
     background: white; border: 1.5px solid var(--border);
     border-radius: 16px; overflow: hidden;
@@ -617,11 +617,13 @@
     position: fixed; bottom: 110px; left: 50%;
     transform: translateX(-50%) translateY(20px);
     background: var(--black); color: white;
-    padding: 12px 22px; border-radius: 12px;
-    font-size: 14px; font-weight: 600;
+    padding: 14px 26px; border-radius: 12px;
+    font-size: 14px; font-weight: 700;
     opacity: 0; pointer-events: none;
     transition: all 0.25s; z-index: 200;
     box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+    display: flex; align-items: center; gap: 8px;
+    white-space: nowrap;
   }
   .toast.show {
     opacity: 1;
@@ -664,7 +666,6 @@
 </head>
 <body>
 
-<!-- ===== MOBILE TOP ===== -->
 <div class="mobile-top">
   <div class="logo" style="padding:0; border:none; margin:0;">
     <div class="logo-mark">Z</div> Zavora <span style="color:var(--blue)">SMS</span>
@@ -674,7 +675,7 @@
 
 <div class="overlay" id="overlay" onclick="closeAll()"></div>
 
-<!-- ===== DRAWER ===== -->
+<!-- DRAWER -->
 <aside class="drawer" id="drawer">
   <div class="drawer-head">
     <div class="logo">
@@ -706,7 +707,7 @@
   </div>
 </aside>
 
-<!-- ===== SIDEBAR ===== -->
+<!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
   <div class="logo"><div class="logo-mark">Z</div> Zavora <span style="color:var(--blue)">SMS</span></div>
 
@@ -734,7 +735,7 @@
   </div>
 </aside>
 
-<!-- ===== MAIN ===== -->
+<!-- MAIN -->
 <main class="main">
   <div class="topbar">
     <h1>Dashboard <span id="welcomeMsg">/ Loading...</span></h1>
@@ -745,7 +746,7 @@
 
   <div class="content">
 
-    <!-- WALLET CARD (No Deposit button now) -->
+    <!-- WALLET CARD -->
     <div class="wallet-card">
       <div class="label">Wallet Balance</div>
       <div class="balance">
@@ -767,7 +768,7 @@
       <div class="loading-skeleton"><span class="spin"></span> Loading services...</div>
     </div>
 
-    <!-- COUNTRIES (now separate, not dependent on service) -->
+    <!-- COUNTRIES -->
     <div class="sec-head">
       <h2>Select your country</h2>
       <div class="search-wrap">
@@ -808,7 +809,7 @@
   </div>
 </main>
 
-<!-- ===== ALL SERVICES MODAL ===== -->
+<!-- ALL SERVICES MODAL -->
 <div class="modal-overlay" id="servicesModal" onclick="closeServicesModal(event)">
   <div class="modal-panel" onclick="event.stopPropagation()">
     <div class="modal-head">
@@ -823,7 +824,7 @@
   </div>
 </div>
 
-<!-- ===== ALL COUNTRIES MODAL ===== -->
+<!-- ALL COUNTRIES MODAL -->
 <div class="modal-overlay" id="countriesModal" onclick="closeCountriesModal(event)">
   <div class="modal-panel" onclick="event.stopPropagation()">
     <div class="modal-head">
@@ -848,7 +849,7 @@
 </div>
 
 <!-- TOAST -->
-<div class="toast" id="toast">Copied!</div>
+<div class="toast" id="toast"></div>
 
 <script>
   function openDrawer() {
@@ -871,14 +872,15 @@
     if (window.updateBuyButton) window.updateBuyButton();
   });
 
+  // ✅ UPDATED: toast accepts HTML for icon + message
   window.showToast = function (msg, type = 'success') {
     const t = document.getElementById('toast');
-    t.textContent = msg;
+    t.innerHTML = msg;
     t.className = 'toast show ' + type;
     clearTimeout(window.__toastTimer);
     window.__toastTimer = setTimeout(() => {
       t.className = 'toast ' + type;
-    }, 2000);
+    }, 2200);
   };
 
   /* SERVICES MODAL */
@@ -917,7 +919,6 @@
     query, where, getDocs, serverTimestamp, increment
   } from './firebase-config.js';
 
-  /* STATE */
   let ALL_SERVICES = [];
   let FEATURED_SERVICE_IDS = [
     'whatsapp', 'telegram', 'facebook',
@@ -938,7 +939,7 @@
   let selectedCountry = null;
   let sortByPrice = true;
 
-  /* LOAD FROM FIRESTORE */
+  /* LOAD */
   async function loadServicesFromFirestore() {
     try {
       const snap = await getDocs(collection(db, 'config_products'));
@@ -963,7 +964,7 @@
     }
   }
 
-  /* RENDER FEATURED SERVICES */
+  /* RENDER SERVICES */
   function renderServices(filter = '') {
     const grid = document.getElementById('servicesGrid');
     const f = filter.toLowerCase().trim();
@@ -1022,7 +1023,7 @@
     return tile;
   }
 
-  /* RENDER FEATURED COUNTRIES */
+  /* RENDER COUNTRIES */
   function renderCountries(filter = '') {
     const grid = document.getElementById('countriesGrid');
     const f = filter.toLowerCase().trim();
@@ -1161,7 +1162,7 @@
     renderCountriesModal(e.target.value);
   });
 
-  /* SELECT SERVICE / COUNTRY */
+  /* SELECT */
   function selectService(s) {
     selectedService = s;
     renderServices(document.getElementById('serviceSearch').value);
@@ -1204,7 +1205,7 @@
       const balance = data.walletBalance || 0;
 
       if (balance < total) {
-        showToast(`Insufficient balance. Need ₦${total.toLocaleString()}`, 'error');
+        showToast(`⚠️ Insufficient balance. Need ₦${total.toLocaleString()}`, 'error');
         btn.disabled = false;
         updateBuyButton();
         return;
@@ -1228,7 +1229,7 @@
         createdAt: serverTimestamp()
       });
 
-      showToast('Order placed! Waiting for SMS...', 'success');
+      showToast('✅ Order placed! Waiting for SMS...', 'success');
       simulateSmsArrival(orderRef.id, total);
       renderOrders();
 
@@ -1237,7 +1238,7 @@
 
     } catch (err) {
       console.error(err);
-      showToast('Could not place order. Try again.', 'error');
+      showToast('⚠️ Could not place order. Try again.', 'error');
       btn.disabled = false;
       updateBuyButton();
     }
@@ -1276,7 +1277,7 @@
     }, 10000);
   }
 
-  /* RECENT ORDERS — ONLY LAST 5 */
+  /* RECENT ORDERS — only last 5 */
   async function renderOrders() {
     const tbody = document.getElementById('ordersBody');
     if (!currentUser) return;
@@ -1291,7 +1292,7 @@
       let orders = [];
       snap.forEach(d => orders.push({ id: d.id, ...d.data() }));
       orders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-      orders = orders.slice(0, 5); // ✅ Only 5
+      orders = orders.slice(0, 5);
 
       if (orders.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" class="empty-orders">No orders yet. Buy your first number!</td></tr>';
@@ -1317,11 +1318,12 @@
     else if (o.status === 'cancelled') statusBadge = '<span class="badge badge-gray">Cancelled</span>';
     else statusBadge = '<span class="badge badge-red">' + (o.status || 'Failed') + '</span>';
 
+    // ✅ Number cell — has data-copy-type="number"
     let numberCell = '—';
     if (o.number) {
       numberCell = `
         <span class="num-val">${o.number}
-          <button class="copy-btn" data-copy="${o.number}" title="Copy number">📋</button>
+          <button class="copy-btn" data-copy="${o.number}" data-copy-type="number" title="Copy number">📋</button>
         </span>
       `;
       if (o.status === 'pending') {
@@ -1329,11 +1331,12 @@
       }
     }
 
+    // ✅ Code cell — has data-copy-type="code"
     let codeCell = '';
     if (o.smsCode) {
       codeCell = `
         <span class="code-val">${o.smsCode}
-          <button class="copy-btn" data-copy="${o.smsCode}" title="Copy code">📋</button>
+          <button class="copy-btn" data-copy="${o.smsCode}" data-copy-type="code" title="Copy code">📋</button>
         </span>
       `;
     } else if (o.status === 'pending') {
@@ -1358,21 +1361,30 @@
     return tr;
   }
 
-  /* COPY + CANCEL */
+  /* COPY + CANCEL — now with specific messages */
   document.getElementById('ordersBody').addEventListener('click', async (e) => {
     const copyBtn = e.target.closest('.copy-btn');
     if (copyBtn) {
       const val = copyBtn.dataset.copy;
+      const type = copyBtn.dataset.copyType || 'text';
       try {
         await navigator.clipboard.writeText(val);
         copyBtn.textContent = '✓';
         copyBtn.classList.add('copied');
-        showToast('Copied to clipboard!', 'success');
+
+        // ✅ SPECIFIC message per type
+        const messages = {
+          number: '📞 Purchased number copied ✅',
+          code:   '🔑 SMS code copied ✅',
+          text:   '✅ Copied to clipboard'
+        };
+        showToast(messages[type] || messages.text, 'success');
+
         setTimeout(() => {
           copyBtn.textContent = '📋';
           copyBtn.classList.remove('copied');
         }, 1500);
-      } catch (err) { showToast('Copy failed', 'error'); }
+      } catch (err) { showToast('❌ Copy failed', 'error'); }
       return;
     }
 
@@ -1385,11 +1397,11 @@
           status: 'cancelled',
           cancelledAt: serverTimestamp()
         });
-        showToast('Order cancelled. No charge.', 'success');
+        showToast('🚫 Order cancelled. No charge.', 'success');
         renderOrders();
       } catch (err) {
         console.error(err);
-        showToast('Could not cancel order.', 'error');
+        showToast('⚠️ Could not cancel order.', 'error');
       }
     }
   });
