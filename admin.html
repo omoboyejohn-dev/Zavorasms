@@ -226,6 +226,15 @@
   .pill-gray   { background: #f3f4f6; color: #4b5563; }
   .pill-purple { background: #ede9fe; color: #6d28d9; }
 
+  .order-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    background: var(--gray-light); color: var(--gray);
+    border-radius: 6px; font-weight: 700;
+    font-size: 12px; min-width: 32px; text-align: center;
+    font-family: 'Courier New', monospace;
+  }
+
   .price-cell {
     font-weight: 800; color: var(--black);
     font-size: 14px; letter-spacing: -0.2px;
@@ -474,9 +483,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  /* ============================================================
-     UI HELPERS (outside module)
-  ============================================================ */
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('overlay').classList.toggle('show');
@@ -515,8 +521,8 @@
   ============================================================ */
   let currentUser = null;
   let currentAdmin = null;
-  let products = [];       // [{id, name, icon, cls, stock, order}]
-  let countries = [];      // [{id, name, flag, price, stock, dial, order}]
+  let products = [];
+  let countries = [];
   let allUsers = [];
   let allOrders = [];
   let currentTab = 'overview';
@@ -525,22 +531,22 @@
      DEFAULT DATA (for seed)
   ============================================================ */
   const DEFAULT_PRODUCTS = [
-    { id: 'whatsapp',  name: 'WhatsApp',    icon: '✆', cls: 'ic-whatsapp',  stock: 113,  order: 1 },
-    { id: 'telegram',  name: 'Telegram',    icon: '✈', cls: 'ic-telegram',  stock: 340,  order: 2 },
-    { id: 'facebook',  name: 'Facebook',    icon: 'f', cls: 'ic-facebook',  stock: 665,  order: 3 },
-    { id: 'instagram', name: 'Instagram',   icon: '◉', cls: 'ic-instagram', stock: 210,  order: 4 },
-    { id: 'google',    name: 'Google',      icon: 'G', cls: 'ic-google',    stock: 332,  order: 5 },
-    { id: 'tiktok',    name: 'TikTok',      icon: '♪', cls: 'ic-tiktok',    stock: 180,  order: 6 },
-    { id: 'twitter',   name: 'Twitter / X', icon: '𝕏', cls: 'ic-twitter',   stock: 145,  order: 7 },
-    { id: 'amazon',    name: 'Amazon',      icon: 'a', cls: 'ic-amazon',    stock: 84,   order: 8 },
-    { id: 'apple',     name: 'Apple',       icon: '',  cls: 'ic-apple',     stock: 62,   order: 9 },
-    { id: 'snapchat',  name: 'Snapchat',    icon: '👻', cls: 'ic-snapchat', stock: 95,  order: 10 },
-    { id: 'discord',   name: 'Discord',     icon: '◈', cls: 'ic-discord',   stock: 120,  order: 11 },
-    { id: 'signal',    name: 'Signal',      icon: '◐', cls: 'ic-signal',    stock: 88,   order: 12 },
-    { id: 'pof',       name: 'POF',         icon: '❤', cls: 'ic-pof',       stock: 42,   order: 13 },
-    { id: 'match',     name: 'Match',       icon: 'M', cls: 'ic-match',     stock: 56,   order: 14 },
-    { id: 'tagged',    name: 'Tagged',      icon: 'T', cls: 'ic-tagged',    stock: 33,   order: 15 },
-    { id: 'uber',      name: 'Uber',        icon: 'U', cls: 'ic-uber',      stock: 74,   order: 16 }
+    { id: 'whatsapp',  name: 'WhatsApp',    icon: '✆', cls: 'ic-whatsapp',  stock: 113 },
+    { id: 'telegram',  name: 'Telegram',    icon: '✈', cls: 'ic-telegram',  stock: 340 },
+    { id: 'facebook',  name: 'Facebook',    icon: 'f', cls: 'ic-facebook',  stock: 665 },
+    { id: 'instagram', name: 'Instagram',   icon: '◉', cls: 'ic-instagram', stock: 210 },
+    { id: 'google',    name: 'Google',      icon: 'G', cls: 'ic-google',    stock: 332 },
+    { id: 'tiktok',    name: 'TikTok',      icon: '♪', cls: 'ic-tiktok',    stock: 180 },
+    { id: 'twitter',   name: 'Twitter / X', icon: '𝕏', cls: 'ic-twitter',   stock: 145 },
+    { id: 'signal',    name: 'Signal',      icon: '◐', cls: 'ic-signal',    stock: 88  },
+    { id: 'amazon',    name: 'Amazon',      icon: 'a', cls: 'ic-amazon',    stock: 84  },
+    { id: 'apple',     name: 'Apple',       icon: '',  cls: 'ic-apple',     stock: 62  },
+    { id: 'snapchat',  name: 'Snapchat',    icon: '👻', cls: 'ic-snapchat', stock: 95  },
+    { id: 'discord',   name: 'Discord',     icon: '◈', cls: 'ic-discord',   stock: 120 },
+    { id: 'pof',       name: 'POF',         icon: '❤', cls: 'ic-pof',       stock: 42  },
+    { id: 'match',     name: 'Match',       icon: 'M', cls: 'ic-match',     stock: 56  },
+    { id: 'tagged',    name: 'Tagged',      icon: 'T', cls: 'ic-tagged',    stock: 33  },
+    { id: 'uber',      name: 'Uber',        icon: 'U', cls: 'ic-uber',      stock: 74  }
   ];
 
   const DEFAULT_COUNTRIES = [
@@ -589,7 +595,7 @@
   });
 
   /* ============================================================
-     LOAD ALL DATA FROM FIRESTORE
+     LOAD ALL DATA
   ============================================================ */
   async function loadAllData() {
     await Promise.all([
@@ -606,6 +612,7 @@
       const snap = await getDocs(collection(db, 'config_products'));
       products = [];
       snap.forEach(d => products.push({ id: d.id, ...d.data() }));
+      // Sort by "order" ascending (oldest first, newest at bottom)
       products.sort((a, b) => (a.order || 0) - (b.order || 0));
     } catch (err) {
       console.error('Products load error:', err);
@@ -657,7 +664,19 @@
   }
 
   /* ============================================================
-     TAB NAVIGATION
+     HELPERS — next order number
+  ============================================================ */
+  function nextProductOrder() {
+    if (products.length === 0) return 1;
+    return Math.max(...products.map(p => p.order || 0)) + 1;
+  }
+  function nextCountryOrder() {
+    if (countries.length === 0) return 1;
+    return Math.max(...countries.map(c => c.order || 0)) + 1;
+  }
+
+  /* ============================================================
+     TAB NAV
   ============================================================ */
   document.querySelectorAll('.side-link[data-tab]').forEach(link => {
     link.addEventListener('click', () => switchTab(link.dataset.tab));
@@ -671,7 +690,7 @@
 
     const titles = {
       overview:  ['Overview', '/ Welcome back, Admin'],
-      products:  ['Products', '/ Manage services & stock'],
+      products:  ['Products', '/ Manage services — new ones go to the bottom'],
       countries: ['Countries', '/ Manage countries & prices'],
       users:     ['Users', '/ All registered accounts'],
       orders:    ['Orders', '/ All customer orders']
@@ -772,7 +791,7 @@
     document.getElementById('contentArea').innerHTML = `
       <div class="sec-head">
         <div><h2>Products <span style="color:var(--gray); font-weight:500; font-size:14px;">(${products.length})</span></h2>
-        <div class="sub">Services you sell — click Edit to change name, icon or stock</div></div>
+        <div class="sub">New products go to the <strong>bottom</strong> — continue from where you stopped</div></div>
         <div class="actions">
           <div class="search-box">
             <span class="ico">🔍</span>
@@ -785,7 +804,7 @@
         <table>
           <thead>
             <tr>
-              <th>#</th>
+              <th>Order</th>
               <th>Product</th>
               <th>ID</th>
               <th>Stock (pcs)</th>
@@ -804,10 +823,11 @@
     });
   }
 
-  function rowProduct(p, idx) {
+  function rowProduct(p) {
+    const orderNum = (p.order || 0).toLocaleString();
     return `
       <tr>
-        <td style="color:var(--gray); font-weight:600;">${idx + 1}</td>
+        <td><span class="order-badge">#${orderNum}</span></td>
         <td>
           <div class="cell-icon">
             <div class="mini-icon ${p.cls || 'ic-more'}">${p.icon || '?'}</div>
@@ -849,7 +869,7 @@
     document.getElementById('contentArea').innerHTML = `
       <div class="sec-head">
         <div><h2>Countries <span style="color:var(--gray); font-weight:500; font-size:14px;">(${countries.length})</span></h2>
-        <div class="sub">Change price + stock anytime. Users see updates instantly.</div></div>
+        <div class="sub">Change price + stock anytime. New ones go to the <strong>bottom</strong>.</div></div>
         <div class="actions">
           <div class="search-box">
             <span class="ico">🔍</span>
@@ -862,7 +882,7 @@
         <table>
           <thead>
             <tr>
-              <th>#</th>
+              <th>Order</th>
               <th>Country</th>
               <th>Dial</th>
               <th>Stock (pcs)</th>
@@ -882,10 +902,11 @@
     });
   }
 
-  function rowCountry(c, idx) {
+  function rowCountry(c) {
+    const orderNum = (c.order || 0).toLocaleString();
     return `
       <tr>
-        <td style="color:var(--gray); font-weight:600;">${idx + 1}</td>
+        <td><span class="order-badge">#${orderNum}</span></td>
         <td>
           <div class="cell-icon">
             <span style="font-size:22px;">${c.flag || '🌍'}</span>
@@ -1054,6 +1075,7 @@
      PRODUCT CRUD
   ============================================================ */
   window.addProduct = function () {
+    const nextOrder = nextProductOrder();
     window.openModal(
       'Add Product',
       `<div class="field">
@@ -1068,7 +1090,7 @@
         <div class="field">
           <label>Product ID (lowercase, no spaces)</label>
           <input type="text" id="pId" placeholder="whatsapp" />
-          <div class="hint">Used internally. Must be unique.</div>
+          <div class="hint">Unique ID used internally</div>
         </div>
       </div>
       <div class="field">
@@ -1096,6 +1118,9 @@
       <div class="field">
         <label>Stock (pcs)</label>
         <input type="number" id="pStock" value="100" min="0" />
+      </div>
+      <div style="padding:12px 14px; background:var(--blue-light); border-radius:10px; font-size:13px; color:var(--blue-dark); font-weight:600;">
+        ℹ️ This product will be added as <strong>#${nextOrder}</strong> (at the bottom of the list)
       </div>`,
       `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
        <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>`
@@ -1113,13 +1138,13 @@
     if (products.some(p => p.id === id)) { showToast('Product ID already exists', 'error'); return; }
 
     try {
+      const order = nextProductOrder();
       await setDoc(doc(db, 'config_products', id), {
-        name, icon, cls, stock,
-        order: products.length + 1,
+        name, icon, cls, stock, order,
         createdAt: serverTimestamp()
       });
       closeModal();
-      showToast('Product added!', 'success');
+      showToast(`Product added as #${order}!`, 'success');
       await loadProducts();
       updateSidebarCounts();
       renderProducts();
@@ -1158,6 +1183,9 @@
       <div class="field">
         <label>Stock (pcs)</label>
         <input type="number" id="pStock" value="${p.stock || 0}" min="0" />
+      </div>
+      <div style="padding:12px 14px; background:var(--gray-light); border-radius:10px; font-size:13px; color:var(--gray); font-weight:600;">
+        Position: <strong>#${p.order || 0}</strong> (unchanged)
       </div>`,
       `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
        <button class="btn btn-primary" onclick="updateProduct('${p.id}')">Save Changes</button>`
@@ -1173,6 +1201,7 @@
     if (!name) { showToast('Name required', 'error'); return; }
 
     try {
+      // Note: "order" is NOT touched — position stays the same
       await updateDoc(doc(db, 'config_products', id), { name, icon, cls, stock });
       closeModal();
       showToast('Product updated!', 'success');
@@ -1204,6 +1233,7 @@
      COUNTRY CRUD
   ============================================================ */
   window.addCountry = function () {
+    const nextOrder = nextCountryOrder();
     window.openModal(
       'Add Country',
       `<div class="field">
@@ -1233,7 +1263,10 @@
       <div class="field">
         <label>Country ID (lowercase, no spaces)</label>
         <input type="text" id="cId" placeholder="us" />
-        <div class="hint">Used internally. Must be unique.</div>
+        <div class="hint">Unique ID used internally</div>
+      </div>
+      <div style="padding:12px 14px; background:var(--blue-light); border-radius:10px; font-size:13px; color:var(--blue-dark); font-weight:600;">
+        ℹ️ This country will be added as <strong>#${nextOrder}</strong> (at the bottom of the list)
       </div>`,
       `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
        <button class="btn btn-primary" onclick="saveCountry()">Save Country</button>`
@@ -1252,13 +1285,13 @@
     if (countries.some(c => c.id === id)) { showToast('Country ID already exists', 'error'); return; }
 
     try {
+      const order = nextCountryOrder();
       await setDoc(doc(db, 'config_countries', id), {
-        name, flag, dial, price, stock,
-        order: countries.length + 1,
+        name, flag, dial, price, stock, order,
         createdAt: serverTimestamp()
       });
       closeModal();
-      showToast('Country added!', 'success');
+      showToast(`Country added as #${order}!`, 'success');
       await loadCountries();
       updateSidebarCounts();
       renderCountries();
@@ -1296,6 +1329,9 @@
           <label>Stock (pcs)</label>
           <input type="number" id="cStock" value="${c.stock || 0}" min="0" />
         </div>
+      </div>
+      <div style="padding:12px 14px; background:var(--gray-light); border-radius:10px; font-size:13px; color:var(--gray); font-weight:600;">
+        Position: <strong>#${c.order || 0}</strong> (unchanged)
       </div>`,
       `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
        <button class="btn btn-primary" onclick="updateCountry('${c.id}')">Save Changes</button>`
@@ -1312,6 +1348,7 @@
     if (!name) { showToast('Name required', 'error'); return; }
 
     try {
+      // "order" NOT touched
       await updateDoc(doc(db, 'config_countries', id), { name, flag, dial, price, stock });
       closeModal();
       showToast('Country updated!', 'success');
@@ -1400,18 +1437,29 @@
      SEED DEFAULT DATA
   ============================================================ */
   document.getElementById('seedBtn').addEventListener('click', async () => {
-    if (!confirm('Seed default products + countries?\n\nThis adds 16 products and 15 countries.\n\nExisting entries with same IDs will be overwritten.')) return;
+    if (!confirm('Seed default products + countries?\n\nThis adds 16 products and 15 countries.\n\nExisting entries with same IDs will be overwritten but keep their order.')) return;
 
     showToast('Seeding data...', 'info');
 
     try {
+      // Only set "order" if the product/country doesn't already exist
       for (const p of DEFAULT_PRODUCTS) {
-        await setDoc(doc(db, 'config_products', p.id), { ...p, createdAt: serverTimestamp() });
+        const existing = products.find(x => x.id === p.id);
+        const order = existing?.order || nextProductOrder();
+        await setDoc(doc(db, 'config_products', p.id), {
+          ...p, order,
+          createdAt: serverTimestamp()
+        });
       }
       for (const c of DEFAULT_COUNTRIES) {
-        await setDoc(doc(db, 'config_countries', c.id), { ...c, createdAt: serverTimestamp() });
+        const existing = countries.find(x => x.id === c.id);
+        const order = existing?.order || nextCountryOrder();
+        await setDoc(doc(db, 'config_countries', c.id), {
+          ...c, order,
+          createdAt: serverTimestamp()
+        });
       }
-      showToast('✅ Seeded! 16 products + 15 countries', 'success');
+      showToast('✅ Seeded! Products + countries added', 'success');
       await loadAllData();
       switchTab(currentTab);
     } catch (err) {
