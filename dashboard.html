@@ -233,10 +233,10 @@
   }
   .sec-head .view-all:hover { text-decoration: underline; }
 
-  /* ===== SERVICES GRID ===== */
+  /* ===== SERVICES GRID (FEATURED 9 + MORE) ===== */
   .services-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px; margin-bottom: 34px;
   }
   .service-tile {
@@ -244,6 +244,7 @@
     border-radius: 14px; padding: 14px;
     display: flex; align-items: center; gap: 12px;
     transition: all 0.15s; cursor: pointer; text-align: left;
+    min-width: 0;
   }
   .service-tile:hover {
     border-color: var(--blue);
@@ -254,17 +255,25 @@
     border-color: var(--blue); background: var(--blue-light);
     box-shadow: 0 0 0 3px rgba(30,94,255,0.15);
   }
+  .service-tile.more-tile {
+    border-style: dashed; border-color: var(--blue);
+    background: var(--blue-light);
+  }
+  .service-tile.more-tile:hover { background: #d6e4ff; }
   .service-icon {
     width: 40px; height: 40px; border-radius: 10px;
     display: grid; place-items: center; color: white;
     font-size: 18px; font-weight: 800; flex-shrink: 0;
   }
-  .service-info { overflow: hidden; flex: 1; }
+  .service-info { overflow: hidden; flex: 1; min-width: 0; }
   .service-info h4 {
     font-size: 14px; font-weight: 700;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  .service-info .stock { font-size: 11.5px; color: var(--gray); font-weight: 500; }
+  .service-info .stock {
+    font-size: 11.5px; color: var(--gray); font-weight: 500;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
 
   /* brand colors */
   .ic-whatsapp  { background: #25D366; }
@@ -283,7 +292,7 @@
   .ic-match     { background: #0E5BFF; }
   .ic-tagged    { background: #00A0DC; }
   .ic-uber      { background: #0A0A0A; }
-  .ic-more      { background: var(--black); }
+  .ic-more      { background: var(--blue); }
 
   /* ===== COUNTRIES GRID ===== */
   .countries-grid {
@@ -348,6 +357,99 @@
     margin-right: 8px; vertical-align: middle;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ===== MODAL — ALL SERVICES ===== */
+  .all-services-overlay {
+    position: fixed; inset: 0;
+    background: rgba(10,10,10,0.6);
+    backdrop-filter: blur(6px);
+    display: none; z-index: 100;
+    align-items: flex-end; justify-content: center;
+    padding: 0;
+  }
+  .all-services-overlay.show {
+    display: flex;
+    animation: fadeIn 0.2s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .all-services-panel {
+    background: white;
+    width: 100%; max-width: 520px;
+    height: 90vh;
+    border-radius: 24px 24px 0 0;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    animation: slideUp 0.25s ease;
+    box-shadow: 0 -20px 60px rgba(0,0,0,0.3);
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+  }
+  .all-services-head {
+    padding: 22px 24px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1.5px solid var(--border);
+  }
+  .all-services-head h2 {
+    font-size: 22px; font-weight: 800; letter-spacing: -0.5px;
+  }
+  .all-services-close {
+    width: 38px; height: 38px; border-radius: 10px;
+    border: none; background: var(--gray-light);
+    display: grid; place-items: center;
+    font-size: 18px; color: var(--black);
+    transition: all 0.15s;
+  }
+  .all-services-close:hover { background: var(--red); color: white; }
+
+  .all-services-search {
+    position: relative;
+    padding: 16px 24px 12px;
+  }
+  .all-services-search input {
+    width: 100%; padding: 13px 16px 13px 42px;
+    border: 1.5px solid var(--border); border-radius: 12px;
+    font-size: 14px; font-family: inherit; background: white;
+    transition: all 0.2s;
+  }
+  .all-services-search input:focus {
+    outline: none; border-color: var(--blue);
+    box-shadow: 0 0 0 4px rgba(30,94,255,0.1);
+  }
+  .all-services-search .ico {
+    position: absolute; left: 40px; top: 50%;
+    transform: translateY(-25%);
+    color: var(--gray); font-size: 16px; pointer-events: none;
+  }
+
+  .all-services-body {
+    flex: 1; overflow-y: auto;
+    padding: 8px 24px 24px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    align-content: start;
+  }
+  .all-services-body .service-tile {
+    padding: 12px;
+    border-radius: 12px;
+  }
+  .all-services-body .service-icon {
+    width: 36px; height: 36px;
+    border-radius: 9px; font-size: 16px;
+  }
+  .all-services-body .service-info h4 { font-size: 13.5px; }
+  .all-services-body .service-info .stock { font-size: 11px; }
+
+  .all-services-empty {
+    grid-column: 1/-1;
+    text-align: center; padding: 50px 20px;
+    color: var(--gray); font-size: 14px;
+  }
 
   /* ===== RECENT ORDERS ===== */
   .orders-card {
@@ -605,6 +707,7 @@
     }
     .toggle-wrap { justify-content: center; }
     .buy-main { width: 100%; padding: 14px; }
+    /* ⭐ Mobile = 2 cols */
     .services-grid { grid-template-columns: repeat(2, 1fr); }
     .countries-grid { grid-template-columns: 1fr; }
     .sec-head .search-wrap { max-width: 100%; width: 100%; }
@@ -724,7 +827,36 @@
         </div>
       </div>
 
-      
+      <div class="stat-card">
+        <div class="ic-wrap">📊</div>
+        <div class="stat-split">
+          <div class="stat-half">
+            <div class="num" id="totalOrders">0</div>
+            <div class="lbl">Total</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-half">
+            <div class="num" id="completedOrders">0</div>
+            <div class="lbl">Done</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="ic-wrap">⏱</div>
+        <div class="stat-split">
+          <div class="stat-half">
+            <div class="num" id="pendingOrders">0</div>
+            <div class="lbl">Pending</div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-half">
+            <div class="num" id="failedOrders">0</div>
+            <div class="lbl">Failed</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- SERVICES -->
     <div class="sec-head">
@@ -783,6 +915,21 @@
   </div>
 </main>
 
+<!-- ===== ALL SERVICES MODAL ===== -->
+<div class="all-services-overlay" id="allServicesOverlay" onclick="closeAllServices(event)">
+  <div class="all-services-panel" onclick="event.stopPropagation()">
+    <div class="all-services-head">
+      <h2>Select a service</h2>
+      <button class="all-services-close" onclick="closeAllServices()">✕</button>
+    </div>
+    <div class="all-services-search">
+      <span class="ico">🔍</span>
+      <input type="text" id="allServicesSearch" placeholder="Search by service" />
+    </div>
+    <div class="all-services-body" id="allServicesBody"></div>
+  </div>
+</div>
+
 <!-- BOTTOM BAR -->
 <div class="bottom-bar">
   <div class="toggle-wrap">
@@ -825,6 +972,20 @@
       t.className = 'toast ' + type;
     }, 2000);
   };
+
+  // ====== ALL SERVICES MODAL ======
+  window.openAllServices = function() {
+    document.getElementById('allServicesOverlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    if (window.renderAllServices) window.renderAllServices('');
+    setTimeout(() => document.getElementById('allServicesSearch').focus(), 100);
+  };
+  window.closeAllServices = function(e) {
+    if (e && e.target !== e.currentTarget) return;
+    document.getElementById('allServicesOverlay').classList.remove('show');
+    document.body.style.overflow = '';
+    document.getElementById('allServicesSearch').value = '';
+  };
 </script>
 
 <script type="module">
@@ -835,17 +996,21 @@
   } from './firebase-config.js';
 
   /* ============================================================
-     STATE — now loaded from Firestore
+     STATE
   ============================================================ */
-  let SERVICES = [];    // loaded from config_products
-  let COUNTRIES = [];   // loaded from config_countries
+  let ALL_SERVICES = [];       // every product from Firestore
+  let FEATURED_IDS = [         // the 9 we show on main grid
+    'whatsapp', 'telegram', 'facebook',
+    'instagram', 'google', 'tiktok',
+    'twitter', 'signal', 'amazon'
+  ];
 
+  let COUNTRIES = [];
   let currentUser = null;
   let currentUserData = null;
   let selectedService = null;
   let selectedCountry = null;
   let sortByPrice = true;
-  let dataReady = false;
 
   /* ============================================================
      LOAD FROM FIRESTORE
@@ -853,20 +1018,13 @@
   async function loadServicesFromFirestore() {
     try {
       const snap = await getDocs(collection(db, 'config_products'));
-      SERVICES = [];
-      snap.forEach(d => SERVICES.push({ id: d.id, ...d.data() }));
-
-      // Sort by order field if exists
-      SERVICES.sort((a, b) => (a.order || 0) - (b.order || 0));
-
-      // Add "+More" tile at end
-      SERVICES.push({ id: 'more', name: '+ More', icon: '⋯', cls: 'ic-more', stock: 5000 });
-
-      console.log(`Loaded ${SERVICES.length - 1} services from Firestore`);
+      ALL_SERVICES = [];
+      snap.forEach(d => ALL_SERVICES.push({ id: d.id, ...d.data() }));
+      ALL_SERVICES.sort((a, b) => (a.order || 0) - (b.order || 0));
+      console.log(`Loaded ${ALL_SERVICES.length} services`);
     } catch (err) {
       console.error('Load services error:', err);
-      // Fallback to empty
-      SERVICES = [{ id: 'more', name: '+ More', icon: '⋯', cls: 'ic-more', stock: 0 }];
+      ALL_SERVICES = [];
     }
   }
 
@@ -875,10 +1033,7 @@
       const snap = await getDocs(collection(db, 'config_countries'));
       COUNTRIES = [];
       snap.forEach(d => COUNTRIES.push({ id: d.id, ...d.data() }));
-
       COUNTRIES.sort((a, b) => (a.order || 0) - (b.order || 0));
-
-      console.log(`Loaded ${COUNTRIES.length} countries from Firestore`);
     } catch (err) {
       console.error('Load countries error:', err);
       COUNTRIES = [];
@@ -886,24 +1041,92 @@
   }
 
   /* ============================================================
-     RENDER SERVICES
+     RENDER FEATURED SERVICES (9 + More tile)
   ============================================================ */
   function renderServices(filter = '') {
     const grid = document.getElementById('servicesGrid');
-    const f = filter.toLowerCase();
-    const list = SERVICES.filter(s =>
-      s.name.toLowerCase().includes(f) || s.id.includes(f)
-    );
+    const f = filter.toLowerCase().trim();
+
+    // If searching → show ALL matching in main grid
+    if (f) {
+      const matching = ALL_SERVICES.filter(s =>
+        s.name.toLowerCase().includes(f) || s.id.includes(f)
+      );
+      if (matching.length === 0) {
+        grid.innerHTML = `<div class="empty-msg" style="grid-column:1/-1;">
+          <span class="emoji">📦</span>No services match "${filter}"
+        </div>`;
+        return;
+      }
+      grid.innerHTML = '';
+      matching.slice(0, 20).forEach(s => grid.appendChild(buildServiceTile(s)));
+      return;
+    }
+
+    // Otherwise → show featured 9 + More tile
+    grid.innerHTML = '';
+
+    // Build featured list in the exact order
+    const featured = [];
+    FEATURED_IDS.forEach(id => {
+      const found = ALL_SERVICES.find(s => s.id === id);
+      if (found) featured.push(found);
+    });
+
+    // Fallback: if some featured missing, show first 9 from ALL_SERVICES
+    if (featured.length === 0) {
+      ALL_SERVICES.slice(0, 9).forEach(s => featured.push(s));
+    }
+
+    featured.slice(0, 9).forEach(s => grid.appendChild(buildServiceTile(s)));
+
+    // "+ More" tile
+    const moreTile = document.createElement('div');
+    moreTile.className = 'service-tile more-tile';
+    moreTile.innerHTML = `
+      <div class="service-icon ic-more">⋯</div>
+      <div class="service-info">
+        <h4>+ More</h4>
+        <div class="stock">${ALL_SERVICES.length} services</div>
+      </div>
+    `;
+    moreTile.onclick = () => window.openAllServices();
+    grid.appendChild(moreTile);
+  }
+
+  function buildServiceTile(s) {
+    const tile = document.createElement('div');
+    tile.className = 'service-tile' + (selectedService?.id === s.id ? ' selected' : '');
+    tile.innerHTML = `
+      <div class="service-icon ${s.cls || 'ic-more'}">${s.icon || '?'}</div>
+      <div class="service-info">
+        <h4>${s.name}</h4>
+        <div class="stock">${(s.stock || 0).toLocaleString()} pcs</div>
+      </div>
+    `;
+    tile.onclick = () => selectService(s);
+    return tile;
+  }
+
+  /* ============================================================
+     RENDER ALL SERVICES MODAL
+  ============================================================ */
+  function renderAllServices(filter = '') {
+    const body = document.getElementById('allServicesBody');
+    const f = filter.toLowerCase().trim();
+    const list = f
+      ? ALL_SERVICES.filter(s => s.name.toLowerCase().includes(f) || s.id.includes(f))
+      : ALL_SERVICES;
 
     if (list.length === 0) {
-      grid.innerHTML = `<div class="empty-msg" style="grid-column:1/-1;">
-        <span class="emoji">📦</span>
-        No services available. Admin needs to add products.
+      body.innerHTML = `<div class="all-services-empty">
+        <div style="font-size:32px; margin-bottom:10px;">📦</div>
+        ${f ? `No services match "${filter}"` : 'No services available yet.'}
       </div>`;
       return;
     }
 
-    grid.innerHTML = '';
+    body.innerHTML = '';
     list.forEach(s => {
       const tile = document.createElement('div');
       tile.className = 'service-tile' + (selectedService?.id === s.id ? ' selected' : '');
@@ -914,17 +1137,34 @@
           <div class="stock">${(s.stock || 0).toLocaleString()} pcs</div>
         </div>
       `;
-      tile.onclick = () => selectService(s);
-      grid.appendChild(tile);
+      tile.onclick = () => {
+        selectService(s);
+        window.closeAllServices();
+      };
+      body.appendChild(tile);
     });
   }
+  window.renderAllServices = renderAllServices;
 
+  document.getElementById('allServicesSearch').addEventListener('input', (e) => {
+    renderAllServices(e.target.value);
+  });
+
+  /* ============================================================
+     SELECT SERVICE / COUNTRY
+  ============================================================ */
   function selectService(s) {
-    if (s.id === 'more') { alert('More services coming soon!'); return; }
     selectedService = s;
     selectedCountry = null;
     renderServices(document.getElementById('serviceSearch').value);
     renderCountries();
+    updateBuyButton();
+    renderOrders();
+  }
+
+  function selectCountry(c) {
+    selectedCountry = c;
+    renderCountries(document.getElementById('countrySearch').value);
     updateBuyButton();
     renderOrders();
   }
@@ -946,8 +1186,7 @@
 
     if (COUNTRIES.length === 0) {
       grid.innerHTML = `<div class="empty-msg">
-        <span class="emoji">🌍</span>
-        No countries available. Admin needs to add countries.
+        <span class="emoji">🌍</span>No countries available.
       </div>`;
       return;
     }
@@ -956,7 +1195,6 @@
     if (sortByPrice) list.sort((a, b) => (a.price || 0) - (b.price || 0));
     else list.sort((a, b) => a.name.localeCompare(b.name));
 
-    // Add "+ More" card at end
     list.push({ id: 'more', name: '+ More countries', flag: '🌍', isMore: true });
 
     grid.innerHTML = '';
@@ -986,13 +1224,6 @@
       }
       grid.appendChild(card);
     });
-  }
-
-  function selectCountry(c) {
-    selectedCountry = c;
-    renderCountries(document.getElementById('countrySearch').value);
-    updateBuyButton();
-    renderOrders();
   }
 
   /* ============================================================
@@ -1065,7 +1296,7 @@
   });
 
   /* ============================================================
-     DEMO: Generate number + SMS
+     DEMO: Number + SMS
   ============================================================ */
   function generateDemoNumber(dial) {
     const d = dial || '+1';
@@ -1074,11 +1305,9 @@
     const c = Math.floor(1000 + Math.random() * 9000);
     return `${d} ${a} ${b} ${c}`;
   }
-
   function generateDemoCode() {
     return String(Math.floor(100000 + Math.random() * 900000));
   }
-
   async function simulateSmsArrival(orderId, amount) {
     setTimeout(async () => {
       try {
@@ -1087,17 +1316,14 @@
           status: 'completed',
           completedAt: serverTimestamp()
         });
-
         await updateDoc(doc(db, 'users', currentUser.uid), {
           walletBalance: increment(-amount),
           totalOrders: increment(1),
           completedOrders: increment(1)
         });
-
         await refreshUserData();
         renderOrders();
         showToast('✅ SMS received! Order completed.', 'success');
-
       } catch (err) {
         console.error('SMS simulation error:', err);
       }
@@ -1105,7 +1331,7 @@
   }
 
   /* ============================================================
-     RENDER ORDERS
+     ORDERS
   ============================================================ */
   async function renderOrders() {
     const tbody = document.getElementById('ordersBody');
@@ -1118,15 +1344,9 @@
         collection(db, 'orders'),
         where('uid', '==', currentUser.uid)
       ));
-
       let orders = [];
       snap.forEach(d => orders.push({ id: d.id, ...d.data() }));
-
-      orders.sort((a, b) => {
-        const ta = a.createdAt?.seconds || 0;
-        const tb = b.createdAt?.seconds || 0;
-        return tb - ta;
-      });
+      orders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
       if (selectedService && selectedCountry) {
         orders = orders.filter(o =>
@@ -1156,7 +1376,7 @@
   }
 
   function buildOrderRow(o) {
-    const svc = SERVICES.find(s => s.id === o.productId) || { icon: '?', cls: 'ic-more' };
+    const svc = ALL_SERVICES.find(s => s.id === o.productId) || { icon: '?', cls: 'ic-more' };
     const tr = document.createElement('tr');
 
     let statusBadge = '';
@@ -1203,7 +1423,6 @@
       <td>₦${Number(o.price || 0).toLocaleString()}</td>
       <td>${statusBadge}</td>
     `;
-
     return tr;
   }
 
@@ -1223,9 +1442,7 @@
           copyBtn.textContent = '📋';
           copyBtn.classList.remove('copied');
         }, 1500);
-      } catch (err) {
-        showToast('Copy failed', 'error');
-      }
+      } catch (err) { showToast('Copy failed', 'error'); }
       return;
     }
 
@@ -1233,7 +1450,6 @@
     if (cancelBtn) {
       const orderId = cancelBtn.dataset.cancel;
       if (!confirm('Cancel this order?\n\nYou will NOT be charged.')) return;
-
       try {
         await updateDoc(doc(db, 'orders', orderId), {
           status: 'cancelled',
@@ -1262,7 +1478,7 @@
   window.toggleSort = toggleSort;
 
   /* ============================================================
-     AUTH
+     AUTH + USER DATA
   ============================================================ */
   async function refreshUserData() {
     if (!currentUser) return;
@@ -1291,7 +1507,6 @@
     });
     document.getElementById('walletBalance').textContent = `₦${bal}`;
 
-    // Show admin link if this user is admin
     if (data.role === 'admin') {
       document.getElementById('sidebarAdminLink').style.display = 'flex';
       document.getElementById('drawerAdminLink').style.display = 'flex';
@@ -1304,17 +1519,13 @@
 
     const snap = await getDoc(doc(db, 'users', user.uid));
     if (!snap.exists()) { window.location.href = 'register.html'; return; }
-
     currentUserData = snap.data();
 
-    // 👇 Load live data from Firestore FIRST
     await Promise.all([
       loadServicesFromFirestore(),
       loadCountriesFromFirestore()
     ]);
-    dataReady = true;
 
-    // Then render everything
     renderUser(currentUserData);
     renderServices();
     renderCountries();
@@ -1322,11 +1533,10 @@
     renderOrders();
     updateBuyButton();
 
-    // Auto-refresh orders every 5 seconds
+    // Refresh orders every 5 sec
     setInterval(renderOrders, 5000);
 
-    // Auto-reload products/countries every 30 seconds
-    // (so admin price changes appear automatically)
+    // Refresh products + countries every 30 sec
     setInterval(async () => {
       await Promise.all([
         loadServicesFromFirestore(),
