@@ -1,57 +1,77 @@
-// /api/tv-buy.js
-// Buys a USA number for a specific service from TextVerified
+// ============================================
+// POST /api/tv-buy
+// Buys a USA number from TextVerified
+// ============================================
 
 export default async function handler(req, res) {
-  // CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-
+  const API_USERNAME = process.env.TEXTVERIFIED_API_USERNAME;
   const API_KEY = process.env.TEXTVERIFIED_API_KEY;
-  const API_USER = process.env.TEXTVERIFIED_API_USERNAME;
 
-  if (!API_KEY || !API_USER) {
+  if (!API_USERNAME || !API_KEY) {
     return res.status(500).json({ error: 'TextVerified credentials not configured' });
   }
 
-  const { service } = req.body || {};
-  if (!service) {
-    return res.status(400).json({ error: 'Missing "service" in request body' });
-  }
-
   try {
-    // TextVerified API v2 - create verification
-    const response = await fetch('https://www.textverified.com/api/pub/v2/verify', {
+    const { service, capability } = req.body;
+
+    if (!service) {
+      return res.status(400).json({ error: 'Service name is required' });
+    }
+
+    // Step 1: Generate bearer token
+    const tokenRes = await fetch('https://www.textverified.com/api/v2/auth/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: API_USERNAME,
+        api_key: API_KEY
+      })
+    });
+
+    if (!tokenRes.ok) {
+      return res.status(500).json({ error: 'Failed to authenticate' });
+    }
+
+    const tokenData = await tokenRes.json();
+    const bearerToken = tokenData.token || tokenData.access_token;
+
+    // Step 2: Create verification
+    const buyRes = await fetch('https://www.textverified.com/api/v2/verifications', {
       method: 'POST',
       headers: {
-        'X-API-KEY': API_KEY,
-        'X-API-USERNAME': API_USER,
+        'Authorization': `Bearer ${bearerToken}`,
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
       body: JSON.stringify({
-        service: service,
-        country: 'US'
+        service_name: service,
+        capability: capability || 'sms'
       })
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('TextVerified buy error:', response.status, errorText);
-      return res.status(response.status).json({ 
-        error: 'TextVerified buy failed', 
-        details: errorText 
-      });
+    if (!buyRes.ok) {
+      const err = await buyRes.text();
+      console.error('Buy error:', err);
+      return res.status(500).json({ error: 'Failed to buy number', details: err });
     }
 
-    const data = await response.json();
-    return res.status(200).json(data);
+    const buyData = await buyRes.json();
 
-  } catch (err) {
-    console.error('Buy error:', err);
-    return res.status(500).json({ error: 'Server error', details: err.message });
+    return res.status(200).json({
+      success: true,
+      verificationId: buyData.id || buyData.verification_id,
+      number: buyData.number || buyData.phone_number,
+      expiresAt: buyData.expires_at || null,
+      service: service,
+      price: buyData.price || null
+    });
+
+  } catch (error) {
+    console.error('tv-buy error:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
