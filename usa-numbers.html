@@ -78,6 +78,15 @@
   .ic-signal    { background: #3A76F0; }
   .ic-more      { background: var(--black); }
 
+  .loading-skeleton { text-align: center; padding: 40px 20px; color: var(--gray); font-size: 14px; }
+  .loading-skeleton .spin {
+    display: inline-block; width: 20px; height: 20px;
+    border: 2px solid var(--border); border-top-color: var(--blue);
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+    margin-right: 8px; vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
   .mobile-top { display: none; background: white; padding: 14px 20px; border-bottom: 1px solid var(--border); align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
   .drawer { position: fixed; top: 0; right: 0; width: 300px; max-width: 85vw; height: 100vh; background: white; z-index: 60; transform: translateX(100%); transition: transform 0.25s; box-shadow: -10px 0 40px rgba(0,0,0,0.15); display: flex; flex-direction: column; overflow-y: auto; }
   .drawer.open { transform: translateX(0); }
@@ -204,7 +213,11 @@
       </div>
     </div>
 
-    <div class="usa-grid" id="usaGrid"></div>
+    <div class="usa-grid" id="usaGrid">
+      <div class="loading-skeleton" style="grid-column:1/-1;">
+        <span class="spin"></span> Loading USA products...
+      </div>
+    </div>
 
   </div>
 </main>
@@ -217,22 +230,22 @@
 </script>
 
 <script type="module">
-  import { auth, db, onAuthStateChanged, signOut, doc, getDoc } from './firebase-config.js';
+  import { auth, db, onAuthStateChanged, signOut, doc, getDoc, collection, getDocs } from './firebase-config.js';
 
-  /* 🇺🇸 USA PROVIDER PRICES — EDIT HERE ANYTIME */
-  const USA_PRODUCTS = [
-    { id: 'whatsapp',  name: 'WhatsApp',    icon: '✆',  cls: 'ic-whatsapp',  price: 4500 },
-    { id: 'telegram',  name: 'Telegram',    icon: '✈',  cls: 'ic-telegram',  price: 6500 },
-    { id: 'facebook',  name: 'Facebook',    icon: 'f',  cls: 'ic-facebook',  price: 709  },
-    { id: 'instagram', name: 'Instagram',   icon: '◉',  cls: 'ic-instagram', price: 578  },
-    { id: 'google',    name: 'Google',      icon: 'G',  cls: 'ic-google',    price: 850  },
-    { id: 'tiktok',    name: 'TikTok',      icon: '♪',  cls: 'ic-tiktok',    price: 950  },
-    { id: 'twitter',   name: 'Twitter / X', icon: '𝕏',  cls: 'ic-twitter',   price: 780  },
-    { id: 'apple',     name: 'Apple',       icon: '',   cls: 'ic-apple',     price: 1200 },
-    { id: 'snapchat',  name: 'Snapchat',    icon: '👻', cls: 'ic-snapchat',  price: 700  }
-  ];
+  let ALL_PRODUCTS = [];
 
-  let ALL_PRODUCTS = [...USA_PRODUCTS];
+  // ⭐ LOAD USA PRODUCTS FROM FIRESTORE
+  async function loadUsaProducts() {
+    try {
+      const snap = await getDocs(collection(db, 'config_usa_products'));
+      ALL_PRODUCTS = [];
+      snap.forEach(d => ALL_PRODUCTS.push({ id: d.id, ...d.data() }));
+      ALL_PRODUCTS.sort((a, b) => (a.order || 0) - (b.order || 0));
+    } catch (err) {
+      console.error('Load USA products error:', err);
+      ALL_PRODUCTS = [];
+    }
+  }
 
   function renderProducts(filter = '') {
     const grid = document.getElementById('usaGrid');
@@ -242,8 +255,9 @@
       : ALL_PRODUCTS;
 
     if (list.length === 0) {
-      grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px 20px; color:var(--gray);">
-        No products match "${filter}"
+      grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:50px 20px; color:var(--gray); font-size:14px;">
+        <div style="font-size:32px; margin-bottom:10px;">🇺🇸</div>
+        ${f ? `No products match "${filter}"` : 'No USA products available yet.'}
       </div>`;
       return;
     }
@@ -253,10 +267,10 @@
       const card = document.createElement('div');
       card.className = 'usa-card';
       card.innerHTML = `
-        <div class="usa-icon ${p.cls}">${p.icon}</div>
+        <div class="usa-icon ${p.cls || 'ic-more'}">${p.icon || '?'}</div>
         <div class="usa-info">
           <h4>${p.name}</h4>
-          <div class="price">₦${p.price.toLocaleString()}</div>
+          <div class="price">₦${(p.price || 0).toLocaleString()}</div>
         </div>
         <button class="usa-buy">Buy</button>
       `;
@@ -265,8 +279,8 @@
     });
   }
 
-  // ⭐ REDIRECT WITH PROVIDER + PRICE OVERRIDE
   function buyProduct(p) {
+    // Redirect with provider=usa so dashboard uses override price
     window.location.href = `dashboard.html?product=${p.id}&country=us&price=${p.price}&provider=usa`;
   }
 
@@ -295,6 +309,8 @@
       document.getElementById('drawerAdminLink').style.display = 'flex';
     }
 
+    // Load USA products from Firestore
+    await loadUsaProducts();
     renderProducts();
   });
 
@@ -303,4 +319,4 @@
 </script>
 
 </body>
-</html>
+      </html>
