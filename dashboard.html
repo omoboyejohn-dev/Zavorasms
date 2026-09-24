@@ -60,20 +60,10 @@
   .sec-head .sort-btn:hover { border-color: var(--black); color: var(--black); }
   .sec-head .view-all { color: var(--blue); font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 10px; background: var(--blue-light); }
   .sec-head .view-all:hover { background: var(--blue); color: white; }
-
-  /* ⭐ Refresh button */
-  .refresh-btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 8px 14px; border-radius: 10px;
-    background: white; color: var(--blue);
-    border: 1.5px solid var(--blue-light);
-    font-size: 13.5px; font-weight: 700;
-    transition: all 0.15s;
-  }
+  .refresh-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 10px; background: white; color: var(--blue); border: 1.5px solid var(--blue-light); font-size: 13.5px; font-weight: 700; transition: all 0.15s; }
   .refresh-btn:hover { background: var(--blue-light); }
   .refresh-btn.spinning .ico { animation: spin 0.7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
   .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 34px; }
   .service-tile { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; transition: all 0.15s; cursor: pointer; text-align: left; min-width: 0; }
   .service-tile:hover { border-color: var(--blue); transform: translateY(-2px); box-shadow: 0 10px 24px rgba(30,94,255,0.1); }
@@ -214,9 +204,10 @@
   }
   .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 55; }
   .overlay.show { display: block; }
+
+  /* ⭐ USA MODE — hide service + country grids (keep bottom bar visible) */
   body.usa-mode .services-grid,
   body.usa-mode .countries-grid,
-  body.usa-mode .bottom-bar,
   body.usa-mode #servicesModal,
   body.usa-mode #countriesModal,
   body.usa-mode .sec-head:has(#serviceSearch),
@@ -339,7 +330,6 @@
       <div class="loading-skeleton"><span class="spin"></span> Loading countries...</div>
     </div>
 
-    <!-- ⭐ RECENT ORDERS with REFRESH BUTTON -->
     <div class="sec-head" style="margin-top:34px;">
       <h2>Recent Orders <span style="color:var(--gray); font-weight:500; font-size:14px;">(last 5)</span></h2>
       <div style="display:flex; gap:8px; align-items:center;">
@@ -871,12 +861,10 @@
     return match ? match[0] : null;
   }
 
-  /* ⭐ RECENT ORDERS — NO AUTO-REFRESH, ONLY MANUAL + SILENT AFTER SMS ARRIVES */
   async function renderOrders(showLoading = false) {
     const tbody = document.getElementById('ordersBody');
     if (!currentUser) return;
 
-    // Only show "Loading..." on first load, not on refresh
     if (isFirstLoad || showLoading) {
       tbody.innerHTML = '<tr><td colspan="5" class="empty-orders">Loading...</td></tr>';
     }
@@ -995,13 +983,11 @@
     }
   });
 
-  /* ⭐ REFRESH BUTTON HANDLER */
   document.getElementById('refreshOrdersBtn').addEventListener('click', async () => {
     const btn = document.getElementById('refreshOrdersBtn');
     btn.classList.add('spinning');
     btn.disabled = true;
 
-    // Also check any pending orders for new SMS
     try {
       const snap = await getDocs(query(collection(db, 'orders'), where('uid', '==', currentUser.uid)));
       const pending = [];
@@ -1012,7 +998,6 @@
         }
       });
 
-      // Check each pending order's SMS
       for (const o of pending) {
         try {
           const provider = o.provider || 'main';
@@ -1046,7 +1031,6 @@
       console.error('Refresh error:', err);
     }
 
-    // Reload orders table
     await renderOrders();
 
     btn.classList.remove('spinning');
@@ -1134,8 +1118,6 @@
     }
     updateBuyButton();
 
-    // ⭐ NO AUTO-REFRESH. Only manual refresh + silent SMS polling in background.
-    // The polling inside startSmsPolling() still updates when SMS arrives.
     setInterval(async () => {
       await Promise.all([loadServicesFromFirestore(), loadCountriesFromFirestore()]);
       renderServices(document.getElementById('serviceSearch').value);
