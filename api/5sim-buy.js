@@ -12,7 +12,7 @@ export default async function handler(req, res) {
 
   if (!API_KEY) {
     return res.status(500).json({
-      error: '5SIM credentials not configured',
+      error: 'Service is being updated. Please try again later.',
       code: 'NOT_CONFIGURED'
     });
   }
@@ -22,7 +22,7 @@ export default async function handler(req, res) {
 
     if (!country || !service) {
       return res.status(400).json({
-        error: 'country and service are required',
+        error: 'Missing required fields',
         code: 'MISSING_PARAMS'
       });
     }
@@ -36,32 +36,42 @@ export default async function handler(req, res) {
       }
     });
 
-    const buyData = await buyRes.json();
+    // ⭐ Read raw text first (5SIM sometimes returns plain text errors like "no free phones")
+    const rawText = await buyRes.text();
 
-    // ⭐ Handle 5SIM errors with SPECIFIC codes
+    // Try to parse as JSON
+    let buyData;
+    try {
+      buyData = JSON.parse(rawText);
+    } catch (e) {
+      // Plain text response — treat as provider error
+      console.error('5sim-buy plain text response:', rawText);
+      return res.status(500).json({
+        error: 'Connection pool. Please try again in a few minutes.',
+        code: 'OUT_OF_STOCK',
+        details: rawText.substring(0, 200)
+      });
+    }
+
+    // ⭐ Handle 5SIM JSON errors
     if (!buyRes.ok || buyData.error) {
-      const errMsg = (buyData.error || buyData.message || '').toLowerCase();
-      let code = 'UNKNOWN_ERROR';
-      let userMessage = 'This service is temporarily unavailable. Please try again.';
+      const errMsg = (buyData.error || buyData.message || rawText || '').toLowerCase();
+      let code = 'PROVIDER_ERROR';
 
-      if (errMsg.includes('no free phones') || errMsg.includes('out of stock') || errMsg.includes('no numbers')) {
-        code = 'OUT_OF_STOCK';
-        userMessage = 'This service is out of stock for that country right now. Please try another country or service.';
-      } else if (errMsg.includes('not enough money') || errMsg.includes('insufficient') || errMsg.includes('balance')) {
+      if (errMsg.includes('not enough money') || errMsg.includes('insufficient') || errMsg.includes('balance')) {
         code = 'PROVIDER_LOW_BALANCE';
-        userMessage = 'This service is temporarily unavailable. Please try another option.';
-      } else if (errMsg.includes('no product') || errMsg.includes('not found') || errMsg.includes('unsupported')) {
-        code = 'NOT_AVAILABLE';
-        userMessage = 'This service and country combination is not available right now.';
+      } else if (errMsg.includes('no free phones') || errMsg.includes('out of stock') || errMsg.includes('no numbers')) {
+        code = 'OUT_OF_STOCK';
       } else if (errMsg.includes('bad country')) {
         code = 'INVALID_COUNTRY';
-        userMessage = 'This country is not supported for this service.';
+      } else if (errMsg.includes('bad product')) {
+        code = 'INVALID_SERVICE';
       }
 
       console.error('5sim-buy error:', buyRes.status, buyData, '→ code:', code);
 
       return res.status(500).json({
-        error: userMessage,
+        error: 'Connection pool. Please try again in a few minutes.',
         code: code,
         details: JSON.stringify(buyData).substring(0, 300)
       });
@@ -84,8 +94,8 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('5sim-buy catch error:', error);
     return res.status(500).json({
-      error: 'Could not process your order. Please try again.',
-      code: 'SERVER_ERROR',
+      error: 'Connection pool. Please try again in a few minutes.',
+      code: 'PROVIDER_ERROR',
       message: error.message
     });
   }
