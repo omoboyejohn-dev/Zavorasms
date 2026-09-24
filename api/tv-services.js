@@ -4,6 +4,7 @@
 // ============================================
 
 export default async function handler(req, res) {
+  // Only allow GET
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -40,9 +41,9 @@ export default async function handler(req, res) {
     const bearerToken = tokenData.token;
     console.log('Got bearer token, expires in:', tokenData.expiresIn);
 
-    // ⭐ Step 2: Fetch services with bearer token
+    // ⭐ Step 2: Fetch services with CORRECT param name (reservationType)
     const servicesRes = await fetch(
-      'https://www.textverified.com/api/pub/v2/services?number_type=mobile&reservation_type=verification',
+      'https://www.textverified.com/api/pub/v2/services?number_type=mobile&reservationType=verification',
       {
         headers: {
           'Authorization': `Bearer ${bearerToken}`,
