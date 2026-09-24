@@ -61,33 +61,18 @@ export default async function handler(req, res) {
     const servicesData = await servicesRes.json();
     const rawServices = servicesData.services || servicesData.targets || servicesData.data || servicesData || [];
 
-    // ⭐ DEBUG: Return raw sample if requested
-    if (req.query.raw === '1') {
-      return res.status(200).json({
-        success: true,
-        rawSample: rawServices.slice(0, 5),
-        rawKeys: rawServices.length > 0 ? Object.keys(rawServices[0]) : [],
-        totalRaw: rawServices.length
-      });
-    }
-
-    // ⭐ Try many possible field names
-    const services = rawServices.map(svc => {
-      const id = svc.serviceName || svc.service_name || svc.name || svc.id || 
-                 svc.target || svc.service || svc.slug || null;
-      const name = svc.serviceName || svc.service_name || svc.displayName || 
-                   svc.display_name || svc.name || svc.target || svc.service || id;
-      const price = svc.price || svc.cost || svc.minPrice || svc.min_price || 
-                    svc.priceUsd || svc.price_usd || 0.25;
-
-      return { id, name, price, available: svc.available !== false };
-    }).filter(s => s.id && s.name);
+    // ⭐ CORRECT mapping based on actual TextVerified field names
+    const services = rawServices.map(svc => ({
+      id: svc.serviceName,         // ← was service_name
+      name: svc.description || svc.serviceName,  // ← was name
+      price: svc.price || svc.cost || 0.25,
+      available: svc.available !== false
+    })).filter(s => s.id && s.id !== 'servicenotlisted');
 
     return res.status(200).json({
       success: true,
       services: services,
-      totalRaw: rawServices.length,
-      totalMapped: services.length
+      total: services.length
     });
 
   } catch (error) {
