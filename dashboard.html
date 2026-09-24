@@ -17,7 +17,6 @@
   body { font-family: 'Inter', system-ui, sans-serif; background: var(--gray-light); color: var(--black); line-height: 1.5; }
   a { text-decoration: none; color: inherit; }
   button { font-family: inherit; cursor: pointer; }
-
   .sidebar { position: fixed; left: 0; top: 0; width: var(--sidebar-w); height: 100vh; background: var(--black); color: white; padding: 24px 18px; display: flex; flex-direction: column; z-index: 50; overflow-y: auto; }
   .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; padding: 6px 8px 26px; border-bottom: 1px solid #1e1e1e; margin-bottom: 20px; }
   .logo-mark { width: 34px; height: 34px; background: var(--blue); border-radius: 9px; display: grid; place-items: center; color: white; font-weight: 900; font-size: 16px; }
@@ -33,7 +32,6 @@
   .user-mini .info { overflow: hidden; }
   .user-mini .name { font-size: 13.5px; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .user-mini .email { font-size: 11.5px; color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
   .main { margin-left: var(--sidebar-w); min-height: 100vh; padding-bottom: 100px; }
   .topbar { background: white; border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
   .topbar h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
@@ -43,18 +41,15 @@
   .icon-btn:hover { border-color: var(--blue); color: var(--blue); }
   .icon-btn .dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--red); border-radius: 50%; border: 2px solid white; }
   .content { padding: 26px 32px 60px; max-width: 1400px; }
-
   .wallet-card { background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%); border-radius: 22px; padding: 28px; color: white; position: relative; overflow: hidden; margin-bottom: 34px; }
   .wallet-card::after { content: ''; position: absolute; width: 300px; height: 300px; background: rgba(255,255,255,0.08); border-radius: 50%; top: -120px; right: -100px; }
   .wallet-card .label { font-size: 14px; opacity: 0.9; font-weight: 500; margin-bottom: 8px; position: relative; }
   .wallet-card .balance { font-size: 40px; font-weight: 800; letter-spacing: -1.5px; position: relative; display: flex; align-items: baseline; gap: 10px; }
   .wallet-card .balance small { font-size: 15px; font-weight: 600; opacity: 0.75; letter-spacing: 0; }
-
   .usa-header-card { display: none; background: white; border: 1.5px solid var(--border); border-radius: 18px; padding: 24px; margin-bottom: 24px; }
   .usa-header-card.show { display: block; }
   .usa-header-card h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
   .usa-header-card p { color: var(--gray); font-size: 14.5px; }
-
   .sec-head { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 16px; flex-wrap: wrap; }
   .sec-head h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.4px; }
   .sec-head .search-wrap { position: relative; flex: 1; max-width: 340px; min-width: 200px; }
@@ -65,7 +60,6 @@
   .sec-head .sort-btn:hover { border-color: var(--black); color: var(--black); }
   .sec-head .view-all { color: var(--blue); font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 10px; background: var(--blue-light); }
   .sec-head .view-all:hover { background: var(--blue); color: white; }
-
   .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 34px; }
   .service-tile { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; transition: all 0.15s; cursor: pointer; text-align: left; min-width: 0; }
   .service-tile:hover { border-color: var(--blue); transform: translateY(-2px); box-shadow: 0 10px 24px rgba(30,94,255,0.1); }
@@ -76,7 +70,6 @@
   .service-info { overflow: hidden; flex: 1; min-width: 0; }
   .service-info h4 { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .service-info .stock { font-size: 11.5px; color: var(--gray); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
   .ic-whatsapp  { background: #25D366; }
   .ic-telegram  { background: #229ED9; }
   .ic-facebook  { background: #1877F2; }
@@ -94,7 +87,6 @@
   .ic-tagged    { background: #00A0DC; }
   .ic-uber      { background: #0A0A0A; }
   .ic-more      { background: var(--blue); }
-
   .countries-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 30px; }
   .country-tile { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; transition: all 0.15s; cursor: pointer; text-align: left; min-width: 0; }
   .country-tile:hover { border-color: var(--blue); transform: translateY(-2px); box-shadow: 0 10px 24px rgba(30,94,255,0.1); }
@@ -105,13 +97,11 @@
   .country-info { overflow: hidden; flex: 1; min-width: 0; }
   .country-info h4 { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .country-info .stock { font-size: 11.5px; color: var(--gray); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
   .empty-msg { grid-column: 1 / -1; text-align: center; padding: 50px 20px; color: var(--gray); font-size: 14px; }
   .empty-msg .emoji { font-size: 32px; display: block; margin-bottom: 10px; }
   .loading-skeleton { grid-column: 1 / -1; text-align: center; padding: 40px 20px; color: var(--gray); font-size: 14px; }
   .loading-skeleton .spin { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 8px; vertical-align: middle; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
   .modal-overlay { position: fixed; inset: 0; background: rgba(10,10,10,0.6); backdrop-filter: blur(6px); display: none; z-index: 100; align-items: flex-end; justify-content: center; padding: 0; }
   .modal-overlay.show { display: flex; animation: fadeIn 0.2s ease; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -134,7 +124,6 @@
   .modal-body .country-info h4 { font-size: 13.5px; }
   .modal-body .country-info .stock { font-size: 11px; }
   .modal-empty { grid-column: 1/-1; text-align: center; padding: 50px 20px; color: var(--gray); font-size: 14px; }
-
   .orders-card { background: white; border: 1.5px solid var(--border); border-radius: 16px; overflow: hidden; }
   .orders-table { width: 100%; border-collapse: collapse; }
   .orders-table thead th { text-align: left; padding: 14px 20px; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--gray); background: var(--gray-light); border-bottom: 1px solid var(--border); }
@@ -158,7 +147,6 @@
   .cancel-btn { padding: 5px 10px; margin-left: 6px; border: 1.5px solid #fecaca; border-radius: 7px; background: white; color: var(--red); font-size: 11.5px; font-weight: 700; }
   .cancel-btn:hover { background: var(--red); color: white; border-color: var(--red); }
   .empty-orders { padding: 48px 20px; text-align: center; color: var(--gray); font-size: 14px; }
-
   .bottom-bar { position: fixed; bottom: 0; left: var(--sidebar-w); right: 0; background: white; border-top: 1.5px solid var(--border); padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; z-index: 45; gap: 20px; box-shadow: 0 -8px 24px rgba(0,0,0,0.04); }
   .toggle-wrap { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; color: var(--gray); }
   .toggle { position: relative; width: 44px; height: 24px; background: var(--border); border-radius: 999px; cursor: pointer; transition: background 0.2s; }
@@ -168,7 +156,6 @@
   .buy-main { padding: 15px 44px; border-radius: 12px; background: var(--blue); color: white; font-weight: 800; font-size: 15px; border: none; transition: all 0.2s; }
   .buy-main:hover:not(:disabled) { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 12px 24px rgba(30,94,255,0.3); }
   .buy-main:disabled { background: var(--border); color: var(--gray); cursor: not-allowed; transform: none; box-shadow: none; }
-
   .mobile-top { display: none; background: white; padding: 14px 20px; border-bottom: 1px solid var(--border); align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 40; }
   .drawer { position: fixed; top: 0; right: 0; width: 300px; max-width: 85vw; height: 100vh; background: white; z-index: 60; transform: translateX(100%); transition: transform 0.25s ease; box-shadow: -10px 0 40px rgba(0,0,0,0.15); display: flex; flex-direction: column; overflow-y: auto; }
   .drawer.open { transform: translateX(0); }
@@ -191,12 +178,10 @@
   .drawer-link.admin .ic { background: #ede9fe; color: #6d28d9; }
   .drawer-link .badge-new { margin-left: auto; font-size: 10px; background: var(--blue); color: white; padding: 3px 8px; border-radius: 999px; font-weight: 700; }
   .drawer-link .badge-admin { margin-left: auto; font-size: 10px; background: var(--purple); color: white; padding: 3px 8px; border-radius: 999px; font-weight: 700; }
-
   .toast { position: fixed; bottom: 110px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--black); color: white; padding: 14px 26px; border-radius: 12px; font-size: 14px; font-weight: 700; opacity: 0; pointer-events: none; transition: all 0.25s; z-index: 200; box-shadow: 0 12px 32px rgba(0,0,0,0.25); max-width: 90vw; text-align: center; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .toast.success { background: var(--green); }
   .toast.error   { background: var(--red); }
-
   @media (max-width: 900px) {
     :root { --sidebar-w: 0px; }
     .sidebar { transform: translateX(-100%); transition: transform 0.25s; width: 250px; }
@@ -216,14 +201,13 @@
   }
   .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 55; }
   .overlay.show { display: block; }
-
-  /* ⭐ HIDE SERVICE/COUNTRY/BOTTOMBAR WHEN provider=usa */
   body.usa-mode .services-grid,
   body.usa-mode .countries-grid,
   body.usa-mode .bottom-bar,
   body.usa-mode #servicesModal,
-  body.usa-mode #countriesModal { display: none !important; }
-
+  body.usa-mode #countriesModal,
+  body.usa-mode .sec-head:has(#serviceSearch),
+  body.usa-mode .sec-head:has(#countrySearch) { display: none !important; }
   body.usa-mode .usa-header-card { display: block; }
 </style>
 </head>
@@ -306,7 +290,6 @@
 
   <div class="content">
 
-    <!-- Wallet Card (always shown) -->
     <div class="wallet-card">
       <div class="label">Wallet Balance</div>
       <div class="balance">
@@ -315,13 +298,11 @@
       </div>
     </div>
 
-    <!-- USA Header Card (only shown when provider=usa) -->
     <div class="usa-header-card" id="usaHeaderCard">
       <h2>🇺🇸 USA Orders</h2>
       <p>Buy USA numbers from this page. Your USA purchases appear below.</p>
     </div>
 
-    <!-- Services + Countries (hidden when USA mode) -->
     <div class="sec-head">
       <h2>Select a service</h2>
       <div class="search-wrap">
@@ -345,7 +326,6 @@
       <div class="loading-skeleton"><span class="spin"></span> Loading countries...</div>
     </div>
 
-    <!-- Recent Orders (always shown) -->
     <div class="sec-head" style="margin-top:34px;">
       <h2>Recent Orders <span style="color:var(--gray); font-weight:500; font-size:14px;">(last 5)</span></h2>
       <a href="orders.html" class="view-all">View all →</a>
@@ -371,7 +351,6 @@
   </div>
 </main>
 
-<!-- Modals (hidden in USA mode) -->
 <div class="modal-overlay" id="servicesModal" onclick="closeServicesModal(event)">
   <div class="modal-panel" onclick="event.stopPropagation()">
     <div class="modal-head">
@@ -494,7 +473,6 @@
   let sortByPrice = true;
   let urlProvider = null;
   let urlPriceOverride = null;
-  let isUsaMode = false;
 
   async function loadServicesFromFirestore() {
     try {
@@ -692,14 +670,12 @@
     selectedService = s;
     renderServices(document.getElementById('serviceSearch').value);
     updateBuyButton();
-    renderOrders();
   }
 
   function selectCountry(c) {
     selectedCountry = c;
     renderCountries(document.getElementById('countrySearch').value);
     updateBuyButton();
-    renderOrders();
   }
 
   function updateBuyButton() {
@@ -716,7 +692,6 @@
   }
   window.updateBuyButton = updateBuyButton;
 
-  /* ⭐ BUY FLOW — Routes to TextVerified (USA) or 5SIM (Main) */
   document.getElementById('buyBtn').addEventListener('click', async () => {
     if (!currentUser || !selectedService || !selectedCountry) return;
     const btn = document.getElementById('buyBtn');
@@ -727,7 +702,6 @@
       const basePrice = (urlPriceOverride && selectedCountry?.id === 'us') ? urlPriceOverride : (selectedCountry.price || 0);
       const total = doubleSms ? basePrice * 2 : basePrice;
 
-      // Check wallet
       const snap = await getDoc(doc(db, 'users', currentUser.uid));
       const data = snap.data() || {};
       const balance = data.walletBalance || 0;
@@ -740,23 +714,17 @@
       }
 
       const simService = selectedService.id;
-
-      // ⭐ Choose provider based on URL
       let buyUrl, buyBody, provider;
 
       if (urlProvider === 'usa') {
-        // TextVerified
         buyUrl = '/api/tv-buy';
         buyBody = { service: simService, capability: 'sms' };
         provider = 'usa';
-        console.log(`Buying from TextVerified: service=${simService}`);
       } else {
-        // 5SIM
         const simCountry = COUNTRY_MAP_5SIM[selectedCountry.id] || selectedCountry.id;
         buyUrl = '/api/5sim-buy';
         buyBody = { country: simCountry, service: simService };
         provider = 'main';
-        console.log(`Buying from 5SIM: country=${simCountry}, service=${simService}`);
       }
 
       const res = await fetch(buyUrl, {
@@ -789,7 +757,6 @@
         return;
       }
 
-      // Create order
       const orderRef = await addDoc(collection(db, 'orders'), {
         uid: currentUser.uid,
         email: currentUser.email,
@@ -824,7 +791,6 @@
     }
   });
 
-  /* ⭐ SMS POLLING — Routes to correct endpoint based on provider */
   function startSmsPolling(orderId, simOrderId, amount, provider) {
     let attempts = 0;
     const maxAttempts = 180;
@@ -884,7 +850,6 @@
         }
 
         setTimeout(poll, 5000);
-
       } catch (err) {
         console.error('Poll error:', err);
         setTimeout(poll, 5000);
@@ -900,6 +865,7 @@
     return match ? match[0] : null;
   }
 
+  /* ⭐ SHOW ALL ORDERS — both 5SIM and TextVerified, no filtering */
   async function renderOrders() {
     const tbody = document.getElementById('ordersBody');
     if (!currentUser) return;
@@ -909,11 +875,6 @@
       const snap = await getDocs(query(collection(db, 'orders'), where('uid', '==', currentUser.uid)));
       let orders = [];
       snap.forEach(d => orders.push({ id: d.id, ...d.data() }));
-
-      // If USA mode, filter to USA orders only
-      if (isUsaMode) {
-        orders = orders.filter(o => o.provider === 'usa');
-      }
 
       orders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
       orders = orders.slice(0, 5);
@@ -1080,9 +1041,7 @@
       if (!isNaN(parsed) && parsed > 0) urlPriceOverride = parsed;
     }
 
-    // ⭐ USA MODE — hide service/country grids
     if (urlProvider === 'usa') {
-      isUsaMode = true;
       document.body.classList.add('usa-mode');
     }
 
@@ -1093,7 +1052,6 @@
     renderCountries();
     renderOrders();
 
-    // Auto-select from URL
     if (urlProduct) {
       const svc = ALL_SERVICES.find(s => s.id === urlProduct);
       if (svc) { selectedService = svc; renderServices(); }
