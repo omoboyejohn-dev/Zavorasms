@@ -9,12 +9,12 @@
   :root {
     --blue: #1E5EFF; --blue-dark: #1547c4; --blue-light: #e8efff;
     --black: #0A0A0A; --gray: #6b7280; --gray-light: #f5f7fb;
-    --border: #e5e7eb; --white: #ffffff; --green: #10b981;yo uoo 
+    --border: #e5e7eb; --white: #ffffff; --green: #10b981;
     --yellow: #f59e0b; --red: #ef4444; --purple: #8b5cf6;
     --sidebar-w: 240px;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--gray-light); color: var(--black); line-height: 1.5; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: var(--gray-light); color: var(--black); line-height: 1.5; }
   a { text-decoration: none; color: inherit; }
   button { font-family: inherit; cursor: pointer; }
 
@@ -257,12 +257,13 @@
   let currentUser = null;
   let currentAdmin = null;
   let products = [];
-  let usaProducts = [];   // ⭐ NEW
+  let usaProducts = [];
   let countries = [];
   let allUsers = [];
   let allOrders = [];
   let allDeposits = [];
   let currentTab = 'overview';
+  let simBalance = null;
 
   const DEFAULT_PRODUCTS = [
     { id: 'whatsapp',  name: 'WhatsApp',    icon: '✆', cls: 'ic-whatsapp',  stock: 113 },
@@ -334,6 +335,7 @@
     document.getElementById('userEmail').textContent = data.email || '';
 
     await loadAllData();
+    await load5SimBalance();
     switchTab('overview');
   });
 
@@ -347,6 +349,16 @@
       loadDeposits()
     ]);
     updateSidebarCounts();
+  }
+
+  async function load5SimBalance() {
+    try {
+      const res = await fetch('/api/5sim-balance');
+      const data = await res.json();
+      if (data.success) simBalance = data.balance;
+    } catch (e) {
+      console.error('5SIM balance fetch failed:', e);
+    }
   }
 
   async function loadProducts() {
@@ -468,6 +480,27 @@
     const mainOrders = allOrders.filter(o => (o.provider || 'main') === 'main').length;
     const usaOrders = allOrders.filter(o => o.provider === 'usa').length;
 
+    // 5SIM balance warning
+    let simBalanceHTML = '';
+    if (simBalance !== null) {
+      const bal = Number(simBalance || 0);
+      const isLow = bal < 5;
+      simBalanceHTML = `
+        <div style="margin-bottom:24px; padding:18px 22px; background:${isLow ? '#fee2e2' : '#dcfce7'}; border:1.5px solid ${isLow ? '#fecaca' : '#bbf7d0'}; border-radius:14px; display:flex; align-items:center; gap:14px;">
+          <div style="font-size:26px;">${isLow ? '⚠️' : '💰'}</div>
+          <div style="flex:1;">
+            <div style="font-weight:800; font-size:15px; color:${isLow ? '#b91c1c' : '#15803d'};">
+              5SIM Balance: $${bal.toFixed(4)} USD
+            </div>
+            <div style="font-size:13px; color:${isLow ? '#b91c1c' : '#15803d'}; margin-top:2px;">
+              ${isLow ? 'LOW BALANCE — Top up soon to avoid order failures' : 'Balance healthy — orders will work normally'}
+            </div>
+          </div>
+          ${isLow ? `<a href="https://5sim.net/profile/balance" target="_blank" style="padding:10px 18px; background:var(--red); color:white; border-radius:10px; font-weight:700; font-size:13px; text-decoration:none;">Top Up →</a>` : ''}
+        </div>
+      `;
+    }
+
     document.getElementById('contentArea').innerHTML = `
       <div class="stats-grid">
         <div class="stat-box">
@@ -491,6 +524,8 @@
           <div class="lbl">Completed Orders</div>
         </div>
       </div>
+
+      ${simBalanceHTML}
 
       <div class="stats-grid" style="margin-bottom:24px;">
         <div class="stat-box">
@@ -543,7 +578,6 @@
     `;
   }
 
-  /* ===== PRODUCTS (MAIN) ===== */
   function renderProducts() {
     if (products.length === 0) {
       document.getElementById('contentArea').innerHTML = `
@@ -619,7 +653,6 @@
     `;
   }
 
-  /* ===== USA PRODUCTS ===== */
   function renderUsaProducts() {
     if (usaProducts.length === 0) {
       document.getElementById('contentArea').innerHTML = `
@@ -640,7 +673,7 @@
     document.getElementById('contentArea').innerHTML = `
       <div class="sec-head">
         <div><h2>🇺🇸 USA Products <span style="color:var(--gray); font-weight:500; font-size:14px;">(${usaProducts.length})</span></h2>
-        <div class="sub">These appear on the <strong>Buy USA Number</strong> page with their own prices</div></div>
+        <div class="sub">These appear on the <strong>Buy USA Number</strong> page</div></div>
         <div class="actions">
           <div class="search-box">
             <span class="ico">🔍</span>
@@ -697,7 +730,6 @@
     `;
   }
 
-  /* COUNTRY CRUD */
   function renderCountries() {
     if (countries.length === 0) {
       document.getElementById('contentArea').innerHTML = `
@@ -1005,7 +1037,6 @@
     `;
   }
 
-  /* APPROVE / REJECT DEPOSIT */
   window.approveDeposit = async function (id) {
     if (window.__approvingDeposit) return;
     window.__approvingDeposit = true;
@@ -1077,24 +1108,14 @@
     }
   };
 
-  /* PRODUCT CRUD (MAIN) */
   window.addProduct = function () {
     const nextOrder = nextProductOrder();
     window.openModal(
       'Add Product',
-      `<div class="field">
-        <label>Product Name</label>
-        <input type="text" id="pName" placeholder="e.g. WhatsApp" />
-      </div>
+      `<div class="field"><label>Product Name</label><input type="text" id="pName" placeholder="e.g. WhatsApp" /></div>
       <div class="field-row">
-        <div class="field">
-          <label>Icon (emoji or letter)</label>
-          <input type="text" id="pIcon" placeholder="✆" maxlength="4" />
-        </div>
-        <div class="field">
-          <label>Product ID (lowercase, no spaces)</label>
-          <input type="text" id="pId" placeholder="whatsapp" />
-        </div>
+        <div class="field"><label>Icon</label><input type="text" id="pIcon" placeholder="✆" maxlength="4" /></div>
+        <div class="field"><label>Product ID (lowercase)</label><input type="text" id="pId" placeholder="whatsapp" /></div>
       </div>
       <div class="field">
         <label>Icon Color Class</label>
@@ -1114,15 +1135,9 @@
           <option value="ic-more">Default Black</option>
         </select>
       </div>
-      <div class="field">
-        <label>Stock (pcs)</label>
-        <input type="number" id="pStock" value="100" min="0" />
-      </div>
-      <div style="padding:12px 14px; background:var(--blue-light); border-radius:10px; font-size:13px; color:var(--blue-dark); font-weight:600;">
-        ℹ️ This product will be added as <strong>#${nextOrder}</strong>
-      </div>`,
-      `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-       <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>`
+      <div class="field"><label>Stock (pcs)</label><input type="number" id="pStock" value="100" min="0" /></div>
+      <div style="padding:12px 14px; background:var(--blue-light); border-radius:10px; font-size:13px; color:var(--blue-dark); font-weight:600;">ℹ️ This product will be added as <strong>#${nextOrder}</strong></div>`,
+      `<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveProduct()">Save Product</button>`
     );
   };
 
@@ -1134,7 +1149,6 @@
     const stock = parseInt(document.getElementById('pStock').value) || 0;
     if (!name || !id) { showToast('Name and ID required', 'error'); return; }
     if (products.some(p => p.id === id)) { showToast('ID already exists', 'error'); return; }
-
     try {
       const order = nextProductOrder();
       await setDoc(doc(db, 'config_products', id), { name, icon, cls, stock, order, createdAt: serverTimestamp() });
@@ -1160,8 +1174,7 @@
         </select>
       </div>
       <div class="field"><label>Stock (pcs)</label><input type="number" id="pStock" value="${p.stock || 0}" min="0" /></div>`,
-      `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-       <button class="btn btn-primary" onclick="updateProduct('${p.id}')">Save Changes</button>`
+      `<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="updateProduct('${p.id}')">Save Changes</button>`
     );
   };
 
@@ -1189,24 +1202,14 @@
     } catch (err) { console.error(err); showToast('Could not delete', 'error'); }
   };
 
-  /* USA PRODUCT CRUD */
   window.addUsaProduct = function () {
     const nextOrder = nextUsaProductOrder();
     window.openModal(
       '🇺🇸 Add USA Product',
-      `<div class="field">
-        <label>Product Name</label>
-        <input type="text" id="uName" placeholder="e.g. WhatsApp" />
-      </div>
+      `<div class="field"><label>Product Name</label><input type="text" id="uName" placeholder="e.g. WhatsApp" /></div>
       <div class="field-row">
-        <div class="field">
-          <label>Icon (emoji or letter)</label>
-          <input type="text" id="uIcon" placeholder="✆" maxlength="4" />
-        </div>
-        <div class="field">
-          <label>Product ID (lowercase, no spaces)</label>
-          <input type="text" id="uId" placeholder="whatsapp" />
-        </div>
+        <div class="field"><label>Icon</label><input type="text" id="uIcon" placeholder="✆" maxlength="4" /></div>
+        <div class="field"><label>Product ID</label><input type="text" id="uId" placeholder="whatsapp" /></div>
       </div>
       <div class="field">
         <label>Icon Color Class</label>
@@ -1218,29 +1221,17 @@
           <option value="ic-google">Google Red</option>
           <option value="ic-tiktok">Black</option>
           <option value="ic-twitter">Twitter Black</option>
-          <option value="ic-amazon">Amazon Orange</option>
           <option value="ic-apple">Apple Black</option>
           <option value="ic-snapchat">Snapchat Yellow</option>
-          <option value="ic-discord">Discord Purple</option>
-          <option value="ic-signal">Signal Blue</option>
           <option value="ic-more">Default Black</option>
         </select>
       </div>
       <div class="field-row">
-        <div class="field">
-          <label>USA Price (₦)</label>
-          <input type="number" id="uPrice" value="1000" min="0" />
-        </div>
-        <div class="field">
-          <label>Stock (pcs)</label>
-          <input type="number" id="uStock" value="100" min="0" />
-        </div>
+        <div class="field"><label>USA Price (₦)</label><input type="number" id="uPrice" value="1000" min="0" /></div>
+        <div class="field"><label>Stock (pcs)</label><input type="number" id="uStock" value="100" min="0" /></div>
       </div>
-      <div style="padding:12px 14px; background:#ede9fe; border-radius:10px; font-size:13px; color:#6d28d9; font-weight:600;">
-        🇺🇸 This USA product will be added as <strong>#${nextOrder}</strong>
-      </div>`,
-      `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-       <button class="btn btn-primary" onclick="saveUsaProduct()">Save USA Product</button>`
+      <div style="padding:12px 14px; background:#ede9fe; border-radius:10px; font-size:13px; color:#6d28d9; font-weight:600;">🇺🇸 Will be added as <strong>#${nextOrder}</strong></div>`,
+      `<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveUsaProduct()">Save USA Product</button>`
     );
   };
 
@@ -1252,14 +1243,13 @@
     const price = parseInt(document.getElementById('uPrice').value) || 0;
     const stock = parseInt(document.getElementById('uStock').value) || 0;
     if (!name || !id) { showToast('Name and ID required', 'error'); return; }
-    if (usaProducts.some(p => p.id === id)) { showToast('USA Product ID already exists', 'error'); return; }
-
+    if (usaProducts.some(p => p.id === id)) { showToast('USA Product ID exists', 'error'); return; }
     try {
       const order = nextUsaProductOrder();
       await setDoc(doc(db, 'config_usa_products', id), { name, icon, cls, price, stock, order, createdAt: serverTimestamp() });
       closeModal(); showToast(`🇺🇸 USA Product added as #${order}!`, 'success');
       await loadUsaProducts(); updateSidebarCounts(); renderUsaProducts();
-    } catch (err) { console.error(err); showToast('Could not save USA product', 'error'); }
+    } catch (err) { console.error(err); showToast('Could not save', 'error'); }
   };
 
   window.editUsaProduct = function (id) {
@@ -1275,18 +1265,14 @@
       <div class="field">
         <label>Icon Color Class</label>
         <select id="uCls">
-          ${['ic-whatsapp','ic-telegram','ic-facebook','ic-instagram','ic-google','ic-tiktok','ic-twitter','ic-amazon','ic-apple','ic-snapchat','ic-discord','ic-signal','ic-pof','ic-match','ic-tagged','ic-uber','ic-more'].map(c => `<option value="${c}" ${p.cls === c ? 'selected' : ''}>${c}</option>`).join('')}
+          ${['ic-whatsapp','ic-telegram','ic-facebook','ic-instagram','ic-google','ic-tiktok','ic-twitter','ic-apple','ic-snapchat','ic-more'].map(c => `<option value="${c}" ${p.cls === c ? 'selected' : ''}>${c}</option>`).join('')}
         </select>
       </div>
       <div class="field-row">
         <div class="field"><label>USA Price (₦)</label><input type="number" id="uPrice" value="${p.price || 0}" min="0" /></div>
         <div class="field"><label>Stock (pcs)</label><input type="number" id="uStock" value="${p.stock || 0}" min="0" /></div>
-      </div>
-      <div style="padding:12px 14px; background:var(--gray-light); border-radius:10px; font-size:13px; color:var(--gray); font-weight:600;">
-        Position: <strong>#${p.order || 0}</strong> (unchanged)
       </div>`,
-      `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-       <button class="btn btn-primary" onclick="updateUsaProduct('${p.id}')">Save Changes</button>`
+      `<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="updateUsaProduct('${p.id}')">Save Changes</button>`
     );
   };
 
@@ -1315,7 +1301,6 @@
     } catch (err) { console.error(err); showToast('Could not delete', 'error'); }
   };
 
-  /* COUNTRY CRUD */
   window.addCountry = function () {
     const nextOrder = nextCountryOrder();
     window.openModal(
@@ -1330,8 +1315,7 @@
         <div class="field"><label>Stock (pcs)</label><input type="number" id="cStock" value="1000" min="0" /></div>
       </div>
       <div class="field"><label>Country ID (lowercase)</label><input type="text" id="cId" placeholder="us" /></div>`,
-      `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-       <button class="btn btn-primary" onclick="saveCountry()">Save Country</button>`
+      `<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveCountry()">Save Country</button>`
     );
   };
 
@@ -1366,8 +1350,7 @@
         <div class="field"><label>Price (₦)</label><input type="number" id="cPrice" value="${c.price || 0}" min="0" /></div>
         <div class="field"><label>Stock (pcs)</label><input type="number" id="cStock" value="${c.stock || 0}" min="0" /></div>
       </div>`,
-      `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-       <button class="btn btn-primary" onclick="updateCountry('${c.id}')">Save Changes</button>`
+      `<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="updateCountry('${c.id}')">Save Changes</button>`
     );
   };
 
@@ -1396,7 +1379,6 @@
     } catch (err) { console.error(err); showToast('Could not delete', 'error'); }
   };
 
-  /* USER WALLET */
   window.editUserWallet = function (uid) {
     const u = allUsers.find(x => x.uid === uid);
     if (!u) return;
@@ -1404,8 +1386,7 @@
       `Adjust Wallet — ${u.firstName || 'User'}`,
       `<div class="field"><label>Current</label><input type="text" value="₦${Number(u.walletBalance || 0).toLocaleString()}" disabled style="opacity:0.6;" /></div>
       <div class="field"><label>New Balance (₦)</label><input type="number" id="uBalance" value="${u.walletBalance || 0}" min="0" /></div>`,
-      `<button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-       <button class="btn btn-primary" onclick="saveUserWallet('${uid}')">Save</button>`
+      `<button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveUserWallet('${uid}')">Save</button>`
     );
   };
 
@@ -1418,7 +1399,6 @@
     } catch (err) { console.error(err); showToast('Could not update', 'error'); }
   };
 
-  /* ORDER CANCEL */
   window.cancelOrder = async function (id) {
     const o = allOrders.find(x => x.id === id);
     if (!o) return;
@@ -1430,12 +1410,9 @@
     } catch (err) { console.error(err); showToast('Could not cancel', 'error'); }
   };
 
-  /* SEED */
   document.getElementById('seedBtn').addEventListener('click', async () => {
     if (!confirm('Seed default data?\n\nThis will add:\n- 16 Main Products\n- 9 USA Products\n- 15 Countries\n\nExisting items with same IDs keep their order.')) return;
-
     showToast('Seeding data...', 'info');
-
     try {
       for (const p of DEFAULT_PRODUCTS) {
         const ex = products.find(x => x.id === p.id);
@@ -1458,7 +1435,6 @@
     } catch (err) { console.error(err); showToast('Seed failed', 'error'); }
   });
 
-  /* LOGOUT */
   document.getElementById('logoutBtn').addEventListener('click', async () => {
     await signOut(auth);
     window.location.href = 'login.html';
