@@ -60,6 +60,20 @@
   .sec-head .sort-btn:hover { border-color: var(--black); color: var(--black); }
   .sec-head .view-all { color: var(--blue); font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 10px; background: var(--blue-light); }
   .sec-head .view-all:hover { background: var(--blue); color: white; }
+
+  /* ⭐ Refresh button */
+  .refresh-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 10px;
+    background: white; color: var(--blue);
+    border: 1.5px solid var(--blue-light);
+    font-size: 13.5px; font-weight: 700;
+    transition: all 0.15s;
+  }
+  .refresh-btn:hover { background: var(--blue-light); }
+  .refresh-btn.spinning .ico { animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
   .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 34px; }
   .service-tile { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; transition: all 0.15s; cursor: pointer; text-align: left; min-width: 0; }
   .service-tile:hover { border-color: var(--blue); transform: translateY(-2px); box-shadow: 0 10px 24px rgba(30,94,255,0.1); }
@@ -101,7 +115,6 @@
   .empty-msg .emoji { font-size: 32px; display: block; margin-bottom: 10px; }
   .loading-skeleton { grid-column: 1 / -1; text-align: center; padding: 40px 20px; color: var(--gray); font-size: 14px; }
   .loading-skeleton .spin { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 8px; vertical-align: middle; }
-  @keyframes spin { to { transform: rotate(360deg); } }
   .modal-overlay { position: fixed; inset: 0; background: rgba(10,10,10,0.6); backdrop-filter: blur(6px); display: none; z-index: 100; align-items: flex-end; justify-content: center; padding: 0; }
   .modal-overlay.show { display: flex; animation: fadeIn 0.2s ease; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -326,9 +339,15 @@
       <div class="loading-skeleton"><span class="spin"></span> Loading countries...</div>
     </div>
 
+    <!-- ⭐ RECENT ORDERS with REFRESH BUTTON -->
     <div class="sec-head" style="margin-top:34px;">
       <h2>Recent Orders <span style="color:var(--gray); font-weight:500; font-size:14px;">(last 5)</span></h2>
-      <a href="orders.html" class="view-all">View all →</a>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="refresh-btn" id="refreshOrdersBtn">
+          <span class="ico">🔄</span> Refresh
+        </button>
+        <a href="orders.html" class="view-all">View all →</a>
+      </div>
     </div>
 
     <div class="orders-card">
@@ -473,6 +492,7 @@
   let sortByPrice = true;
   let urlProvider = null;
   let urlPriceOverride = null;
+  let isFirstLoad = true;
 
   async function loadServicesFromFirestore() {
     try {
@@ -707,7 +727,7 @@
       const balance = data.walletBalance || 0;
 
       if (balance < total) {
-        showToast(`⚠️ Insufficient balance. Need ₦${total.toLocaleString()}`, 'error');
+        showToast(`💰 Fund your wallet. Insufficient wallet balance. Please deposit to continue. Thank you.`, 'error');
         btn.disabled = false;
         updateBuyButton();
         return;
@@ -737,21 +757,7 @@
 
       if (!buyResult.success) {
         console.error(`${provider} buy failed:`, buyResult);
-
-        const errorMessages = {
-          OUT_OF_STOCK: '⚠️ Out of stock. Please try another service.',
-          PROVIDER_LOW_BALANCE: '⚠️ Service temporarily unavailable. Please try another option.',
-          NOT_AVAILABLE: '⚠️ Not available right now. Try a different service.',
-          INVALID_COUNTRY: '⚠️ This country is not supported for this service.',
-          NOT_CONFIGURED: '⚠️ Service is being updated. Please try again later.',
-          MISSING_PARAMS: '⚠️ Please select both a service and a country.',
-          SERVER_ERROR: '⚠️ Something went wrong. Please try again.',
-          TOO_MANY_PENDING: '⚠️ Please finish your pending orders first.',
-          AUTH_FAILED: '⚠️ Service is being updated. Please try again later.'
-        };
-
-        const msg = errorMessages[buyResult.code] || buyResult.error || '⚠️ Could not complete purchase. Please try again.';
-        showToast(msg, 'error');
+        showToast(`⚠️ ${buyResult.error || 'Out of stock. Please try another service.'}`, 'error');
         btn.disabled = false;
         updateBuyButton();
         return;
@@ -865,11 +871,15 @@
     return match ? match[0] : null;
   }
 
-  /* ⭐ SHOW ALL ORDERS — both 5SIM and TextVerified, no filtering */
-  async function renderOrders() {
+  /* ⭐ RECENT ORDERS — NO AUTO-REFRESH, ONLY MANUAL + SILENT AFTER SMS ARRIVES */
+  async function renderOrders(showLoading = false) {
     const tbody = document.getElementById('ordersBody');
     if (!currentUser) return;
-    tbody.innerHTML = '<tr><td colspan="5" class="empty-orders">Loading...</td></tr>';
+
+    // Only show "Loading..." on first load, not on refresh
+    if (isFirstLoad || showLoading) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty-orders">Loading...</td></tr>';
+    }
 
     try {
       const snap = await getDocs(query(collection(db, 'orders'), where('uid', '==', currentUser.uid)));
@@ -881,14 +891,17 @@
 
       if (orders.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" class="empty-orders">No orders yet. Buy your first number!</td></tr>';
+        isFirstLoad = false;
         return;
       }
 
       tbody.innerHTML = '';
       orders.forEach(o => tbody.appendChild(buildOrderRow(o)));
+      isFirstLoad = false;
     } catch (err) {
       console.error('Load orders error:', err);
       tbody.innerHTML = '<tr><td colspan="5" class="empty-orders">Could not load orders.</td></tr>';
+      isFirstLoad = false;
     }
   }
 
@@ -982,6 +995,65 @@
     }
   });
 
+  /* ⭐ REFRESH BUTTON HANDLER */
+  document.getElementById('refreshOrdersBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('refreshOrdersBtn');
+    btn.classList.add('spinning');
+    btn.disabled = true;
+
+    // Also check any pending orders for new SMS
+    try {
+      const snap = await getDocs(query(collection(db, 'orders'), where('uid', '==', currentUser.uid)));
+      const pending = [];
+      snap.forEach(d => {
+        const o = d.data();
+        if (o.status === 'pending' && o.simOrderId) {
+          pending.push({ id: d.id, ...o });
+        }
+      });
+
+      // Check each pending order's SMS
+      for (const o of pending) {
+        try {
+          const provider = o.provider || 'main';
+          const checkUrl = provider === 'usa'
+            ? `/api/tv-check?verificationId=${o.simOrderId}`
+            : `/api/5sim-check?id=${o.simOrderId}`;
+
+          const res = await fetch(checkUrl);
+          const data = await res.json();
+
+          if (data.success && data.received && data.messages && data.messages.length > 0) {
+            const code = data.messages[0].code || extractCode(data.messages[0].content);
+            await updateDoc(doc(db, 'orders', o.id), {
+              smsCode: code || '—',
+              status: 'completed',
+              completedAt: serverTimestamp()
+            });
+            await updateDoc(doc(db, 'users', currentUser.uid), {
+              walletBalance: increment(-(o.price || 0)),
+              totalOrders: increment(1),
+              completedOrders: increment(1)
+            });
+            showToast('✅ SMS received! Order completed.', 'success');
+          }
+        } catch (e) {
+          console.error('Check pending error:', e);
+        }
+      }
+      await refreshUserData();
+    } catch (err) {
+      console.error('Refresh error:', err);
+    }
+
+    // Reload orders table
+    await renderOrders();
+
+    btn.classList.remove('spinning');
+    btn.disabled = false;
+    showToast('✅ Refreshed', 'success');
+  });
+
   document.getElementById('serviceSearch').addEventListener('input', (e) => renderServices(e.target.value));
   document.getElementById('countrySearch').addEventListener('input', (e) => renderCountries(e.target.value));
 
@@ -1062,7 +1134,8 @@
     }
     updateBuyButton();
 
-    setInterval(renderOrders, 5000);
+    // ⭐ NO AUTO-REFRESH. Only manual refresh + silent SMS polling in background.
+    // The polling inside startSmsPolling() still updates when SMS arrives.
     setInterval(async () => {
       await Promise.all([loadServicesFromFirestore(), loadCountriesFromFirestore()]);
       renderServices(document.getElementById('serviceSearch').value);
